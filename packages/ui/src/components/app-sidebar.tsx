@@ -15,13 +15,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
-import { RiDashboardLine, RiListUnordered, RiBarChartLine, RiFolderLine, RiGroupLine, RiCameraLine, RiFileTextLine, RiSettingsLine, RiQuestionLine, RiSearchLine, RiDatabase2Line, RiFileChartLine, RiFileLine, RiCommandLine } from "@remixicon/react"
+import { RiDashboardLine, RiBarChartLine, RiGroupLine, RiSettingsLine, RiFileChartLine, RiFileTextLine, RiQuestionLine, RiLogoutBoxLine, RiCommandLine } from "@remixicon/react"
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "Admin User",
+    email: "user@example.com",
+    avatar: "/placeholder.svg",
   },
   navMain: [
     {
@@ -29,14 +29,6 @@ const data = {
       url: "#",
       icon: (
         <RiDashboardLine
-        />
-      ),
-    },
-    {
-      title: "Lifecycle",
-      url: "#",
-      icon: (
-        <RiListUnordered
         />
       ),
     },
@@ -49,80 +41,13 @@ const data = {
       ),
     },
     {
-      title: "Projects",
-      url: "#",
-      icon: (
-        <RiFolderLine
-        />
-      ),
-    },
-    {
-      title: "Team",
+      title: "Users",
       url: "#",
       icon: (
         <RiGroupLine
         />
       ),
     },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: (
-        <RiCameraLine
-        />
-      ),
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: (
-        <RiFileTextLine
-        />
-      ),
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: (
-        <RiFileTextLine
-        />
-      ),
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
     {
       title: "Settings",
       url: "#",
@@ -131,32 +56,8 @@ const data = {
         />
       ),
     },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: (
-        <RiQuestionLine
-        />
-      ),
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: (
-        <RiSearchLine
-        />
-      ),
-    },
   ],
   documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: (
-        <RiDatabase2Line
-        />
-      ),
-    },
     {
       name: "Reports",
       url: "#",
@@ -166,10 +67,28 @@ const data = {
       ),
     },
     {
-      name: "Word Assistant",
+      name: "Activity log",
       url: "#",
       icon: (
-        <RiFileLine
+        <RiFileTextLine
+        />
+      ),
+    },
+  ],
+  navSecondary: [
+    {
+      title: "Help",
+      url: "#",
+      icon: (
+        <RiQuestionLine
+        />
+      ),
+    },
+    {
+      title: "Sign out",
+      url: "#",
+      icon: (
+        <RiLogoutBoxLine
         />
       ),
     },
@@ -186,7 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               render={<a href="#" />}
             >
               <RiCommandLine className="size-5!" />
-              <span className="text-base font-semibold">Acme Inc.</span>
+              <span className="text-base font-semibold">Admin Template</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
