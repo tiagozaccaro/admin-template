@@ -6,7 +6,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from admin_template.api.main import app
-from admin_template.modules.identity.service import IdentityLinkError
+
+
+class _AuthError(Exception):
+    """Test auth error."""
 
 
 @pytest.fixture
@@ -57,12 +60,13 @@ def patch_auth_for_smoke(monkeypatch: pytest.MonkeyPatch) -> None:
         pass
 
     async def fake_get_user_from_session(session_id, credentials=None):
-        # For smoke tests, we want to validate unauth behavior separately
-        # But for integration context, we can be flexible
         token = session_id or (credentials.credentials if credentials else None)
-        if token == "00000000-0000-0000-0000-000000000002" or token == "Bearer 00000000-0000-0000-0000-000000000002":
+        if (
+            token == "00000000-0000-0000-0000-000000000002"
+            or token == "Bearer 00000000-0000-0000-0000-000000000002"
+        ):
             return _FakeUser()
-        raise Exception("Invalid session")
+        raise _AuthError("Invalid session")
 
     monkeypatch.setattr(
         "admin_template.auth.router.build_authorization_url", fake_start

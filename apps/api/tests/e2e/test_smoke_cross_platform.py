@@ -53,8 +53,7 @@ def test_openapi_contract_exists(client: TestClient) -> None:
     assert schema["openapi"].startswith("3.1")
     assert "/auth/google/start" in schema["paths"]
     assert "/auth/callback" in schema["paths"]
-    # /me may be under auth prefix; check for presence
     paths = schema["paths"]
     assert "/auth/google/start" in paths
     assert "/auth/callback" in paths
-    assert any("/me" in p for p in paths.keys())
+    assert any("/me" in p for p in paths)
