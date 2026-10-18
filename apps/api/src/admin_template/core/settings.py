@@ -40,16 +40,16 @@ class Settings(BaseSettings):
     # Redis (queue + cache + sessions)
     redis_url: str = "redis://localhost:6379/0"
 
-    # Keycloak OIDC (constitution VI)
+    # Keycloak OIDC
     keycloak_jwks_url: str | None = Field(
         default=None, description="Keycloak JWKS endpoint URL"
     )
     keycloak_issuer: str | None = Field(default=None, description="Keycloak issuer URL")
-    keycloak_audience: str = "contentforge-api"
+    keycloak_audience: str = "admin-template-api"
     access_token_expire_minutes: int = 5
 
-    # LiteLLM gateway (constitution V)
-    litellm_base_url: str = "http://litellm:4000"
+    # OpenTelemetry trace export endpoint
+    otlp_endpoint: str = "http://localhost:4318/v1/traces"
 
     def model_post_init(self, /, __context) -> None:
         """Resolve Docker `_FILE` secret mounts after field init.

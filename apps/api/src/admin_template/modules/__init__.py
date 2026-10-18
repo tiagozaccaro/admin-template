@@ -2,20 +2,16 @@
 
 Each subpackage exposes a public ``__init__.py`` interface. Cross-module
 communication goes through published interfaces only; modules must not import
-implementation details of other modules (constitution II).
+implementation details of other modules.
 
 Bounded contexts:
 
-- identity: users, accounts, integrations
-- workspace: workspaces, memberships, roles
-- sources: source registration, ingestion adapters
-- stories: discovery, comparison
-- evidence: evidence collection
-- ai: provider config, gateway adapter, PydanticAI workflows
-- content: ideas, scripts, drafts, revisions
-- projects: project organization
-- jobs: Dramatiq actors, outbox publisher
-- sync: revisioned sync endpoints
+- identity: authenticated users (OIDC keycloak_sub keyed)
+- workspace: workspaces, memberships, and roles (owner/member/viewer)
+
+Extension point: add new bounded contexts under
+``apps/api/src/admin_template/modules/<context>/`` and expose routers under
+``apps/api/src/admin_template/api/v1/routers/``.
 """
 
 __all__ = []

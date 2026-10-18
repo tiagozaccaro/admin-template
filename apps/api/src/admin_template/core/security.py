@@ -156,7 +156,7 @@ async def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing authentication token",
-            headers={"WWW-Authenticate": 'Bearer realm="contentforge"'},
+            headers={"WWW-Authenticate": 'Bearer realm="admin-template"'},
         )
     return await validate_token(credentials.credentials)
 
