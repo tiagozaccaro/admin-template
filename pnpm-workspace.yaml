@@ -1,7 +1,6 @@
 packages:
   - "apps/*"
   - "packages/*"
-  - "product/queue"
 
 allowBuilds:
   esbuild: true
