@@ -1,0 +1,97 @@
+openapi: 3.1.0
+info:
+  title: Admin Template API
+  version: 1.0.0
+  description: Versioned REST/JSON API for admin-template.
+servers:
+  - url: /api/v1
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Healthy
+  /auth/google/start:
+    get:
+      summary: Start Google OIDC login
+      responses:
+        '302':
+          description: Redirect to provider
+  /auth/callback:
+    get:
+      summary: OIDC callback
+      responses:
+        '302':
+          description: Post-login redirect
+  /me:
+    get:
+      summary: Current user profile
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Profile
+  /tenants:
+    get:
+      summary: List user tenants
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Tenant list
+    post:
+      summary: Create tenant
+      security: [{ bearerAuth: [] }]
+      responses:
+        '201':
+          description: Created
+  /tenants/{tenantId}/members:
+    get:
+      summary: List members
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Member list
+  /tenants/{tenantId}/invitations:
+    post:
+      summary: Create invitation
+      security: [{ bearerAuth: [] }]
+      responses:
+        '201':
+          description: Created
+  /dashboard/summary:
+    get:
+      summary: Dashboard metrics
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Summary
+  /ai/conversations:
+    get:
+      summary: List conversations
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Conversations
+    post:
+      summary: Create conversation
+      security: [{ bearerAuth: [] }]
+      responses:
+        '201':
+          description: Created
+  /ai/conversations/{id}/messages:
+    post:
+      summary: Send message (streaming)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Streamed response
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session
