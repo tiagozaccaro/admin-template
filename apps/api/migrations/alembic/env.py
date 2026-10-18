@@ -22,10 +22,16 @@ if config.config_file_name is not None:
 
 # Import all domain models so they are registered on the shared
 # SQLAlchemy Base.metadata for Alembic autogenerate support.
-from admin_template.db.base import Base  # noqa: E402
-from admin_template.modules.identity.models import user  # noqa: F401,E402
-from admin_template.modules.workspace.models import workspace  # noqa: F401,E402
-from admin_template.modules.workspace.models import member  # noqa: F401,E402
+from admin_template.db.base import Base
+from admin_template.modules.identity.models import (
+    external_identity,  # noqa: F401
+    session,  # noqa: F401
+    user,  # noqa: F401
+)
+from admin_template.modules.workspace.models import (
+    member,  # noqa: F401
+    workspace,  # noqa: F401
+)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

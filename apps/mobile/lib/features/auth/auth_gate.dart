@@ -28,8 +28,10 @@ class _AuthGateState extends State<AuthGate> {
   }
 
   Future<void> _checkAuth() async {
-    // AuthService holds tokens in memory; on cold start we are
-    // unauthenticated until the user completes the PKCE flow.
+    // Load any persisted session from secure storage before deciding the
+    // initial route. On cold start we are unauthenticated until the user
+    // completes the PKCE flow.
+    await widget.authService.loadSession();
     if (!mounted) return;
     setState(() => _loading = false);
   }

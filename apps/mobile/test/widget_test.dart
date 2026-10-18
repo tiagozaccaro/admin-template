@@ -29,6 +29,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(home: AuthGate(authService: authService)),
     );
+    await tester.pump();
 
     expect(find.text("Sign in"), findsOneWidget);
     expect(find.text("Signed in"), findsNothing);

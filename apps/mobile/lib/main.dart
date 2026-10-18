@@ -13,11 +13,11 @@ class AdminTemplateApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final storage = InMemorySecureStorage();
+    final storage = FlutterSecureStorageImpl();
     final oauthClient = OAuthClient(
       issuer: const String.fromEnvironment(
         "ADMIN_TEMPLATE_OIDC_ISSUER",
-        defaultValue: "http://localhost:8080/realms/admin-template",
+        defaultValue: "https://accounts.google.com",
       ),
       clientId: const String.fromEnvironment(
         "ADMIN_TEMPLATE_OIDC_CLIENT_ID",
@@ -29,7 +29,7 @@ class AdminTemplateApp extends StatelessWidget {
       ),
       storage: storage,
     );
-    final authService = AuthService(oauthClient);
+    final authService = AuthService(oauthClient, storage: storage);
 
     return MaterialApp(
       title: "Admin Template",

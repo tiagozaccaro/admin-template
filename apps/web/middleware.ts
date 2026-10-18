@@ -1,28 +1,29 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
+// Session cookie issued by the backend on successful authentication.
+const SESSION_COOKIE = "admin_template_session"
+
 export function middleware(request: NextRequest) {
-  const isLoggedIn =
-    request.cookies.get("isLoggedIn")?.value === "true" ||
-    request.headers.get("cookie")?.includes("isLoggedIn=true")
+  const hasSession = request.cookies.has(SESSION_COOKIE)
 
   const { pathname } = request.nextUrl
 
   if (pathname === "/login") {
-    if (isLoggedIn) {
+    if (hasSession) {
       return NextResponse.redirect(new URL("/dashboard", request.url))
     }
     return NextResponse.next()
   }
 
   if (pathname === "/") {
-    if (isLoggedIn) {
+    if (hasSession) {
       return NextResponse.redirect(new URL("/dashboard", request.url))
     }
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
-  if (!isLoggedIn && pathname.startsWith("/dashboard")) {
+  if (!hasSession && pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
