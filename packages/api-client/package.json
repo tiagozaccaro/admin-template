@@ -1,0 +1,20 @@
+{
+  "name": "@workspace/api-client",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Generated OpenAPI client for the Admin Template API",
+  "scripts": {
+    "lint": "eslint",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit",
+    "generate": "echo 'OpenAPI client generation placeholder'"
+  },
+  "devDependencies": {
+    "@workspace/eslint-config": "workspace:^",
+    "@workspace/typescript-config": "workspace:*",
+    "eslint": "^10",
+    "prettier": "^3",
+    "typescript": "^5"
+  }
+}

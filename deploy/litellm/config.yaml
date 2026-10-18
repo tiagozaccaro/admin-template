@@ -1,0 +1,54 @@
+# LiteLLM self-hosted, provider-neutral gateway configuration.
+#
+# This file defines the model_list exposed by the LiteLLM gateway. The
+# LiteLLMGateway adapter (apps/api/src/content_forge/modules/ai/gateway/)
+# routes provider-neutral completion requests through this gateway.
+#
+# Provider credentials are resolved from environment variables only; no
+# secrets are committed here (constitution V / AGENTS.md security).
+#
+# See https://docs.litellm.ai/docs/proxy/config for the full schema.
+
+model_list:
+  # OpenAI-compatible models (OpenAI API, Azure OpenAI, or any OpenAI-like
+  # endpoint). Credentials via LITELLM_OPENAI_API_KEY / LITELLM_OPENAI_API_BASE.
+  - model_name: openai/gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: ${LITELLM_OPENAI_API_KEY}
+      api_base: ${LITELLM_OPENAI_API_BASE:-https://api.openai.com/v1}
+
+  - model_name: openai/gpt-4o-mini
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_key: ${LITELLM_OPENAI_API_KEY}
+      api_base: ${LITELLM_OPENAI_API_BASE:-https://api.openai.com/v1}
+
+  # Anthropic models. Credentials via LITELLM_ANTHROPIC_API_KEY.
+  - model_name: anthropic/claude-3-5-sonnet-20241022
+    litellm_params:
+      model: anthropic/claude-3-5-sonnet-20241022
+      api_key: ${LITELLM_ANTHROPIC_API_KEY}
+
+  # Local/self-hosted models via Ollama (no API key required by default).
+  - model_name: ollama/llama3.1
+    litellm_params:
+      model: ollama/llama3.1
+      api_base: ${LITELLM_OLLAMA_API_BASE:-http://localhost:11434}
+
+  # Local/self-hosted models via a generic OpenAI-compatible endpoint
+  # (e.g. vLLM, TGI, llama.cpp server). Credentials via
+  # LITELLM_LOCAL_API_KEY when required.
+  - model_name: local/completion
+    litellm_params:
+      model: ${LITELLM_LOCAL_MODEL:-local/completion}
+      api_key: ${LITELLM_LOCAL_API_KEY:-}
+      api_base: ${LITELLM_LOCAL_API_BASE:-http://localhost:8000/v1}
+
+# General LiteLLM proxy settings.
+general_settings:
+  telemetry: false
+  # LiteLLM admin UI / dashboard is intentionally not exposed beyond the
+  # edge in production (contracts/docker-boundaries.md).
+  # max_tokens, timeout, and retry defaults can be overridden per-request
+  # by the LiteLLMGateway adapter.

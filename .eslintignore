@@ -1,0 +1,17 @@
+# Admin Template — ESLint ignore patterns
+
+**/node_modules/**
+**/.next/**
+**/out/**
+**/build/**
+**/dist/**
+**/.turbo/**
+**/coverage/**
+**/*.min.js
+**/*.tsbuildinfo
+**/next-env.d.ts
+
+# Python (not linted, but keep out of any project-wide runs)
+**/__pycache__/**
+**/*.pyc
+**/.venv/**

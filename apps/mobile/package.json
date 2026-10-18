@@ -1,0 +1,13 @@
+{
+  "name": "mobile",
+  "version": "1.0.0+1",
+  "private": true,
+  "scripts": {
+    "install": "flutter pub get",
+    "dev": "flutter run",
+    "build": "flutter build apk --release",
+    "lint": "flutter analyze",
+    "format": "flutter format . --set-exit-if-changed",
+    "test": "flutter test"
+  }
+}

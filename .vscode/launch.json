@@ -1,0 +1,62 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Web (Next.js)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm exec next dev",
+      "cwd": "${workspaceFolder}/apps/web",
+      "preLaunchTask": "prepare: all dependencies",
+      "serverReadyAction": {
+        "pattern": "Local:\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "API (FastAPI)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "api.main:app",
+        "--reload",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000"
+      ],
+      "cwd": "${workspaceFolder}/apps/api",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "python": "${workspaceFolder}/apps/api/.venv/bin/python",
+      "preLaunchTask": "prepare: all dependencies"
+    },
+    {
+      "name": "Mobile (Flutter)",
+      "type": "dart",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/mobile/lib/main.dart",
+      "cwd": "${workspaceFolder}/apps/mobile",
+      "preLaunchTask": "prepare: all dependencies"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Web + API",
+      "configurations": ["Web (Next.js)", "API (FastAPI)"],
+      "stopAll": true
+    },
+    {
+      "name": "Mobile + API",
+      "configurations": ["Mobile (Flutter)", "API (FastAPI)"],
+      "stopAll": true
+    },
+    {
+      "name": "Full Stack",
+      "configurations": ["Web (Next.js)", "API (FastAPI)", "Mobile (Flutter)"],
+      "stopAll": true
+    }
+  ]
+}

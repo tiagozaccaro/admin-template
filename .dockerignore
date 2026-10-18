@@ -1,0 +1,48 @@
+# Admin Template — Docker build context exclusions
+
+# Version control
+.git/
+
+# Dependencies / install output
+node_modules/
+.pnp
+.pnp.*
+
+# Environment / secrets
+.env*
+.env.*.local
+
+# Logs & caches
+*.log
+*.log*
+logs/
+coverage/
+.turbo/
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.env
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# Universal
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Dockerfiles / ignore files themselves (not needed in image)
+Dockerfile*
+.dockerignore

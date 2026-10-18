@@ -1,0 +1,157 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changed:
+    runs-on: ubuntu-latest
+    outputs:
+      web: ${{ steps.filter.outputs.web }}
+      api: ${{ steps.filter.outputs.api }}
+      mobile: ${{ steps.filter.outputs.mobile }}
+      packages: ${{ steps.filter.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Filter changed paths
+        uses: tj-actions/changed-files@v46
+        id: filter
+        with:
+          web: |-
+            **.ts
+            **.tsx
+            **.js
+            **.jsx
+            **.json
+            **.mjs
+            **.cjs
+            apps/web/**
+            packages/**
+            turbo.json
+            package.json
+            pnpm-lock.yaml
+            pnpm-workspace.yaml
+          api: |-
+            apps/api/**
+          mobile: |-
+            apps/mobile/**
+          packages: |-
+            packages/**
+
+  web:
+    needs: changed
+    if: needs.changed.outputs.web == 'true' || needs.changed.outputs.packages == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+          run_install: false
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+      - name: Format check
+        run: pnpm format
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Build
+        run: pnpm build
+
+  api:
+    needs: changed
+    if: needs.changed.outputs.api == 'true'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: contentforge
+          POSTGRES_PASSWORD: contentforge
+          POSTGRES_DB: contentforge
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U contentforge -d contentforge"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql+asyncpg://contentforge:contentforge@postgres:5432/contentforge
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies (frozen lockfile)
+        working-directory: apps/api
+        run: uv sync --frozen
+      - name: Ruff format check
+        working-directory: apps/api
+        run: uv run ruff format --check src tests
+      - name: Ruff lint
+        working-directory: apps/api
+        run: uv run ruff check src tests
+      - name: Pyright typecheck
+        working-directory: apps/api
+        run: uv run pyright
+      - name: Pytest with coverage
+        working-directory: apps/api
+        run: uv run pytest --cov=src --cov-report=term-missing
+
+  mobile:
+    needs: changed
+    if: needs.changed.outputs.mobile == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache Flutter
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            /opt/hostedtoolcache/flutter
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Pub get
+        run: flutter pub get
+      - name: Dart format check
+        run: dart format --output=none --set-exit-if-changed .
+      - name: Analyze
+        run: flutter analyze
+      - name: Test
+        run: flutter test
