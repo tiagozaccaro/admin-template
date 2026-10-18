@@ -88,17 +88,17 @@ jobs:
       postgres:
         image: pgvector/pgvector:pg16
         env:
-          POSTGRES_USER: contentforge
-          POSTGRES_PASSWORD: contentforge
-          POSTGRES_DB: contentforge
+          POSTGRES_USER: admin-template
+          POSTGRES_PASSWORD: admin-template
+          POSTGRES_DB: admin-template
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U contentforge -d contentforge"
+          --health-cmd "pg_isready -U admin-template -d admin-template"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
     env:
-      DATABASE_URL: postgresql+asyncpg://contentforge:contentforge@postgres:5432/contentforge
+      DATABASE_URL: postgresql+asyncpg://admin-template:admin-template@postgres:5432/admin-template
     steps:
       - uses: actions/checkout@v4
       - name: Install uv
