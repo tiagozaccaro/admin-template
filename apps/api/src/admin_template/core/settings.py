@@ -5,6 +5,8 @@ Sensitive values are resolved from environment variables or Docker
 `_FILE` secret mounts; no secrets are committed to the repository.
 """
 
+from typing import Literal
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -40,16 +42,48 @@ class Settings(BaseSettings):
     # Redis (queue + cache + sessions)
     redis_url: str = "redis://localhost:6379/0"
 
-    # Keycloak OIDC (constitution VI)
+    # Keycloak OIDC
     keycloak_jwks_url: str | None = Field(
         default=None, description="Keycloak JWKS endpoint URL"
     )
     keycloak_issuer: str | None = Field(default=None, description="Keycloak issuer URL")
-    keycloak_audience: str = "contentforge-api"
+    keycloak_audience: str = "admin-template-api"
     access_token_expire_minutes: int = 5
 
-    # LiteLLM gateway (constitution V)
-    litellm_base_url: str = "http://litellm:4000"
+    # Google OIDC
+    google_client_id: str | None = Field(
+        default=None, description="Google OAuth client ID"
+    )
+    google_client_secret: str | None = Field(
+        default=None, description="Google OAuth client secret"
+    )
+    google_issuer: str = Field(
+        default="https://accounts.google.com", description="Google OIDC issuer"
+    )
+    google_redirect_uri: str | None = Field(
+        default=None, description="Google OIDC redirect URI (backend callback)"
+    )
+    auth_redirect_uri: str | None = Field(
+        default="http://localhost:3000/auth/callback",
+        description="Post-login redirect URI for the client (web/mobile)",
+    )
+
+    # Sessions (server-side, httpOnly cookie for web / bearer token for mobile)
+    session_cookie_name: str = Field(
+        default="admin_template_session", description="Session cookie name"
+    )
+    session_cookie_secure: bool = Field(
+        default=False, description="Whether the session cookie is Secure"
+    )
+    session_cookie_samesite: Literal["lax", "strict", "none"] = Field(
+        default="lax", description="Session cookie SameSite attribute"
+    )
+    session_ttl_minutes: int = Field(
+        default=60 * 24 * 7, description="Session TTL in minutes"
+    )
+
+    # OpenTelemetry trace export endpoint
+    otlp_endpoint: str = "http://localhost:4318/v1/traces"
 
     def model_post_init(self, /, __context) -> None:
         """Resolve Docker `_FILE` secret mounts after field init.

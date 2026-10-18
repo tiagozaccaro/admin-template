@@ -2,7 +2,7 @@
 
 Implements structlog JSON logging (request_id/trace_id), OpenTelemetry
 traces (OTLP export), Prometheus /metrics, and /healthz (liveness) /
-/readyz (DB + Redis + Keycloak reachability) per research.md section 9.
+/readyz (DB + Redis + Keycloak reachability).
 """
 
 from __future__ import annotations
@@ -50,7 +50,7 @@ def configure_logging() -> None:
 
 configure_logging()
 
-logger = structlog.get_logger("contentforge")
+logger = structlog.get_logger("admin-template")
 
 # ---------------------------------------------------------------------------
 # Tracing (OpenTelemetry, OTLP)
@@ -70,15 +70,14 @@ def configure_tracing() -> None:
         }
     )
     provider = TracerProvider(resource=resource)
-    otlp_endpoint = settings.litellm_base_url.rstrip("/") + "/v1/traces"
     provider.add_span_processor(
-        BatchSpanProcessor(OTLPSpanExporter(endpoint=otlp_endpoint))
+        BatchSpanProcessor(OTLPSpanExporter(endpoint=settings.otlp_endpoint))
     )
     trace.set_tracer_provider(provider)
     _tracer_provider = provider
 
 
-def get_tracer(name: str = "contentforge") -> trace.Tracer:
+def get_tracer(name: str = "admin-template") -> trace.Tracer:
     """Return an OpenTelemetry tracer."""
     return trace.get_tracer(name)
 

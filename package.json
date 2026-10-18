@@ -8,10 +8,7 @@
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck",
-    "install": "turbo install",
-    "queue:validate": "node product/queue/cli.ts validate",
-    "queue:active": "node product/queue/cli.ts active",
-    "queue:next": "node product/queue/cli.ts next"
+    "install": "turbo install"
   },
   "devDependencies": {
     "@types/node": "^20.19.43",

@@ -19,18 +19,19 @@ void main() {
   ) async {
     final storage = InMemorySecureStorage();
     final oauthClient = OAuthClient(
-      issuer: "http://localhost:8080/realms/contentforge",
-      clientId: "contentforge-mobile",
-      redirectUri: "contentforge://auth/callback",
+      issuer: "http://localhost:8080/realms/admin-template",
+      clientId: "admin-template-mobile",
+      redirectUri: "admin-template://auth/callback",
       storage: storage,
     );
     final authService = AuthService(oauthClient);
 
-    await tester.pumpWidget(MaterialApp(
-      home: AuthGate(authService: authService),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(home: AuthGate(authService: authService)),
+    );
+    await tester.pump();
 
-    expect(find.text("Sign in with Keycloak"), findsOneWidget);
+    expect(find.text("Sign in"), findsOneWidget);
     expect(find.text("Signed in"), findsNothing);
   });
 }

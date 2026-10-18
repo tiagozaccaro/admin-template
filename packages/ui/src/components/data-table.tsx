@@ -95,7 +95,20 @@ import {
   TabsList,
   TabsTrigger,
 } from "@workspace/ui/components/tabs"
-import { RiDraggable, RiCheckboxCircleFill, RiLoader4Line, RiMore2Line, RiLayoutColumnLine, RiArrowDownSLine, RiAddLine, RiSkipLeftLine, RiArrowLeftSLine, RiArrowRightSLine, RiSkipRightLine, RiArrowUpLine } from "@remixicon/react"
+import {
+  RiDraggable,
+  RiCheckboxCircleFill,
+  RiLoader4Line,
+  RiMore2Line,
+  RiLayoutColumnLine,
+  RiArrowDownSLine,
+  RiAddLine,
+  RiSkipLeftLine,
+  RiArrowLeftSLine,
+  RiArrowRightSLine,
+  RiSkipRightLine,
+  RiArrowUpLine,
+} from "@remixicon/react"
 
 // New in v9: declare the features this table uses — anything you don't
 // register is tree-shaken out of the bundle.
@@ -117,12 +130,12 @@ const columnHelper = createColumnHelper<
 
 export const schema = z.object({
   id: z.number(),
-  header: z.string(),
+  name: z.string(),
   type: z.string(),
   status: z.string(),
   target: z.string(),
   limit: z.string(),
-  reviewer: z.string(),
+  owner: z.string(),
 })
 
 // Create a separate component for the drag handle
@@ -176,8 +189,8 @@ const columns = columnHelper.columns([
     enableSorting: false,
     enableHiding: false,
   }),
-  columnHelper.accessor("header", {
-    header: "Header",
+  columnHelper.accessor("name", {
+    header: "Item",
     cell: ({ row }) => {
       return <TableCellViewer item={row.original} />
     },
@@ -200,8 +213,7 @@ const columns = columnHelper.columns([
         {row.original.status === "Done" ? (
           <RiCheckboxCircleFill className="fill-green-500 dark:fill-green-400" />
         ) : (
-          <RiLoader4Line
-          />
+          <RiLoader4Line />
         )}
         {row.original.status}
       </Badge>
@@ -214,7 +226,7 @@ const columns = columnHelper.columns([
         onSubmit={(e) => {
           e.preventDefault()
           toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.header}`,
+            loading: `Saving ${row.original.name}`,
             success: "Done",
             error: "Error",
           })
@@ -238,7 +250,7 @@ const columns = columnHelper.columns([
         onSubmit={(e) => {
           e.preventDefault()
           toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.header}`,
+            loading: `Saving ${row.original.name}`,
             success: "Done",
             error: "Error",
           })
@@ -255,37 +267,39 @@ const columns = columnHelper.columns([
       </form>
     ),
   }),
-  columnHelper.accessor("reviewer", {
-    header: "Reviewer",
+  columnHelper.accessor("owner", {
+    header: "Owner",
     cell: ({ row }) => {
-      const isAssigned = row.original.reviewer !== "Assign reviewer"
+      const isAssigned = row.original.owner !== "Unassigned"
       if (isAssigned) {
-        return row.original.reviewer
+        return row.original.owner
       }
       return (
         <>
-          <Label htmlFor={`${row.original.id}-reviewer`} className="sr-only">
-            Reviewer
+          <Label htmlFor={`${row.original.id}-owner`} className="sr-only">
+            Owner
           </Label>
           <Select
             items={[
-              { label: "Eddie Lake", value: "Eddie Lake" },
-              { label: "Jamik Tashpulatov", value: "Jamik Tashpulatov" },
+              { label: "Unassigned", value: "Unassigned" },
+              { label: "Team A", value: "Team A" },
+              { label: "Team B", value: "Team B" },
+              { label: "Team C", value: "Team C" },
             ]}
           >
             <SelectTrigger
               className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
               size="sm"
-              id={`${row.original.id}-reviewer`}
+              id={`${row.original.id}-owner`}
             >
-              <SelectValue placeholder="Assign reviewer" />
+              <SelectValue placeholder="Select an owner" />
             </SelectTrigger>
             <SelectContent align="end">
               <SelectGroup>
-                <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-                <SelectItem value="Jamik Tashpulatov">
-                  Jamik Tashpulatov
-                </SelectItem>
+                <SelectItem value="Unassigned">Unassigned</SelectItem>
+                <SelectItem value="Team A">Team A</SelectItem>
+                <SelectItem value="Team B">Team B</SelectItem>
+                <SelectItem value="Team C">Team C</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -306,8 +320,7 @@ const columns = columnHelper.columns([
             />
           }
         >
-          <RiMore2Line
-          />
+          <RiMore2Line />
           <span className="sr-only">Open menu</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-32">
@@ -417,9 +430,9 @@ export function DataTable({
           defaultValue="outline"
           items={[
             { label: "Outline", value: "outline" },
-            { label: "Past Performance", value: "past-performance" },
-            { label: "Key Personnel", value: "key-personnel" },
-            { label: "Focus Documents", value: "focus-documents" },
+            { label: "All", value: "all" },
+            { label: "Flagged", value: "flagged" },
+            { label: "Archived", value: "archived" },
           ]}
         >
           <SelectTrigger
@@ -440,13 +453,15 @@ export function DataTable({
         </Select>
         <TabsList className="hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1 @4xl/main:flex">
           <TabsTrigger value="outline">Outline</TabsTrigger>
-          <TabsTrigger value="past-performance">
-            Past Performance <Badge variant="secondary">3</Badge>
+          <TabsTrigger value="all">
+            All <Badge variant="secondary">20</Badge>
           </TabsTrigger>
-          <TabsTrigger value="key-personnel">
-            Key Personnel <Badge variant="secondary">2</Badge>
+          <TabsTrigger value="flagged">
+            Flagged <Badge variant="secondary">3</Badge>
           </TabsTrigger>
-          <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
+          <TabsTrigger value="archived">
+            Archived <Badge variant="secondary">2</Badge>
+          </TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2">
           <DropdownMenu>
@@ -482,8 +497,7 @@ export function DataTable({
             </DropdownMenuContent>
           </DropdownMenu>
           <Button variant="outline" size="sm">
-            <RiAddLine
-            />
+            <RiAddLine />
             <span className="hidden lg:inline">Add Section</span>
           </Button>
         </div>
@@ -586,8 +600,7 @@ export function DataTable({
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to first page</span>
-                <RiSkipLeftLine
-                />
+                <RiSkipLeftLine />
               </Button>
               <Button
                 variant="outline"
@@ -597,8 +610,7 @@ export function DataTable({
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to previous page</span>
-                <RiArrowLeftSLine
-                />
+                <RiArrowLeftSLine />
               </Button>
               <Button
                 variant="outline"
@@ -608,8 +620,7 @@ export function DataTable({
                 disabled={!table.getCanNextPage()}
               >
                 <span className="sr-only">Go to next page</span>
-                <RiArrowRightSLine
-                />
+                <RiArrowRightSLine />
               </Button>
               <Button
                 variant="outline"
@@ -619,8 +630,7 @@ export function DataTable({
                 disabled={!table.getCanNextPage()}
               >
                 <span className="sr-only">Go to last page</span>
-                <RiSkipRightLine
-                />
+                <RiSkipRightLine />
               </Button>
             </div>
           </div>
@@ -698,14 +708,12 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           />
         }
       >
-        {item.header}
+        {item.name}
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1">
-          <DrawerTitle>{item.header}</DrawerTitle>
-          <DrawerDescription>
-            Showing total visitors for the last 6 months
-          </DrawerDescription>
+          <DrawerTitle>{item.name}</DrawerTitle>
+          <DrawerDescription>Details for the selected item.</DrawerDescription>
         </DrawerHeader>
         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
           {!isMobile && (
@@ -751,24 +759,12 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                 </AreaChart>
               </ChartContainer>
               <Separator />
-              <div className="grid gap-2">
-                <div className="flex gap-2 leading-none font-medium">
-                  Trending up by 5.2% this month{" "}
-                  <RiArrowUpLine className="size-4" />
-                </div>
-                <div className="text-muted-foreground">
-                  Showing total visitors for the last 6 months. This is just
-                  some random text to test the layout. It spans multiple lines
-                  and should wrap around.
-                </div>
-              </div>
-              <Separator />
             </>
           )}
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
               <Label htmlFor="header">Header</Label>
-              <Input id="header" defaultValue={item.header} />
+              <Input id="header" defaultValue={item.name} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
@@ -776,17 +772,11 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                 <Select
                   defaultValue={item.type}
                   items={[
-                    { label: "Table of Contents", value: "Table of Contents" },
-                    { label: "Executive Summary", value: "Executive Summary" },
-                    {
-                      label: "Technical Approach",
-                      value: "Technical Approach",
-                    },
-                    { label: "Design", value: "Design" },
-                    { label: "Capabilities", value: "Capabilities" },
-                    { label: "Focus Documents", value: "Focus Documents" },
-                    { label: "Narrative", value: "Narrative" },
-                    { label: "Cover Page", value: "Cover Page" },
+                    { label: "Summary", value: "Summary" },
+                    { label: "Report", value: "Report" },
+                    { label: "Plan", value: "Plan" },
+                    { label: "Note", value: "Note" },
+                    { label: "Record", value: "Record" },
                   ]}
                 >
                   <SelectTrigger id="type" className="w-full">
@@ -848,25 +838,25 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <Label htmlFor="reviewer">Reviewer</Label>
+              <Label htmlFor="owner">Owner</Label>
               <Select
-                defaultValue={item.reviewer}
+                defaultValue={item.owner}
                 items={[
-                  { label: "Eddie Lake", value: "Eddie Lake" },
-                  { label: "Jamik Tashpulatov", value: "Jamik Tashpulatov" },
-                  { label: "Emily Whalen", value: "Emily Whalen" },
+                  { label: "Unassigned", value: "Unassigned" },
+                  { label: "Team A", value: "Team A" },
+                  { label: "Team B", value: "Team B" },
+                  { label: "Team C", value: "Team C" },
                 ]}
               >
-                <SelectTrigger id="reviewer" className="w-full">
-                  <SelectValue placeholder="Select a reviewer" />
+                <SelectTrigger id="owner" className="w-full">
+                  <SelectValue placeholder="Select an owner" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-                    <SelectItem value="Jamik Tashpulatov">
-                      Jamik Tashpulatov
-                    </SelectItem>
-                    <SelectItem value="Emily Whalen">Emily Whalen</SelectItem>
+                    <SelectItem value="Unassigned">Unassigned</SelectItem>
+                    <SelectItem value="Team A">Team A</SelectItem>
+                    <SelectItem value="Team B">Team B</SelectItem>
+                    <SelectItem value="Team C">Team C</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>

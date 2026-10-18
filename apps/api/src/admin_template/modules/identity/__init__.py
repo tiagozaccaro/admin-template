@@ -1,7 +1,8 @@
 """Identity bounded context.
 
-Public interface for users, accounts, and secure account integrations.
-Models, services, and routers are implemented in subsequent tasks.
+Public interface for authenticated users keyed by their OIDC provider
+subject identifier (Keycloak ``sub``). Models are implemented in
+``models/user.py``.
 """
 
 __all__ = []

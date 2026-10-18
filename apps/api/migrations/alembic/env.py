@@ -1,8 +1,8 @@
-"""Alembic environment configuration skeleton.
+"""Alembic environment configuration.
 
-Connected to the SQLAlchemy metadata in T013-T016 once the domain models
-exist. Until then, target_metadata is a placeholder so `alembic` commands
-can be exercised against the apps/api/migrations/alembic directory.
+Target metadata is the SQLAlchemy ``Base.metadata`` registered by the
+domain models under ``apps/api/src/admin_template/modules/``. Alembic
+autogenerate works against this metadata once model files exist.
 """
 
 from logging.config import fileConfig
@@ -22,13 +22,16 @@ if config.config_file_name is not None:
 
 # Import all domain models so they are registered on the shared
 # SQLAlchemy Base.metadata for Alembic autogenerate support.
-from admin_template.db.base import Base  # noqa: E402
-from admin_template.modules.identity.models import user  # noqa: F401,E402
-from admin_template.modules.identity.models import integration  # noqa: F401,E402
-from admin_template.modules.workspace.models import workspace  # noqa: F401,E402
-from admin_template.modules.workspace.models import member  # noqa: F401,E402
-from admin_template.modules.sync.models import cursor  # noqa: F401,E402
-from admin_template.modules.sync.models import idempotency  # noqa: F401,E402
+from admin_template.db.base import Base
+from admin_template.modules.identity.models import (
+    external_identity,  # noqa: F401
+    session,  # noqa: F401
+    user,  # noqa: F401
+)
+from admin_template.modules.workspace.models import (
+    member,  # noqa: F401
+    workspace,  # noqa: F401
+)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

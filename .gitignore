@@ -66,6 +66,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# Deployed environment example is safe to commit (copy to deploy/.env locally)
+!deploy/.env.example
 # MCP local secrets - never commit
 .env.mcp.local
 # Sanitized MCP example is safe to commit

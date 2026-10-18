@@ -5,31 +5,31 @@ import 'package:mobile/auth/secure_storage.dart';
 import 'package:mobile/features/auth/auth_gate.dart';
 
 void main() {
-  runApp(const ContentForgeApp());
+  runApp(const AdminTemplateApp());
 }
 
-class ContentForgeApp extends StatelessWidget {
-  const ContentForgeApp({super.key});
+class AdminTemplateApp extends StatelessWidget {
+  const AdminTemplateApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final storage = InMemorySecureStorage();
+    final storage = FlutterSecureStorageImpl();
     final oauthClient = OAuthClient(
       issuer: const String.fromEnvironment(
-        "CONTENT_FORGE_OIDC_ISSUER",
-        defaultValue: "http://localhost:8080/realms/contentforge",
+        "ADMIN_TEMPLATE_OIDC_ISSUER",
+        defaultValue: "https://accounts.google.com",
       ),
       clientId: const String.fromEnvironment(
-        "CONTENT_FORGE_OIDC_CLIENT_ID",
-        defaultValue: "contentforge-mobile",
+        "ADMIN_TEMPLATE_OIDC_CLIENT_ID",
+        defaultValue: "admin-template-mobile",
       ),
       redirectUri: const String.fromEnvironment(
-        "CONTENT_FORGE_OIDC_REDIRECT_URI",
-        defaultValue: "contentforge://auth/callback",
+        "ADMIN_TEMPLATE_OIDC_REDIRECT_URI",
+        defaultValue: "admin-template://auth/callback",
       ),
       storage: storage,
     );
-    final authService = AuthService(oauthClient);
+    final authService = AuthService(oauthClient, storage: storage);
 
     return MaterialApp(
       title: "Admin Template",

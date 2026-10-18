@@ -1,7 +1,7 @@
 """Admin Template API core module.
 
-Provides settings, database, observability, and security placeholders that
-are implemented in T013-T016.
+Provides settings, database, observability, and security foundations used by
+the FastAPI application and its routers.
 """
 
 from . import (
