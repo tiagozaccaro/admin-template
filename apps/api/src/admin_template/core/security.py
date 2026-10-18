@@ -1,8 +1,8 @@
 """Security: JWT validation and RBAC.
 
 JWT RS256 validation against the Keycloak JWKS endpoint, audience
-`contentforge-api`, deny-by-default authentication, and 401/403 handling
-per research.md sections 3 and 8 and constitution VI.
+``keycloak_audience`` (default ``admin-template-api``), deny-by-default
+authentication, and 401/403 handling.
 
 No tokens are ever logged.
 """
@@ -85,7 +85,7 @@ def _signing_key(kid: str) -> Any:
 async def validate_token(token: str) -> dict[str, Any]:
     """Validate a JWT RS256 access token.
 
-    Verifies signature, audience (`contentforge-api`), issuer, and expiry.
+    Verifies signature, audience (``keycloak_audience``), issuer, and expiry.
     Returns the token payload on success; raises HTTPException 401 on any
     failure (deny-by-default).
     """
@@ -173,7 +173,9 @@ def require_role(*roles: str):
     ) -> dict[str, Any]:
         realm_roles = set(user.get("realm_access", {}).get("roles", []))
         client_roles = set(
-            user.get("resource_access", {}).get("contentforge-api", {}).get("roles", [])
+            user.get("resource_access", {})
+            .get(settings.keycloak_audience, {})
+            .get("roles", [])
         )
         user_roles = realm_roles | client_roles
         if not set(roles) & user_roles:

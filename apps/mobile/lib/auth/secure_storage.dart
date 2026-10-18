@@ -1,8 +1,8 @@
 /// Secure storage for OAuth tokens.
 ///
-/// This is a placeholder in-memory implementation per T019. The concrete
-/// production backing (flutter_secure_storage, iOS Keychain / Android
-/// EncryptedSharedPreferences) is wired in T090+ when the Flutter auth
+/// This is a placeholder in-memory implementation. The concrete production
+/// backing (flutter_secure_storage, iOS Keychain / Android
+/// EncryptedSharedPreferences) should be wired in when the Flutter auth
 /// screen is implemented. No tokens are written to disk here.
 abstract class SecureStorage {
   /// Read a value by key, or null when absent.
@@ -16,8 +16,7 @@ abstract class SecureStorage {
 }
 
 /// In-memory secure storage placeholder. Tokens live only in RAM and are
-/// lost when the process restarts -- no long-lived on-device tokens
-/// (constitution VI).
+/// lost when the process restarts -- no long-lived on-device tokens.
 class InMemorySecureStorage implements SecureStorage {
   final Map<String, String> _store = <String, String>{};
 

@@ -1,8 +1,8 @@
-/// Flutter login screen.
-///
-/// Initiates the OIDC Authorization Code + PKCE flow via Keycloak and
-/// handles the redirect callback. Per contracts/auth-oidc.md: no
-/// app-issued long-lived tokens are persisted (constitution VI).
+// Flutter login screen.
+//
+// Initiates the OIDC Authorization Code + PKCE flow via Keycloak and
+// handles the redirect callback. No app-issued long-lived tokens are
+// persisted.
 
 import 'dart:async';
 
@@ -34,12 +34,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // On mobile, launch the system browser for the authorization URL.
       // The callback is handled via the registered redirect URI custom
-      // scheme (e.g. admin-template://auth/callback). On web, this would
-      // be http://localhost:3000/auth/callback handled by the Next.js
-      // route at apps/web/src/app/auth/callback/route.tsx.
-      // TODO: wire platform-specific URL launcher + callback listener
-      // in T090+; here we navigate to the callback page so the code/state
-      // can be exchanged in-process (development simplification).
+      // scheme (e.g. admin-template://auth/callback). On web this would be
+      // handled by the web app's auth callback route.
+      // TODO: wire platform-specific URL launcher + callback listener;
+      // here we navigate to the callback page so the code/state can be
+      // exchanged in-process (development simplification).
       if (!mounted) return;
       Navigator.push(
         context,
@@ -59,7 +58,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   String _randomState() {
-    final values = List<int>.generate(16, (_) => 48 + (DateTime.now().millisecond % 75));
+    final values = List<int>.generate(
+      16,
+      (_) => 48 + (DateTime.now().millisecond % 75),
+    );
     return String.fromCharCodes(values);
   }
 
@@ -91,19 +93,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
               ],
-                FilledButton(
-                  onPressed: _loggingIn ? null : _handleLogin,
-                  child: _loggingIn
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text("Sign in"),
-                ),
+              FilledButton(
+                onPressed: _loggingIn ? null : _handleLogin,
+                child: _loggingIn
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text("Sign in"),
+              ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: _loggingIn ? null : () => setState(() => _error = null),
+                onPressed: _loggingIn
+                    ? null
+                    : () => setState(() => _error = null),
                 child: const Text("Cancel"),
               ),
             ],
@@ -114,11 +118,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-/// In-process PKCE callback screen (development simplification).
-///
-/// Receives the authorization URL, exchanges the code/state for tokens,
-/// and stores them in AuthService (memory only). On production mobile,
-/// this is replaced by a custom-scheme redirect listener.
+// In-process PKCE callback screen (development simplification).
+//
+// Receives the authorization URL, exchanges the code/state for tokens,
+// and stores them in AuthService (memory only). On production mobile,
+// this is replaced by a custom-scheme redirect listener.
 class CallbackScreen extends StatefulWidget {
   const CallbackScreen({
     super.key,
@@ -153,7 +157,9 @@ class _CallbackScreenState extends State<CallbackScreen> {
     if (code == null || state == null) {
       // No code yet: show the authorization URL as a deep-link target.
       if (!mounted) return;
-      setState(() => _error = "Open the authorization URL and complete sign-in");
+      setState(
+        () => _error = "Open the authorization URL and complete sign-in",
+      );
       return;
     }
     setState(() => _exchanging = true);

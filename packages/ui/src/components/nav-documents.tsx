@@ -16,7 +16,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@workspace/ui/components/sidebar"
-import { RiMoreLine, RiFolderLine, RiShareLine, RiDeleteBinLine } from "@remixicon/react"
+import {
+  RiMoreLine,
+  RiFolderLine,
+  RiShareLine,
+  RiDeleteBinLine,
+} from "@remixicon/react"
 
 export function NavDocuments({
   items,
@@ -47,8 +52,7 @@ export function NavDocuments({
                   />
                 }
               >
-                <RiMoreLine
-                />
+                <RiMoreLine />
                 <span className="sr-only">More</span>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -57,19 +61,16 @@ export function NavDocuments({
                 align={isMobile ? "end" : "start"}
               >
                 <DropdownMenuItem>
-                  <RiFolderLine
-                  />
+                  <RiFolderLine />
                   <span>Open</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <RiShareLine
-                  />
+                  <RiShareLine />
                   <span>Share</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive">
-                  <RiDeleteBinLine
-                  />
+                  <RiDeleteBinLine />
                   <span>Delete</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>

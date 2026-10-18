@@ -1,11 +1,12 @@
-/// Flutter authentication gate.
-///
-/// Routes to the login screen when unauthenticated, otherwise to the
-/// content home screen. Per contracts/auth-oidc.md: Authorization Code +
-/// PKCE via Keycloak, no app-issued long-lived tokens.
+// Flutter authentication gate.
+//
+// Routes to the login screen when unauthenticated, otherwise to the
+// content home screen. Per contracts/auth-oidc.md: Authorization Code +
+// PKCE via Keycloak, no app-issued long-lived tokens.
 
 import 'package:flutter/material.dart';
 import 'package:mobile/auth/auth_service.dart';
+
 import 'login_screen.dart';
 
 class AuthGate extends StatefulWidget {
@@ -36,9 +37,7 @@ class _AuthGateState extends State<AuthGate> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     if (widget.authService.isAuthenticated) {
       return const DashboardPlaceholder();
@@ -47,7 +46,7 @@ class _AuthGateState extends State<AuthGate> {
   }
 }
 
-/// Placeholder home shown after successful login.
+// Placeholder home shown after successful login.
 class DashboardPlaceholder extends StatelessWidget {
   const DashboardPlaceholder({super.key});
 

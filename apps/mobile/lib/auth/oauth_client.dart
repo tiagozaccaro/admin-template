@@ -1,12 +1,10 @@
-/// OAuth 2.0 Authorization Code + PKCE client placeholder.
-///
-/// Placeholder for the mobile OIDC client per T019. Talks to the Keycloak
-/// realm `admin-template` (client `admin-template-mobile`, PKCE, custom scheme
-/// redirects). The actual HTTP token exchange and secure-storage wiring are
-/// completed in T090+ when the Flutter auth screen is implemented.
-///
-/// No app-issued long-lived tokens are persisted to disk here
-/// (constitution VI / AGENTS.md security).
+// OAuth 2.0 Authorization Code + PKCE client placeholder.
+//
+// Placeholder for the mobile OIDC client. Talks to the Keycloak
+// realm `admin-template` (client `admin-template-mobile`, PKCE, custom scheme
+// redirects). The HTTP token exchange and secure-storage wiring should be
+// completed when the Flutter auth screen is implemented.
+// No app-issued long-lived tokens are persisted to disk here.
 import 'dart:convert';
 import 'dart:math';
 
@@ -46,10 +44,13 @@ class OAuthClient {
 
   /// SHA-256 of the verifier, base64url-encoded (no padding).
   ///
-  /// Placeholder: the real SHA-256 challenge is wired in T090+ when
+  /// Placeholder: the real SHA-256 challenge is implemented when the auth
+  /// screen is wired end to end.
   /// flutter_secure_storage and the HTTP token exchange are implemented.
   Future<String> codeChallenge(String verifier) async {
-    return base64Url.encode(utf8.encode(verifier)).replaceAll(RegExp(r"=+$"), "");
+    return base64Url
+        .encode(utf8.encode(verifier))
+        .replaceAll(RegExp(r"=+$"), "");
   }
 
   /// Build the Keycloak authorization URL with PKCE and store verifier/state.
@@ -58,21 +59,23 @@ class OAuthClient {
     await _storage.write(_verifierKey, verifier);
     await _storage.write(_stateKey, state);
     final challenge = await codeChallenge(verifier);
-    return Uri.parse(authorizationEndpoint).replace(queryParameters: <String, String>{
-      "client_id": clientId,
-      "response_type": "code",
-      "scope": scope,
-      "redirect_uri": redirectUri,
-      "code_challenge": challenge,
-      "code_challenge_method": "S256",
-      "state": state,
-    });
+    return Uri.parse(authorizationEndpoint).replace(
+      queryParameters: <String, String>{
+        "client_id": clientId,
+        "response_type": "code",
+        "scope": scope,
+        "redirect_uri": redirectUri,
+        "code_challenge": challenge,
+        "code_challenge_method": "S256",
+        "state": state,
+      },
+    );
   }
 
   /// Exchange the authorization code for tokens.
   ///
   /// Placeholder: validates PKCE state/verifier and returns a [TokenSet]
-  /// without performing the real HTTP exchange (wired in T090+).
+  /// without performing the real HTTP exchange.
   Future<TokenSet> handleCallback(String code, String state) async {
     final expectedState = await _storage.read(_stateKey);
     if (expectedState == null || expectedState != state) {
@@ -92,15 +95,13 @@ class OAuthClient {
       expiresAt: null,
     );
   }
-
-  /// Clear stored PKCE verifier/state (logout).
   Future<void> clearPkce() async {
     await _storage.delete(_verifierKey);
     await _storage.delete(_stateKey);
   }
 }
 
-/// Tokens held by the OAuth client.
+// Tokens held by the OAuth client.
 class TokenSet {
   const TokenSet({
     required this.accessToken,

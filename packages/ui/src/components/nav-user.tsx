@@ -20,7 +20,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@workspace/ui/components/sidebar"
-import { RiMore2Line, RiUserLine, RiBankCardLine, RiNotification3Line, RiLogoutBoxLine } from "@remixicon/react"
+import {
+  RiMore2Line,
+  RiUserLine,
+  RiBankCardLine,
+  RiNotification3Line,
+  RiLogoutBoxLine,
+} from "@remixicon/react"
 
 export function NavUser({
   user,
@@ -78,25 +84,21 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <RiUserLine
-                />
+                <RiUserLine />
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <RiBankCardLine
-                />
+                <RiBankCardLine />
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <RiNotification3Line
-                />
+                <RiNotification3Line />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <RiLogoutBoxLine
-              />
+              <RiLogoutBoxLine />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

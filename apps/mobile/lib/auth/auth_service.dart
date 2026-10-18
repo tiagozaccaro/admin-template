@@ -1,9 +1,8 @@
-/// Mobile authentication session.
-///
-/// Placeholder auth service per T019. Coordinates the PKCE OAuth client
-/// and secure storage. Refresh-token persistence to secure storage is
-/// wired in T090+ when the Flutter auth screen is implemented; here tokens
-/// live in memory only (constitution VI).
+// Mobile authentication session.
+//
+// Placeholder auth service. Coordinates the PKCE OAuth client
+// and secure storage. Tokens live in memory only; no long-lived on-device
+// tokens here.
 import 'oauth_client.dart';
 
 class AuthService {

@@ -26,11 +26,11 @@ void main() {
     );
     final authService = AuthService(oauthClient);
 
-    await tester.pumpWidget(MaterialApp(
-      home: AuthGate(authService: authService),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(home: AuthGate(authService: authService)),
+    );
 
-    expect(find.text("Sign in with Keycloak"), findsOneWidget);
+    expect(find.text("Sign in"), findsOneWidget);
     expect(find.text("Signed in"), findsNothing);
   });
 }

@@ -1,8 +1,8 @@
-"""Alembic environment configuration skeleton.
+"""Alembic environment configuration.
 
-Connected to the SQLAlchemy metadata in T013-T016 once the domain models
-exist. Until then, target_metadata is a placeholder so `alembic` commands
-can be exercised against the apps/api/migrations/alembic directory.
+Target metadata is the SQLAlchemy ``Base.metadata`` registered by the
+domain models under ``apps/api/src/admin_template/modules/``. Alembic
+autogenerate works against this metadata once model files exist.
 """
 
 from logging.config import fileConfig

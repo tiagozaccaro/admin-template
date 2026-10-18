@@ -15,7 +15,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
-import { RiDashboardLine, RiBarChartLine, RiGroupLine, RiSettingsLine, RiFileChartLine, RiFileTextLine, RiQuestionLine, RiLogoutBoxLine, RiCommandLine } from "@remixicon/react"
+import {
+  RiDashboardLine,
+  RiBarChartLine,
+  RiGroupLine,
+  RiSettingsLine,
+  RiFileChartLine,
+  RiFileTextLine,
+  RiQuestionLine,
+  RiLogoutBoxLine,
+  RiCommandLine,
+} from "@remixicon/react"
 
 const data = {
   user: {
@@ -27,70 +37,46 @@ const data = {
     {
       title: "Dashboard",
       url: "#",
-      icon: (
-        <RiDashboardLine
-        />
-      ),
+      icon: <RiDashboardLine />,
     },
     {
       title: "Analytics",
       url: "#",
-      icon: (
-        <RiBarChartLine
-        />
-      ),
+      icon: <RiBarChartLine />,
     },
     {
       title: "Users",
       url: "#",
-      icon: (
-        <RiGroupLine
-        />
-      ),
+      icon: <RiGroupLine />,
     },
     {
       title: "Settings",
       url: "#",
-      icon: (
-        <RiSettingsLine
-        />
-      ),
+      icon: <RiSettingsLine />,
     },
   ],
   documents: [
     {
       name: "Reports",
       url: "#",
-      icon: (
-        <RiFileChartLine
-        />
-      ),
+      icon: <RiFileChartLine />,
     },
     {
       name: "Activity log",
       url: "#",
-      icon: (
-        <RiFileTextLine
-        />
-      ),
+      icon: <RiFileTextLine />,
     },
   ],
   navSecondary: [
     {
       title: "Help",
       url: "#",
-      icon: (
-        <RiQuestionLine
-        />
-      ),
+      icon: <RiQuestionLine />,
     },
     {
       title: "Sign out",
       url: "#",
-      icon: (
-        <RiLogoutBoxLine
-        />
-      ),
+      icon: <RiLogoutBoxLine />,
     },
   ],
 }
