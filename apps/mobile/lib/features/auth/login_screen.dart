@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // On mobile, launch the system browser for the authorization URL.
       // The callback is handled via the registered redirect URI custom
-      // scheme (e.g. contentforge://auth/callback). On web, this would
+      // scheme (e.g. admin-template://auth/callback). On web, this would
       // be http://localhost:3000/auth/callback handled by the Next.js
       // route at apps/web/src/app/auth/callback/route.tsx.
       // TODO: wire platform-specific URL launcher + callback listener
@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                "Connect your workspace via Keycloak",
+                "Sign in to your workspace",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
@@ -91,16 +91,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
               ],
-              FilledButton(
-                onPressed: _loggingIn ? null : _handleLogin,
-                child: _loggingIn
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text("Sign in with Keycloak"),
-              ),
+                FilledButton(
+                  onPressed: _loggingIn ? null : _handleLogin,
+                  child: _loggingIn
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text("Sign in"),
+                ),
               const SizedBox(height: 12),
               TextButton(
                 onPressed: _loggingIn ? null : () => setState(() => _error = null),

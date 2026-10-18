@@ -41,21 +41,21 @@ class _AuthGateState extends State<AuthGate> {
       );
     }
     if (widget.authService.isAuthenticated) {
-      return const ContentPlaceholder();
+      return const DashboardPlaceholder();
     }
     return LoginScreen(authService: widget.authService);
   }
 }
 
-/// Placeholder content home shown after successful login.
-class ContentPlaceholder extends StatelessWidget {
-  const ContentPlaceholder({super.key});
+/// Placeholder home shown after successful login.
+class DashboardPlaceholder extends StatelessWidget {
+  const DashboardPlaceholder({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Admin Template")),
-      body: const Center(child: Text("Signed in — admin dashboard in T092")),
+      body: const Center(child: Text("Signed in — admin dashboard")),
     );
   }
 }

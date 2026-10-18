@@ -1,7 +1,7 @@
 /// OAuth 2.0 Authorization Code + PKCE client placeholder.
 ///
 /// Placeholder for the mobile OIDC client per T019. Talks to the Keycloak
-/// realm `contentforge` (client `contentforge-mobile`, PKCE, custom scheme
+/// realm `admin-template` (client `admin-template-mobile`, PKCE, custom scheme
 /// redirects). The actual HTTP token exchange and secure-storage wiring are
 /// completed in T090+ when the Flutter auth screen is implemented.
 ///
@@ -22,7 +22,7 @@ class OAuthClient {
   }) : _storage = storage ?? InMemorySecureStorage();
 
   /// Keycloak issuer URL, e.g.
-  /// `https://auth.contentforge.local/realms/contentforge`
+  /// `https://auth.example.local/realms/admin-template`
   final String issuer;
   final String clientId;
   final String redirectUri;
@@ -32,8 +32,8 @@ class OAuthClient {
   String get authorizationEndpoint => "$issuer/protocol/openid-connect/auth";
   String get tokenEndpoint => "$issuer/protocol/openid-connect/token";
 
-  static const _verifierKey = "contentforge_mobile_pkce_verifier";
-  static const _stateKey = "contentforge_mobile_pkce_state";
+  static const _verifierKey = "admin_template_mobile_pkce_verifier";
+  static const _stateKey = "admin_template_mobile_pkce_state";
 
   /// Cryptographically random PKCE code verifier (43-128 chars).
   String generateCodeVerifier() {
