@@ -93,9 +93,9 @@
 - [X] T039 [P] [US4] Implement ownership transfer in backend/src/admin_template/modules/tenancy/ownership.py
 - [X] T040 [P] [US4] Implement pluggable invitation delivery adapter in backend/src/admin_template/modules/tenancy/delivery.py
 - [X] T041 [US4] Tenant/invitation API endpoints in backend/src/admin_template/modules/tenancy/router.py
-- [ ] T042 [P] [US4] Web tenant management pages in apps/web/src/app/(app)/tenants/
-- [ ] T043 [P] [US4] Mobile tenant management screens in apps/mobile/lib/features/tenants/
-- [ ] T044 [US4] Add tenant isolation + invitation tests in tests/integration/test_tenancy.py
+- [X] T042 [P] [US4] Web tenant management pages in apps/web/src/app/(app)/tenants/
+- [X] T043 [P] [US4] Mobile tenant management screens in apps/mobile/lib/features/tenants/
+- [X] T044 [US4] Add tenant isolation + invitation tests in tests/integration/test_tenancy.py
 
 **Checkpoint**: US4 complete.
 
