@@ -87,12 +87,12 @@
 
 **Independent Test**: Create tenant, invite, accept, role change, remove, transfer; verify isolation.
 
-- [ ] T036 [P] [US4] Implement tenant service (create/list/switch/details/settings) in backend/src/admin_template/modules/tenancy/service.py
-- [ ] T037 [P] [US4] Implement membership service (add/remove/role change) in backend/src/admin_template/modules/tenancy/memberships.py
-- [ ] T038 [P] [US4] Implement invitation service (create/accept/revoke/expire) in backend/src/admin_template/modules/tenancy/invitations.py
-- [ ] T039 [P] [US4] Implement ownership transfer in backend/src/admin_template/modules/tenancy/ownership.py
-- [ ] T040 [P] [US4] Implement pluggable invitation delivery adapter in backend/src/admin_template/modules/tenancy/delivery.py
-- [ ] T041 [US4] Tenant/invitation API endpoints in backend/src/admin_template/modules/tenancy/router.py
+- [X] T036 [P] [US4] Implement tenant service (create/list/switch/details/settings) in backend/src/admin_template/modules/tenancy/service.py
+- [X] T037 [P] [US4] Implement membership service (add/remove/role change) in backend/src/admin_template/modules/tenancy/memberships.py
+- [X] T038 [P] [US4] Implement invitation service (create/accept/revoke/expire) in backend/src/admin_template/modules/tenancy/invitations.py
+- [X] T039 [P] [US4] Implement ownership transfer in backend/src/admin_template/modules/tenancy/ownership.py
+- [X] T040 [P] [US4] Implement pluggable invitation delivery adapter in backend/src/admin_template/modules/tenancy/delivery.py
+- [X] T041 [US4] Tenant/invitation API endpoints in backend/src/admin_template/modules/tenancy/router.py
 - [ ] T042 [P] [US4] Web tenant management pages in apps/web/src/app/(app)/tenants/
 - [ ] T043 [P] [US4] Mobile tenant management screens in apps/mobile/lib/features/tenants/
 - [ ] T044 [US4] Add tenant isolation + invitation tests in tests/integration/test_tenancy.py
