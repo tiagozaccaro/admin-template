@@ -76,8 +76,8 @@
 
 **Independent Test**: Repeat core journey on both clients; identical data/authz.
 
-- [ ] T034 [P] [US3] Implement parity matrix document in docs/parity-matrix.md
-- [ ] T035 [US3] Add cross-platform e2e smoke tests in tests/e2e/
+- [X] T034 [P] [US3] Implement parity matrix document in docs/parity-matrix.md
+- [X] T035 [US3] Add cross-platform e2e smoke tests in tests/e2e/
 
 **Checkpoint**: US3 complete.
 
