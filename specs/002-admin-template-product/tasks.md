@@ -117,8 +117,8 @@
 
 **Independent Test**: Dashboard values match backend aggregates; refresh on tenant switch.
 
-- [ ] T048 [P] [US6] Implement dashboard aggregation service in backend/src/admin_template/modules/dashboard/service.py
-- [ ] T049 [P] [US6] Implement dashboard endpoint in backend/src/admin_template/modules/dashboard/router.py
+- [X] T048 [P] [US6] Implement dashboard aggregation service in backend/src/admin_template/modules/dashboard/service.py
+- [X] T049 [P] [US6] Implement dashboard endpoint in backend/src/admin_template/modules/dashboard/router.py
 - [ ] T050 [P] [US6] Web dashboard page with cards/charts in apps/web/src/app/(app)/dashboard/
 - [ ] T051 [P] [US6] Mobile dashboard screen in apps/mobile/lib/features/dashboard/
 - [ ] T052 [US6] Add dashboard correctness tests in tests/integration/test_dashboard.py
