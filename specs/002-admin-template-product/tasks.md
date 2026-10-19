@@ -107,7 +107,7 @@
 
 - [X] T045 [P] [US5] Implement permission dependency + decorators in backend/src/admin_template/permissions/deps.py
 - [ ] T046 [P] [US5] Apply permission checks to all protected endpoints
-- [ ] T047 [US5] Add role enforcement negative tests in tests/integration/test_permissions.py
+- [X] T047 [US5] Add role enforcement negative tests in tests/integration/test_permissions.py
 
 **Checkpoint**: US5 complete.
 
