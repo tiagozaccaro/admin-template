@@ -131,7 +131,7 @@
 
 **Independent Test**: Full CRUD workflow on both clients with validation.
 
-- [ ] T053 [P] [US7] Implement generic CRUD base service/pagination in backend/src/admin_template/core/crud.py
+- [X] T053 [P] [US7] Implement generic CRUD base service/pagination in backend/src/admin_template/core/crud.py
 - [ ] T054 [P] [US7] Implement demo resource module (e.g., "items") end-to-end in backend/src/admin_template/modules/items/
 - [ ] T055 [P] [US7] Web data table + form components in packages/web-ui and apps/web
 - [ ] T056 [P] [US7] Mobile searchable list + detail screens in apps/mobile/lib/features/items/
