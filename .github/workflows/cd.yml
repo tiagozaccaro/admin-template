@@ -14,7 +14,8 @@ concurrency:
 jobs:
   build-artifact:
     name: Build production artifact
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Enable Corepack (pnpm)
@@ -29,29 +30,39 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      # The API workspace installs its Python environment through a pnpm
+      # lifecycle script, which needs uv. The web build does not, so the API
+      # workspace is excluded from this install.
       - name: Install dependencies (frozen lockfile)
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --filter "!@admin-template/api"
       - name: Build web
         run: pnpm --filter @admin-template/web build
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: web-build
-          path: apps/web/out
+          path: |
+            apps/web/.next/standalone
+            apps/web/.next/static
+            apps/web/public
+          if-no-files-found: error
 
   deploy:
     name: Deploy to production
     needs: build-artifact
     # Production deployment is intentionally NOT enabled until the target
-    # infrastructure is confirmed. See docs/development/deployment.md.
+    # infrastructure is confirmed. See docs/architecture/overview.md.
     if: false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     environment:
       name: production
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: web-build
+          path: artifacts/web
       - name: Deploy
-        run: echo "TODO: configure production deploy step"
+        run: |
+          echo "TODO: configure production deploy step"
