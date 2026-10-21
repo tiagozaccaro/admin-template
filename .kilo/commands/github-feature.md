@@ -34,7 +34,8 @@ $ARGUMENTS
    - Mobile: `dart format --output=none --set-exit-if-changed .`, `flutter analyze`, `flutter test`.
    - Review the diff for correctness, security, unintended changes, and missing tests.
 5. **Commit and push the branch**
-   - Commit logical, reviewable units with meaningful messages.
+   - Commit logical, reviewable units.
+   - Use Conventional Commits: `<type>(<scope>): <subject>`. Allowed types are `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`; allowed scopes are `web`, `api`, `mobile`, `ui`, `api-client`, `ci`, `deps`, `docs`. The header is limited to 100 characters and the `commitlint` CI job rejects anything else.
    - Never commit secrets, credentials, or generated local configuration.
    - Push the branch: `git push -u origin <branch>`.
 6. **Open a pull request targeting `main`**

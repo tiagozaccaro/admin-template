@@ -1,0 +1,8 @@
+
+# Admin Template Guidelines
+Read `AGENTS.md` before writing any code in this repository. It holds the engineering
+standards for the monorepo and the rules that apply to every change.
+
+See also:
+- `AGENTS.md` (standards)
+- `CONTRIBUTING.md` (branch policy, commit format, pull request flow)
