@@ -33,9 +33,9 @@ node_modules/.modules.yaml
 
 # python
 apps/api/.venv
-apps/api/uv.lock
 *.pyc
 __pycache__
+.coverage
 .pytest_cache
 .mypy_cache
 .ruff_cache
@@ -43,8 +43,15 @@ __pycache__
 # kilo
 .kilo/agent-manager.json
 
+# Local Kilo plan scratch space
+.kilo/plans/
+
 # spec kit
-.specify/.gitignore
+# Machine-local Spec Kit state (see .specify/.gitignore).
+.specify/feature.json
+.specify/extensions/*/local-config.yml
+.specify/integrations/packages/
+.specify/integrations/packages.json
 
 # misc
 .DS_Store

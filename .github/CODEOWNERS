@@ -1,0 +1,13 @@
+# Default owner for everything in the repository.
+* @tiagozaccaro
+
+# Shared backend logic and the shared UI package need a second pair of eyes.
+/apps/api/ @tiagozaccaro
+/packages/ui/ @tiagozaccaro
+/packages/api-client/ @tiagozaccaro
+
+# Release tooling, CI pipelines and deployment configuration.
+/.github/ @tiagozaccaro
+/deploy/ @tiagozaccaro
+/apps/web/Dockerfile @tiagozaccaro
+/apps/api/Dockerfile @tiagozaccaro

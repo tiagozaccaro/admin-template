@@ -8,9 +8,12 @@
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck",
-    "install": "turbo install"
+    "install": "turbo install",
+    "lint:commit": "commitlint --from origin/main --to HEAD"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
     "@types/node": "^20.19.43",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
