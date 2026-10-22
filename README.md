@@ -32,7 +32,7 @@ admin-template/
 
 ## Prerequisites
 
-- Node.js >= 20.9 and pnpm 11.25 (monorepo)
+- Node.js >= 22.13 and pnpm 11.25 (monorepo)
 - Dart SDK 3.13+ and Flutter 3.x (mobile)
 - Python 3.12+ and uv (API)
 - Docker and Docker Compose (optional, for full local stack)
@@ -43,16 +43,20 @@ admin-template/
 pnpm install
 ```
 
-This installs web, API, and shared package dependencies via the pnpm workspace. For the mobile app:
-
-```bash
-cd apps/mobile && flutter pub get
-```
+This installs the web, API and shared package JavaScript dependencies through the pnpm
+workspace. The Python and Flutter environments are managed by their own tools, so they are
+set up separately.
 
 For the API (Python dependencies via uv):
 
 ```bash
 cd apps/api && uv sync
+```
+
+For the mobile app:
+
+```bash
+cd apps/mobile && flutter pub get
 ```
 
 ## Environment configuration

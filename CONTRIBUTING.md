@@ -82,7 +82,7 @@ cd apps/api && uv sync --frozen && uv run ruff format --check src tests \
 ```
 
 ```sh
-cd apps/mobile && flutter analyze && flutter test
+cd apps/mobile && flutter pub get && flutter analyze && flutter test
 ```
 
 Commit messages can be checked locally with commitlint:
