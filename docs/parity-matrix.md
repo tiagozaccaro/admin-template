@@ -25,8 +25,6 @@ This document defines which capabilities are supported on both web and mobile to
 | Generic CRUD operations | WIP | WIP | Parity for core admin operations (US7/US10) |
 | Notifications (in-app) | WIP | WIP | Tenant/user scoped (US8) |
 | Audit history view | WIP | WIP | Read-only, tenant-scoped (US9) |
-| AI chatbot (streaming) | WIP | WIP | Provider-independent; streaming where supported (US10) |
-| AI tool execution (with approval) | WIP | WIP | Approval flow for destructive tool calls (US10) |
 | Error handling & validation feedback | ✓ | WIP | Consistent error responses from API |
 
 ## Platform-specific Notes
@@ -42,7 +40,6 @@ This document defines which capabilities are supported on both web and mobile to
 - [ ] Negative tests (authz, invalid input, CSRF, etc.) behave identically in terms of rejection semantics
 - [ ] Tenant isolation verified on both clients (cannot see cross-tenant data)
 - [ ] Role restrictions verified on both clients per permission matrix
-- [ ] AI streaming and error handling behave consistently where supported
 - [ ] Any deviation must be documented with explicit approved rationale
 
 ## Status Summary

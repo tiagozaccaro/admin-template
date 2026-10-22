@@ -15,11 +15,6 @@
 - **Rationale**: Maintained, supports OIDC discovery, PKCE, nonce, signature validation.
 - **Alternatives considered**: hand-rolled JWT validation (error-prone); other libraries (less maintained).
 
-## Decision: Initial AI provider
-- **Decision**: OpenAI-compatible adapter behind provider-independent interface; primary OpenAI, with documented evaluation of Anthropic and local (Ollama).
-- **Rationale**: Broad capability + streaming; adapter swap supported without UI changes.
-- **Alternatives considered**: coupling core to one SDK (rejected); local-only (limits usefulness).
-
 ## Decision: State management and API cache
 - **Decision**: Riverpod (mobile), TanStack Query (web).
 - **Rationale**: Mature, testable, cache invalidation, parity of semantics.

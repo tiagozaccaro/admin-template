@@ -99,6 +99,10 @@ behavior — not merely for generating code quickly.
 - Do not perform broad upgrades while implementing a feature.
 - Never edit a lockfile by hand. Regenerate it with the owning tool and commit it.
 
+## Dependency selection
+
+- Before implementing any feature, search for existing open source APIs, components, SDKs, libraries, and other reusable solutions; prefer adopting a suitable, well-maintained option over building from scratch (e.g., AI services).
+
 ## Tests and verification
 
 - Add regression tests for bug fixes; assert behavior, not implementation shape.

@@ -17,6 +17,5 @@
 - Tenant switch shows only authorized records; cross-tenant tampering fails.
 - Dashboard metrics reflect real data and update on tenant switch.
 - CRUD workflow (list/search/filter/create/edit/delete) works on both clients with validation.
-- AI conversation persists and streams; provider failure shows AI-unavailable state without breaking dashboard.
 - Unauthorized API calls return 401/403; negative security tests pass.
 - Lint/typecheck/test commands pass for all stacks.
