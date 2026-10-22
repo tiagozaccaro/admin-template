@@ -75,11 +75,8 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      # The API workspace installs its Python environment through a pnpm
-      # lifecycle script, which needs uv. The web build does not, so the API
-      # workspace is excluded from this install.
       - name: Install dependencies (frozen lockfile)
-        run: pnpm install --frozen-lockfile --filter "!@admin-template/api"
+        run: pnpm install --frozen-lockfile
       - name: Format check
         working-directory: ${{ github.workspace }}
         run: |
@@ -206,7 +203,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - name: Install dependencies (frozen lockfile)
-        run: pnpm install --frozen-lockfile --filter "!@admin-template/api"
+        run: pnpm install --frozen-lockfile
       - name: Audit JavaScript dependencies
         run: pnpm audit --audit-level=high
       - name: Install uv

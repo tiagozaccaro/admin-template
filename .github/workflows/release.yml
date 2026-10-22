@@ -50,7 +50,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - name: Install dependencies (frozen lockfile)
-        run: pnpm install --frozen-lockfile --filter "!@admin-template/api"
+        run: pnpm install --frozen-lockfile
 
       - name: Build web
         run: pnpm --filter @admin-template/web build

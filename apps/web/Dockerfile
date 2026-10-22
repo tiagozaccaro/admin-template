@@ -1,17 +1,18 @@
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 RUN corepack enable
 FROM base AS deps
 WORKDIR /app
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .npmrc ./
+# Every workspace manifest is needed: pnpm checks the frozen lockfile against
+# the workspace projects, not only against the ones being built.
 COPY apps/web/package.json ./apps/web/
 COPY apps/api/package.json ./apps/api/
+COPY apps/mobile/package.json ./apps/mobile/
 COPY packages/api-client/package.json ./packages/api-client/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 COPY packages/ui/package.json ./packages/ui/
-# The API workspace installs its Python environment through a pnpm lifecycle
-# script, which needs uv. The web image does not, so it is excluded here.
-RUN pnpm install --frozen-lockfile --filter "!@admin-template/api"
+RUN pnpm install --frozen-lockfile
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
