@@ -30,6 +30,8 @@ export default {
         "ui",
         "api-client",
         "ci",
+        "build",
+        "release",
         "deps",
         "docs",
       ],

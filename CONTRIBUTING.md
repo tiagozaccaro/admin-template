@@ -49,7 +49,8 @@ validated by `commitlint` in CI.
 Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`,
 `chore`, `revert`.
 
-Allowed scopes: `web`, `api`, `mobile`, `ui`, `api-client`, `ci`, `deps`, `docs`.
+Allowed scopes: `web`, `api`, `mobile`, `ui`, `api-client`, `ci`, `build`, `release`,
+`deps`, `docs`.
 
 Examples:
 
