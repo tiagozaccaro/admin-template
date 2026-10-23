@@ -8,11 +8,15 @@
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck",
-    "lint:commit": "commitlint --from origin/main --to HEAD"
+    "lint:commit": "commitlint --from origin/main --to HEAD",
+    "prepare": "git config core.hooksPath scripts/git-hooks",
+    "test:e2e": "playwright test",
+    "test": "pnpm --filter @admin-template/web test && cd apps/api && uv run pytest"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^19.6.0",
+    "@playwright/test": "^1.64.1",
     "@types/node": "^20.19.43",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",

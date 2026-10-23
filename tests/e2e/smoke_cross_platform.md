@@ -86,3 +86,8 @@ Verify feature parity and core cross-platform journeys per the Parity Matrix (do
 - docs/parity-matrix.md (T034)
 - specs/002-admin-template-product/contracts/openapi.yaml
 - tests/integration/test_auth.py (auth baseline)
+
+## Auth lifecycle (added)
+- Register new user -> verify email -> login -> reset password -> delete account
+- Signup form validation errors shown
+- Protected routes redirect unauthenticated users
