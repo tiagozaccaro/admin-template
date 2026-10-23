@@ -34,7 +34,8 @@ $ARGUMENTS
    - Follow existing code conventions and style.
 6. **Run tests, create the PR, and track the result**
    - Run the narrowest relevant checks (format, lint, typecheck, tests).
-   - Commit and push the branch.
+   - Commit with a Conventional Commits message: `fix(<scope>): <subject>`. The `commitlint` CI job rejects any other format.
+   - Push the branch.
    - Open a PR targeting `main` with `Closes #ISSUE_NUMBER`.
    - Report CI status and review requirements.
    - **Never merge unless explicitly authorized and permitted by policy.**

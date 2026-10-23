@@ -6,7 +6,7 @@
 
 ## Summary
 
-Build a reusable, production-oriented multi-platform admin foundation: Flutter mobile + Next.js/shadcn web + Python FastAPI backend, with Google OIDC, multi-tenant organizations and roles, dashboard, generic CRUD, notifications, audit history, and a provider-independent AI chatbot. Resolve the nine open decisions with documented rationale, then execute in the phased delivery plan (Phase 0–7). All work MUST preserve feature parity, server-side authorization, tenant isolation, and provider-independent AI.
+Build a reusable, production-oriented multi-platform admin foundation: Flutter mobile + Next.js/shadcn web + Python FastAPI backend, with Google OIDC, multi-tenant organizations and roles, dashboard, generic CRUD, notifications, and audit history. Resolve the nine open decisions with documented rationale, then execute in the phased delivery plan (Phase 0–7). All work MUST preserve feature parity, server-side authorization, and tenant isolation.
 
 ## Technical Context
 
@@ -29,14 +29,13 @@ Build a reusable, production-oriented multi-platform admin foundation: Flutter m
 - Article V (Auth): Google OIDC first, distinct internal/external identities, server-side secrets — satisfied.
 - Article VI (Security): server-side authz/tenant scope, CSRF, no secrets in logs — satisfied.
 - Article VII (Multi-tenancy): explicit membership, Owner/Admin/Member/Viewer, fail-closed cross-tenant — satisfied.
-- Article VIII (AI): provider-independent interfaces, timeouts, approval for destructive — satisfied.
-- Article IX (Testing): backend/web/mobile tests, negative security tests — satisfied.
-- Article X (Accessibility): keyboard nav, visible focus, touch targets, color not sole status — satisfied.
-- Article XI (Observability): structured logs, correlation ids, health/readiness — satisfied.
-- Article XII (Documentation/genericity): setup, config, migrations, testing, deployment, extension docs — satisfied.
-- Article XIII (Spec-driven): Spec Kit workflow — satisfied.
-- Article XIV (PR governance): branches/PRs, focused review — satisfied.
-- Article XV (Dependencies): review for security/maintenance/license — satisfied.
+- Article VIII (Testing): backend/web/mobile tests, negative security tests — satisfied.
+- Article IX (Accessibility): keyboard nav, visible focus, touch targets, color not sole status — satisfied.
+- Article X (Observability): structured logs, correlation ids, health/readiness — satisfied.
+- Article XI (Documentation/genericity): setup, config, migrations, testing, deployment, extension docs — satisfied.
+- Article XII (Spec-driven): Spec Kit workflow — satisfied.
+- Article XIII (PR governance): branches/PRs, focused review — satisfied.
+- Article XIV (Dependencies): review for security/maintenance/license — satisfied.
 
 Gates pass. No violations requiring justification.
 
@@ -76,7 +75,6 @@ backend/src/admin_template/
 ├── permissions/
 ├── tenancy/
 ├── database/
-├── ai/
 ├── jobs/
 └── observability/
 packages/contracts/     # OpenAPI generation/source tooling
@@ -94,12 +92,11 @@ docs/
 1. **Mobile OS/targets**: iOS 15+ and Android 8+ (API 26+). Flutter stable channel. Rationale: broad coverage; Flutter supports both with one codebase. Rejected: single-platform (limits template value).
 2. **Session architecture**: Web uses backend-issued httpOnly, SameSite, Secure cookie with CSRF token (double-submit) for state-changing requests; mobile uses short-lived access token + refresh token in platform secure storage (Keychain/Keystore). Rationale: matches platform security models. Rejected: shared browser session on mobile (insecure).
 3. **OIDC implementation**: authlib (maintained, supports OIDC discovery, PKCE, nonce) on FastAPI. Rationale: maintained, well-tested. Rejected: hand-rolled JWT validation (error-prone).
-4. **Initial AI provider**: OpenAI-compatible adapter as primary, behind provider-independent interface; documented evaluation of alternatives (Anthropic, local/Ollama) in research.md. Rationale: broad capability + streaming; adapter swap supported. Rejected: coupling to one SDK in core.
-5. **State management/cache**: Riverpod (mobile), TanStack Query (web). Rationale: mature, testable, cache invalidation. Rejected: ad-hoc state (divergence risk).
-6. **Invitation delivery**: pluggable delivery adapter; default in-app notification + optional email adapter (SMTP/provider). If no email adapter configured, report honestly that delivery did not occur. Rationale: honest status; extensible. Rejected: pretending delivery.
-7. **Deployment target**: containerized (Docker) backend + web; documented production reference (container platform of choice). Secrets via environment/secret manager. Rationale: portable. Rejected: platform-locked deployment.
-8. **Worker in first release**: No separate worker initially; background work runs in-process or via scheduled tasks where trivial; introduce worker when a real processing need (email queue, heavy AI) emerges. Rationale: avoid empty scaffolding.
-9. **Workspace layout/API client generation**: pnpm workspaces + Turborepo; OpenAPI generated from FastAPI; TypeScript client via openapi-typescript + openapi-fetch; Dart client via openapi-generator (or hand-typed DTOs if generator quality insufficient), documented. Rationale: reproducible contracts.
+4. **State management/cache**: Riverpod (mobile), TanStack Query (web). Rationale: mature, testable, cache invalidation. Rejected: ad-hoc state (divergence risk).
+5. **Invitation delivery**: pluggable delivery adapter; default in-app notification + optional email adapter (SMTP/provider). If no email adapter configured, report honestly that delivery did not occur. Rationale: honest status; extensible. Rejected: pretending delivery.
+6. **Deployment target**: containerized (Docker) backend + web; documented production reference (container platform of choice). Secrets via environment/secret manager. Rationale: portable. Rejected: platform-locked deployment.
+7. **Worker in first release**: No separate worker initially; background work runs in-process or via scheduled tasks where trivial; introduce worker when a real processing need (email queue) emerges. Rationale: avoid empty scaffolding.
+8. **Workspace layout/API client generation**: pnpm workspaces + Turborepo; OpenAPI generated from FastAPI; TypeScript client via openapi-typescript + openapi-fetch; Dart client via openapi-generator (or hand-typed DTOs if generator quality insufficient), documented. Rationale: reproducible contracts.
 
 ## Complexity Tracking
 

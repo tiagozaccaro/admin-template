@@ -7,3 +7,12 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
   msw: false
+
+audit:
+  level: high
+  ignore:
+    # braces: stack-exhaustion DoS through deeply nested patterns. No patched
+    # version is published, and the package is only reachable as a dev-only
+    # transitive dependency of fast-glob/micromatch (shadcn, eslint-config-next).
+    # Remove this entry as soon as an upstream patch is available.
+    - GHSA-vfj7-8cjw-p6xm

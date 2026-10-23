@@ -139,23 +139,7 @@
 
 **Checkpoint**: US7 complete.
 
-## Phase 10: User Story 8 - AI chatbot (Priority: P1)
-
-**Goal**: Provider-independent AI assistant on both clients.
-
-**Independent Test**: Conversation completes, persists, streams; unauthorized access denied; provider failure handled.
-
-- [ ] T058 [P] [US8] Implement provider-independent AI interface + adapter base in backend/src/admin_template/ai/provider.py
-- [ ] T059 [P] [US8] Implement OpenAI-compatible adapter in backend/src/admin_template/ai/adapters/openai.py
-- [ ] T060 [P] [US8] Implement conversation persistence (models + service) in backend/src/admin_template/ai/conversations.py
-- [ ] T061 [P] [US8] Implement streaming endpoint with cancellation/timeouts in backend/src/admin_template/ai/router.py
-- [ ] T062 [P] [US8] Web chat panel/page in apps/web/src/components/ai/ and apps/web/src/app/(app)/ai/
-- [ ] T063 [P] [US8] Mobile chat screen in apps/mobile/lib/features/ai/
-- [ ] T064 [US8] Add AI conversation + isolation + provider-failure tests in tests/integration/test_ai.py
-
-**Checkpoint**: US8 complete.
-
-## Phase 11: User Story 9 - Profile and preferences (Priority: P2)
+## Phase 10: User Story 9 - Profile and preferences (Priority: P2)
 
 **Goal**: Profile editing and preferences.
 
@@ -164,7 +148,7 @@
 - [ ] T067 [P] [US9] Mobile profile screens in apps/mobile/lib/features/profile/
 - [ ] T068 [US9] Add profile tests in tests/integration/test_profile.py
 
-## Phase 12: User Story 10 - Notifications and audit (Priority: P2)
+## Phase 11: User Story 10 - Notifications and audit (Priority: P2)
 
 **Goal**: In-app notifications and audit history.
 
@@ -181,23 +165,7 @@
 - [ ] T074 [US11] Write extension guide in docs/extension-guide.md
 - [ ] T075 [US11] Add example module walkthrough
 
-## Phase 14: User Story 12 - AI provider config (Priority: P2)
-
-**Goal**: Swap/add provider adapter.
-
-- [ ] T076 [P] [US12] Document provider evaluation + config in docs/ai-providers.md
-- [ ] T077 [US12] Add second adapter (e.g., Anthropic) skeleton behind interface
-
-## Phase 15: User Story 13 - AI approval (Priority: P2)
-
-**Goal**: Explicit approval for consequential AI tools.
-
-- [ ] T078 [P] [US13] Implement tool framework (typed schemas, validation, authz, tenant context, timeouts, audit, approval) in backend/src/admin_template/ai/tools.py
-- [ ] T079 [P] [US13] Implement read-only dashboard metric tool in backend/src/admin_template/ai/tools.py
-- [ ] T080 [US13] Add approval flow UI on web and mobile
-- [ ] T081 [US13] Add AI tool authorization/approval tests in tests/integration/test_ai_tools.py
-
-## Phase 16: Polish & Cross-Cutting Concerns
+## Phase 14: Polish & Cross-Cutting Concerns
 
 **Purpose**: Improvements affecting multiple stories
 
@@ -213,16 +181,16 @@
 ## Dependencies & Execution Order
 
 - Phase 1 (Setup) → Phase 2 (Foundational) blocks all stories.
-- US1 (run template) and US2 (auth) are P1 foundation; US4/6/7/8 depend on auth+tenancy.
+- US1 (run template) and US2 (auth) are P1 foundation; US4/6/7/9 depend on auth+tenancy.
 - US3 (parity) spans all; complete after core journeys.
-- P2 stories (US9–US13) after P1 core.
-- Polish (Phase 16) last.
+- P2 stories (US9–US11) after P1 core.
+- Polish (Phase 14) last.
 
 ## Parallel Opportunities
 
 - Setup tasks marked [P] can run in parallel.
 - Foundational [P] tasks can run in parallel.
-- Once foundational done, US1–US8 can proceed in parallel by different developers.
+- Once foundational done, US1–US7 can proceed in parallel by different developers.
 - Within each story, [P] models/services can run in parallel.
 
 ## Implementation Strategy
@@ -235,7 +203,7 @@
 ### Incremental Delivery
 1. Setup + Foundational → foundation ready.
 2. Add US1, US2 → MVP.
-3. Add US4, US5, US6, US7, US8 → P0 complete.
+3. Add US4, US5, US6, US7 → P0 complete.
 4. Add P2 stories → P1 complete.
 5. Polish → release.
 

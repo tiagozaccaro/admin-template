@@ -129,6 +129,7 @@ async def build_authorization_url() -> AuthorizationUrlResult:
         redirect_uri=config.redirect_uri,
         scope="openid profile email",
         token_endpoint=discovery["token_endpoint"],
+        code_challenge_method="S256",
     )
     state = secrets.token_urlsafe(32)
     nonce = secrets.token_urlsafe(32)
@@ -185,6 +186,7 @@ async def exchange_code(code: str, state: str) -> TokenResult:
         redirect_uri=config.redirect_uri,
         scope="openid profile email",
         token_endpoint=discovery["token_endpoint"],
+        code_challenge_method="S256",
     )
     token = await client.fetch_token(
         discovery["token_endpoint"],
@@ -209,6 +211,7 @@ class IDTokenClaims:
     sub: str
     email: str | None
     email_verified: bool
+    name: str | None
     issuer: str
     audience: str
 
@@ -256,6 +259,7 @@ async def validate_id_token(id_token: str, expected_nonce: str) -> IDTokenClaims
         sub=payload["sub"],
         email=payload.get("email"),
         email_verified=bool(payload.get("email_verified", False)),
+        name=payload.get("name"),
         issuer=payload["iss"],
         audience=payload["aud"],
     )
