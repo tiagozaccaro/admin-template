@@ -150,12 +150,3 @@ Summarize:
 4. Commands actually executed and their results.
 5. Tests, checks, and platforms not verified.
 6. Remaining risks and recommended next steps.
-
-## Testing and quality gates (enforced)
-
-- Every code change must include or update tests covering the new/changed behavior and relevant error paths.
-- Bug fixes require a regression test that fails on the old code and passes on the new code.
-- Do not merge/commit if lint, typecheck, build, or tests fail; the pre-commit hook blocks broken commits.
-- Aim for >=80% coverage on changed code; never lower thresholds to make tests pass.
-- Prefer narrow, deterministic tests; mock external services; never weaken tests to make them pass.
-- Report which checks ran and their results honestly in the completion report.

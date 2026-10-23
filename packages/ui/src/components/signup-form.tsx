@@ -14,16 +14,7 @@ import {
 } from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
 
-export function SignupForm({
-  onRegister,
-  ...props
-}: React.ComponentProps<typeof Card> & {
-  onRegister?: (data: {
-    email: string
-    password: string
-    display_name?: string
-  }) => void
-}) {
+export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   return (
     <Card {...props}>
       <CardHeader>
@@ -33,33 +24,16 @@ export function SignupForm({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            const fd = new FormData(e.currentTarget)
-            onRegister?.({
-              email: String(fd.get("email") || ""),
-              password: String(fd.get("password") || ""),
-              display_name: String(fd.get("name") || "") || undefined,
-            })
-          }}
-        >
+        <form>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Full Name</FieldLabel>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="John Doe"
-                required
-              />
+              <Input id="name" type="text" placeholder="John Doe" required />
             </Field>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
               <Input
                 id="email"
-                name="email"
                 type="email"
                 placeholder="m@example.com"
                 required
@@ -71,7 +45,7 @@ export function SignupForm({
             </Field>
             <Field>
               <FieldLabel htmlFor="password">Password</FieldLabel>
-              <Input id="password" name="password" type="password" required />
+              <Input id="password" type="password" required />
               <FieldDescription>
                 Must be at least 8 characters long.
               </FieldDescription>
