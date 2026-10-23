@@ -1,5 +1,12 @@
 import { render, screen } from "@testing-library/react"
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "./table.js"
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "./table.js"
 import { describe, it, expect } from "vitest"
 /// <reference types="@testing-library/jest-dom" />
 

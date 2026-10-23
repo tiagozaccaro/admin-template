@@ -13,7 +13,7 @@ test("login page renders email and password fields", async ({ page }) => {
 
 test("signup page renders", async ({ page }) => {
   await page.goto("/signup");
-  await expect(page.getByRole("button", { name: /sign up|create account/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Create Account" })).toBeVisible();
 });
 
 test("dashboard redirects unauthenticated users", async ({ page }) => {

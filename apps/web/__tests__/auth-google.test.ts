@@ -4,6 +4,7 @@ import { getApiUrl, startGoogleSignIn } from "@/lib/auth/google"
 describe("google auth", () => {
   beforeEach(() => {
     vi.unstubAllEnvs()
+    vi.unstubAllGlobals()
   })
 
   it("getApiUrl defaults", () => {
@@ -18,21 +19,8 @@ describe("google auth", () => {
       }),
     })
     vi.stubGlobal("fetch", fetchMock)
-    const hrefSetter = vi.fn()
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, href: "" },
-      writable: true,
-    })
-    // assign via setter
-    let href = ""
-    Object.defineProperty(window, "location", {
-      value: new URL("http://localhost:3000"),
-      writable: true,
-    })
-    // fallback: mock
     const loc = { href: "" }
-    // @ts-ignore
-    window.location = loc as any
+    vi.stubGlobal("window", { location: loc })
     await startGoogleSignIn()
     expect(fetchMock).toHaveBeenCalled()
     expect(loc.href).toBe("https://accounts.google.com/o/oauth2/auth")
