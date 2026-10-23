@@ -21,8 +21,8 @@ async def list_items(
     tenant_id: uuid.UUID,
     skip: int = 0,
     limit: int = 100,
-    db: Annotated[AsyncSession, Depends(get_session)] = None,  # type: ignore[assignment]
     user: Annotated[User, Depends(get_current_user_from_session)] = None,  # type: ignore[assignment]
+    db: Annotated[AsyncSession, Depends(get_session)] = None,  # type: ignore[assignment]
 ):
     return await crud.item.get_by_tenant(db, tenant_id, skip, limit)  # type: ignore[arg-type]
 
@@ -30,8 +30,8 @@ async def list_items(
 @router.post("/items", status_code=status.HTTP_201_CREATED)
 async def create_item(
     item_in: schemas.ItemCreate,
-    db: Annotated[AsyncSession, Depends(get_session)] = None,  # type: ignore[assignment]
     user: Annotated[User, Depends(get_current_user_from_session)] = None,  # type: ignore[assignment]
+    db: Annotated[AsyncSession, Depends(get_session)] = None,  # type: ignore[assignment]
 ):
     return await crud.item.create(db, item_in.model_dump())  # type: ignore[arg-type]
 
@@ -39,8 +39,8 @@ async def create_item(
 @router.get("/items/{item_id}")
 async def get_item(
     item_id: uuid.UUID,
-    db: Annotated[AsyncSession, Depends(get_session)] = None,  # type: ignore[assignment]
     user: Annotated[User, Depends(get_current_user_from_session)] = None,  # type: ignore[assignment]
+    db: Annotated[AsyncSession, Depends(get_session)] = None,  # type: ignore[assignment]
 ):
     db_item = await crud.item.get(db, item_id)  # type: ignore[arg-type]
     if db_item is None:
@@ -52,8 +52,8 @@ async def get_item(
 async def update_item(
     item_id: uuid.UUID,
     item_in: schemas.ItemUpdate,
-    db: Annotated[AsyncSession, Depends(get_session)] = None,  # type: ignore[assignment]
     user: Annotated[User, Depends(get_current_user_from_session)] = None,  # type: ignore[assignment]
+    db: Annotated[AsyncSession, Depends(get_session)] = None,  # type: ignore[assignment]
 ):
     db_item = await crud.item.get(db, item_id)  # type: ignore[arg-type]
     if db_item is None:
@@ -64,8 +64,8 @@ async def update_item(
 @router.delete("/items/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_item(
     item_id: uuid.UUID,
-    db: Annotated[AsyncSession, Depends(get_session)] = None,  # type: ignore[assignment]
     user: Annotated[User, Depends(get_current_user_from_session)] = None,  # type: ignore[assignment]
+    db: Annotated[AsyncSession, Depends(get_session)] = None,  # type: ignore[assignment]
 ):
     db_item = await crud.item.delete(db, item_id)  # type: ignore[arg-type]
     if db_item is None:
