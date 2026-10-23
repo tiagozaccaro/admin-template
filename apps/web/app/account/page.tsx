@@ -26,7 +26,10 @@ export default function AccountPage() {
         if (!cancelled) setUser(data)
       })
       .catch((err: unknown) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : "Failed to load account")
+        if (!cancelled)
+          setError(
+            err instanceof Error ? err.message : "Failed to load account"
+          )
       })
     return () => {
       cancelled = true

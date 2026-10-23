@@ -10,4 +10,10 @@ from admin_template.modules.identity.models.password_reset_token import (
 from admin_template.modules.identity.models.session import Session
 from admin_template.modules.identity.models.user import User
 
-__all__ = ["EmailVerificationToken", "ExternalIdentity", "PasswordResetToken", "Session", "User"]
+__all__ = [
+    "EmailVerificationToken",
+    "ExternalIdentity",
+    "PasswordResetToken",
+    "Session",
+    "User",
+]
