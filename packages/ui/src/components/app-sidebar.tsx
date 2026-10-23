@@ -31,22 +31,17 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: <RiDashboardLine />,
     },
     {
-      title: "Analytics",
-      url: "#",
-      icon: <RiBarChartLine />,
+      title: "Items",
+      url: "/items",
+      icon: <RiFileTextLine />,
     },
     {
-      title: "Users",
-      url: "#",
-      icon: <RiGroupLine />,
-    },
-    {
-      title: "Settings",
-      url: "#",
+      title: "Account",
+      url: "/account",
       icon: <RiSettingsLine />,
     },
   ],
