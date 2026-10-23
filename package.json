@@ -11,7 +11,7 @@
     "lint:commit": "commitlint --from origin/main --to HEAD",
     "prepare": "husky",
     "test:e2e": "playwright test",
-    "test": "pnpm --filter @admin-template/web test && cd apps/api && uv run pytest"
+    "test": "pnpm --filter @admin-template/web test --coverage && cd apps/api && uv run pytest"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",

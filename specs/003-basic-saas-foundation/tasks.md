@@ -10,85 +10,85 @@
 
 ## Phase 1: Setup
 
-- [ ] T001 Verify project structure and dependencies (no new frameworks)
-- [ ] T002 [P] Configure email abstraction module location in apps/api/src/admin_template/core/email.py
+- [x] T001 Verify project structure and dependencies (no new frameworks)
+- [x] T002 [P] Configure email abstraction module location in apps/api/src/admin_template/core/email.py
 
 ## Phase 2: Foundational
 
-- [ ] T003 Add DB migration for user auth fields (password_hash, email_verified, deleted_at) in apps/api/alembic/versions/
-- [ ] T004 [P] Add EmailVerificationToken and PasswordResetToken models in apps/api/src/admin_template/modules/identity/models/
-- [ ] T005 [P] Add Invitation expiration/revocation fields migration
-- [ ] T006 Implement tenant context dependency in apps/api/src/admin_template/permissions/deps.py
-- [ ] T007 Implement rate limiting middleware in apps/api/src/admin_template/core/
+- [x] T003 Add DB migration for user auth fields (password_hash, email_verified, deleted_at) in apps/api/alembic/versions/
+- [x] T004 [P] Add EmailVerificationToken and PasswordResetToken models in apps/api/src/admin_template/modules/identity/models/
+- [x] T005 [P] Add Invitation expiration/revocation fields migration
+- [x] T006 Implement tenant context dependency in apps/api/src/admin_template/permissions/deps.py
+- [x] T007 Implement rate limiting middleware in apps/api/src/admin_template/core/
 
 ## Phase 3: User Story 1 - Complete Authentication Lifecycle (P1)
 
 **Goal**: Registration, verification, login, logout, password reset.
 **Independent Test**: Register → verify → login → reset → login with new password.
 
-- [ ] T008 [P] [US1] Implement password hashing utilities in apps/api/src/admin_template/core/security.py
-- [ ] T009 [US1] Implement register endpoint in apps/api/src/admin_template/auth/router.py
-- [ ] T010 [US1] Implement verify-email endpoint
-- [ ] T011 [US1] Implement request-reset and reset-password endpoints
-- [ ] T012 [US1] Implement account deletion (soft-delete) endpoint
-- [ ] T013 [US1] Update web login/signup pages in apps/web/app/login and signup
-- [ ] T014 [P] [US1] Add auth lifecycle tests in apps/api/tests/
+- [x] T008 [P] [US1] Implement password hashing utilities in apps/api/src/admin_template/core/security.py
+- [x] T009 [US1] Implement register endpoint in apps/api/src/admin_template/auth/router.py
+- [x] T010 [US1] Implement verify-email endpoint
+- [x] T011 [US1] Implement request-reset and reset-password endpoints
+- [x] T012 [US1] Implement account deletion (soft-delete) endpoint
+- [x] T013 [US1] Update web login/signup pages in apps/web/app/login and signup
+- [x] T014 [P] [US1] Add auth lifecycle tests in apps/api/tests/
 
 ## Phase 4: User Story 2 - Tenant Isolation & Authorization (P1)
 
 **Goal**: Strict tenant scoping and RBAC enforcement.
 **Independent Test**: Cross-tenant access denied; role restrictions enforced.
 
-- [ ] T015 [US2] Audit all tenant-owned queries for scoping in apps/api/src/admin_template/modules/
-- [ ] T016 [US2] Implement IDOR protection in routers
-- [ ] T017 [US2] Implement ownership transfer/departure handling in tenancy/ownership.py
-- [ ] T018 [P] [US2] Add cross-tenant isolation tests
-- [ ] T019 [P] [US2] Add RBAC permission tests
+- [x] T015 [US2] Audit all tenant-owned queries for scoping in apps/api/src/admin_template/modules/
+- [x] T016 [US2] Implement IDOR protection in routers
+- [x] T017 [US2] Implement ownership transfer/departure handling in tenancy/ownership.py
+- [x] T018 [P] [US2] Add cross-tenant isolation tests
+- [x] T019 [P] [US2] Add RBAC permission tests
 
 ## Phase 5: User Story 3 - Invitations Lifecycle (P1)
 
 **Goal**: Acceptance, expiration (7d), revocation.
 **Independent Test**: Invite → accept; expired/revoked rejected.
 
-- [ ] T020 [US3] Implement invitation expiration enforcement in invitations.py
-- [ ] T021 [US3] Implement revoke endpoint
-- [ ] T022 [US3] Implement accept endpoint with validation
-- [ ] T023 [P] [US3] Add invitation tests
+- [x] T020 [US3] Implement invitation expiration enforcement in invitations.py
+- [x] T021 [US3] Implement revoke endpoint
+- [x] T022 [US3] Implement accept endpoint with validation
+- [x] T023 [P] [US3] Add invitation tests
 
 ## Phase 6: User Story 4 - Application Shell & UX (P2)
 
 **Goal**: Consistent navigation, states, theme.
 **Independent Test**: Navigate pages; verify loading/error/empty states.
 
-- [ ] T024 [P] [US4] Add loading/error/empty state components in apps/web
-- [ ] T025 [US4] Add breadcrumbs and responsive layout improvements
-- [ ] T026 [US4] Verify light/dark theme support
+- [x] T024 [P] [US4] Add loading/error/empty state components in apps/web
+- [x] T025 [US4] Add breadcrumbs and responsive layout improvements
+- [x] T026 [US4] Verify light/dark theme support
 
 ## Phase 7: User Story 5 - Email Abstraction & Notifications (P2)
 
 **Goal**: Pluggable email with no-op default; reliable delivery handling.
 **Independent Test**: Emails logged in dev; provider configurable.
 
-- [ ] T027 [US5] Implement email provider interface in core/email.py
-- [ ] T028 [US5] Implement no-op/log provider
-- [ ] T029 [US5] Wire verification/reset/invitation emails
-- [ ] T030 [P] [US5] Add duplicate-processing/idempotency tests
+- [x] T027 [US5] Implement email provider interface in core/email.py
+- [x] T028 [US5] Implement no-op/log provider
+- [x] T029 [US5] Wire verification/reset/invitation emails
+- [x] T030 [P] [US5] Add duplicate-processing/idempotency tests
 
 ## Phase 8: User Story 6 - Audit & Platform Admin (P2)
 
 **Goal**: Audit hardening; minimal operator capability.
 **Independent Test**: Audit events recorded; health endpoints work.
 
-- [ ] T031 [US6] Ensure audit events for security/membership/permission actions
-- [ ] T032 [US6] Add anonymization on user soft-delete
-- [ ] T033 [US6] Verify health/readiness endpoints
-- [ ] T034 [P] [US6] Add audit tests
+- [x] T031 [US6] Ensure audit events for security/membership/permission actions
+- [x] T032 [US6] Add anonymization on user soft-delete
+- [x] T033 [US6] Verify health/readiness endpoints
+- [x] T034 [P] [US6] Add audit tests
 
 ## Phase 9: Polish & Cross-Cutting
 
-- [ ] T035 Update documentation (env, migrations, ops)
-- [ ] T036 Run quickstart validation
-- [ ] T037 Final lint/typecheck/test runs
+- [x] T035 Update documentation (env, migrations, ops)
+- [x] T036 Run quickstart validation
+- [x] T037 Final lint/typecheck/test runs
 
 ## Dependencies
 
