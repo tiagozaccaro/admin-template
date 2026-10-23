@@ -9,7 +9,7 @@
     "format": "turbo format",
     "typecheck": "turbo typecheck",
     "lint:commit": "commitlint --from origin/main --to HEAD",
-    "prepare": "git config core.hooksPath scripts/git-hooks",
+    "prepare": "husky",
     "test:e2e": "playwright test",
     "test": "pnpm --filter @admin-template/web test && cd apps/api && uv run pytest"
   },
@@ -20,6 +20,7 @@
     "@types/node": "^20.19.43",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
+    "husky": "^9.1.7",
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "turbo": "^2.11.7",
