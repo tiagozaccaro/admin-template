@@ -9,5 +9,11 @@ def test_auth_lifecycle_routes_registered() -> None:
     client = TestClient(app)
     schema = client.get("/openapi.json").json()
     paths = set(schema["paths"].keys())
-    for p in ("/auth/register", "/auth/verify-email", "/auth/request-reset", "/auth/reset-password", "/auth/account"):
+    for p in (
+        "/auth/register",
+        "/auth/verify-email",
+        "/auth/request-reset",
+        "/auth/reset-password",
+        "/auth/account",
+    ):
         assert p in paths, p

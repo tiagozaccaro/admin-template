@@ -85,13 +85,14 @@ Security improvements must integrate with existing controls rather than introduc
 
 ## Article VII — Testing and Verifiable Quality
 
-Every change must meet a level of verification appropriate to its risk.
+Every change must meet a level of verification appropriate to its risk. Tests are mandatory, not optional.
 
 - Follow the repository's established testing framework and conventions.
-- Add or update tests for new and changed behavior.
-- Preserve existing tests unless their replacement is justified and equivalent coverage is maintained.
-- Test important failure cases, permission boundaries, and regression risks.
-- Use automated formatting, linting, type checking, and CI checks where already supported or required by an approved project plan.
+- Add or update tests for ALL new and changed behavior, including happy paths, error paths, edge cases, and permission boundaries.
+- Preserve existing tests unless their replacement is justified and equivalent or better coverage is maintained.
+- Add regression tests for every bug fix that reproduce the defect before the fix.
+- Aim for meaningful coverage (>=80% on changed code) and do not lower thresholds to pass.
+- Use automated formatting, linting, type checking, and CI checks; they must pass before merge.
 - Do not claim functionality is complete when required tests have not passed or verification has not been performed.
 - Document blocked or unavailable verification explicitly.
 

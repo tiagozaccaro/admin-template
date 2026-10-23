@@ -8,14 +8,19 @@
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck",
-    "lint:commit": "commitlint --from origin/main --to HEAD"
+    "lint:commit": "commitlint --from origin/main --to HEAD",
+    "prepare": "husky",
+    "test:e2e": "playwright test",
+    "test": "pnpm --filter @admin-template/web test && cd apps/api && uv run pytest"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^19.6.0",
+    "@playwright/test": "^1.64.1",
     "@types/node": "^20.19.43",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
+    "husky": "^9.1.7",
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "turbo": "^2.11.7",
