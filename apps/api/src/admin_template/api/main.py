@@ -1,6 +1,3 @@
-import os
-
-import sentry_sdk
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -9,8 +6,6 @@ from admin_template.api.v1.router import router as v1_router
 from admin_template.auth.router import router as auth_router
 from admin_template.core.obs import healthz, readyz
 from admin_template.core.settings import settings
-
-sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"))
 
 app = FastAPI(title="Admin Template API", version="0.1.0")
 
