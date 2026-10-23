@@ -33,6 +33,7 @@ export default {
         "build",
         "release",
         "deps",
+        "deps-dev",
         "docs",
       ],
     ],
