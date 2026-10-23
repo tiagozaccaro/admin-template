@@ -5,10 +5,11 @@ Sensitive values are resolved from environment variables or Docker
 `_FILE` secret mounts; no secrets are committed to the repository.
 """
 
-from typing import Literal
+import json
+from typing import Annotated, Literal
 
-from pydantic import Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -30,7 +31,17 @@ class Settings(BaseSettings):
 
     # Server
     api_port: int = 8000
-    cors_origins: list[str] = []
+    cors_origins: Annotated[list[str], NoDecode] = []
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def _split_cors_origins(cls, value: object) -> object:
+        if isinstance(value, str):
+            value = value.strip()
+            if value.startswith("["):
+                return json.loads(value)
+            return [v.strip() for v in value.split(",") if v.strip()]
+        return value
 
     # Database (postgres + asyncpg). Resolved from DATABASE_URL or a
     # DATABASE_URL_FILE Docker secret mount; no default (must be provided).

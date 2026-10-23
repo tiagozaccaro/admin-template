@@ -50,6 +50,9 @@ async def get_or_create_user_from_claims(claims: IDTokenClaims) -> User:
             user = await database_session.get(User, external.user_id)
             if user is None:
                 raise IdentityLinkError("External identity references missing user")
+            if claims.name and user.display_name != claims.name:
+                user.display_name = claims.name
+                await database_session.commit()
             return user
 
         # 2. No external identity yet: try to find an existing user by email
@@ -64,15 +67,17 @@ async def get_or_create_user_from_claims(claims: IDTokenClaims) -> User:
                 user = User(
                     keycloak_sub=claims.sub,
                     email=claims.email,
-                    display_name=None,
+                    display_name=claims.name,
                 )
                 database_session.add(user)
                 await database_session.flush()
+            elif claims.name and user.display_name != claims.name:
+                user.display_name = claims.name
         else:
             user = User(
                 keycloak_sub=claims.sub,
                 email="",
-                display_name=None,
+                display_name=claims.name,
             )
             database_session.add(user)
             await database_session.flush()
