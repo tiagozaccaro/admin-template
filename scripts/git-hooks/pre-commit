@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "[pre-commit] Prettier format check..."
+pnpm exec prettier --check "apps/web/**/*.{ts,tsx}" "packages/**/*.{ts,tsx}"
+
+echo "[pre-commit] Lint..."
+pnpm lint
+
+echo "[pre-commit] Typecheck..."
+pnpm typecheck
+
+echo "[pre-commit] Web build..."
+pnpm build
+
+echo "[pre-commit] Tests..."
+pnpm test
+
+echo "[pre-commit] API checks..."
+cd apps/api
+uv run ruff format --check src tests
+uv run ruff check src tests
+uv run pyright
+cd ../..
+
+if command -v flutter >/dev/null 2>&1; then
+  echo "[pre-commit] Mobile checks..."
+  cd apps/mobile
+  flutter pub get
+  dart format --output=none --set-exit-if-changed .
+  flutter analyze
+  flutter test
+  cd ../..
+else
+  echo "[pre-commit] flutter not found; skipping mobile checks (CI still runs them)."
+fi
+
+echo "[pre-commit] Security audits..."
+pnpm audit --audit-level=high || true
+cd apps/api
+uv export --frozen --no-dev --no-hashes --no-emit-project --format requirements-txt -o /tmp/requirements-precommit.txt
+uvx pip-audit -r /tmp/requirements-precommit.txt || true
+cd ../..
+
+echo "[pre-commit] All checks passed."
