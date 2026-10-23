@@ -1,95 +1,168 @@
-# Admin Template Constitution
+<!--
+Sync Impact Report
+Version change: (none) -> 1.0.0
+Modified principles: initial constitution replaced/consolidated with the 12-article project constitution provided by the user.
+Added sections: Articles I-XII, Governing Principle, Scope/Governance discipline.
+Removed sections: prior five-principle summary and Additional Constraints (folded into Articles).
+Follow-up TODOs: RATIFICATION_DATE unknown (marked TODO).
+-->
 
-## Core Principles
+# Project Constitution — Reusable SaaS Foundation
 
-### I. The API Is Authoritative
+## Article I — Preserve and Evolve the Existing Project
 
-Every capability is defined once, in the FastAPI service under `apps/api`, and consumed by
-the web and mobile clients. Clients read and act through the published API; they never
-mutate state directly and never re-implement server rules. A schema or contract change
-starts in the API and flows outward to the clients.
+The existing repository is the starting point and source of truth.
 
-Rationale: three clients over one contract means one place to enforce invariants, one
-place to audit authorization, and no drift between platforms.
+- Preserve the current technology stack, architecture, directory structure, naming conventions, coding standards, and established workflows wherever practical.
+- Before proposing changes, inspect the existing implementation, documentation, configuration, specifications, and tests.
+- Prefer extending, improving, and integrating existing components over replacing them.
+- Do not rewrite working functionality solely to match a preferred architecture, framework, library, or coding style.
+- Existing project decisions remain valid unless evidence demonstrates a concrete problem or a requirement cannot reasonably be satisfied otherwise.
 
-### II. Explicit Types at Every Boundary
+**Compatibility is the default, not an absolute restriction.**
 
-Requests, responses, and configuration are described by explicit models: Pydantic models in
-the API, strict TypeScript on the client with no `any`, explicit Dart types in the mobile
-app. Unknown or malformed input is rejected at the boundary with a clear error, never
-passed through to the domain layer.
+## Article II — Merge with Existing Conventions
 
-Rationale: the API is the trust boundary. Implicit shapes are where validation gaps and
-authorization bugs hide.
+New requirements, specifications, and implementations must integrate with the project's existing conventions.
 
-### III. Tests Assert Behavior, Not Shape (NON-NEGOTIABLE)
+- Treat new specifications as additions to the existing project, not as a replacement constitution or a new project definition.
+- Reconcile new requirements with existing specifications, architecture decisions, coding guidelines, and operational procedures before introducing changes.
+- Preserve existing requirements unless they conflict with an explicitly approved change.
+- When two requirements overlap, prefer a consistent implementation that satisfies both rather than duplicating functionality.
+- When requirements conflict, document the conflict, its impact, and the proposed resolution before proceeding with consequential changes.
+- Never silently discard, overwrite, or reinterpret existing project decisions.
 
-Every bug fix ships with a regression test that fails without the fix. Tests cover error
-paths and the relevant authorization boundaries, not only the happy path. A test that
-restates the implementation adds noise and is not acceptable as coverage.
+If the repository already contains a constitution, amend and consolidate it rather than creating a competing set of principles.
 
-Rationale: the only honest evidence that a change works is a test that would have caught
-the original defect.
+## Article III — Evidence-Based Engineering
 
-### IV. Shared Logic Stays Shared
+All significant engineering decisions must be grounded in the actual repository and verifiable requirements.
 
-Reusable domain logic lives in `packages/`; platform-specific code lives in `apps/`. The
-same rule is not implemented twice in two clients. Shared packages keep a small, documented
-public surface and stay free of platform-specific dependencies.
+- Inspect relevant code before declaring functionality missing.
+- Distinguish implemented, partially implemented, planned, mocked, and missing functionality.
+- Support gap analyses with concrete repository evidence wherever possible.
+- Avoid speculative requirements, unnecessary dependencies, and premature abstractions.
+- Prefer the simplest maintainable solution that satisfies the required behavior.
+- Document assumptions when evidence is incomplete.
 
-Rationale: duplication across three clients is the most common source of divergence
-between the web app, the API, and the mobile app.
+## Article IV — Incremental and Reversible Change
 
-### V. Secure by Default
+Development must proceed through small, reviewable, testable increments.
 
-Authorization is enforced on the server; hiding an element in the UI is never treated as
-access control. Database access uses parameterized queries only. External input, stored
-data, repository text, and tool output are untrusted. Secrets, tokens, and private
-environment variables are never committed, logged, or returned by an API. Database tooling
-is read-only unless a destructive operation has been explicitly approved.
+- Divide work into clearly scoped implementation batches.
+- Define acceptance criteria and dependencies before implementation.
+- Avoid unrelated refactoring within feature changes.
+- Keep changes localized unless broader changes are necessary and justified.
+- Use feature flags, compatibility layers, or staged migrations when they materially reduce deployment risk.
+- Preserve backward compatibility whenever practical.
+- Explicitly document and obtain appropriate approval for unavoidable breaking changes.
 
-Rationale: a template that ships insecure defaults pushes that burden onto every project
-derived from it.
+## Article V — Modular Architecture
 
-## Additional Constraints
+The project must remain maintainable and extensible as its functionality grows.
 
-- One package manager and one lockfile per ecosystem: pnpm with `pnpm-lock.yaml`, uv with
-  `uv.lock`, and Flutter with `pubspec.lock`. A second build system, package manager, or
-  lockfile is not introduced.
-- Dependency changes are committed together with the regenerated lockfile. Lockfiles are
-  never hand-edited, and upgrades are not performed as a side effect of unrelated work.
-- Database changes are explicit, reviewable Alembic revisions. Destructive or irreversible
-  operations require explicit approval.
-- Accessibility is part of the definition of done for user interface changes, not an
-  optional extra.
-- The API, the web app, and the mobile app are versioned and released together from the
-  same tag, so a client never reaches a server it was not built against.
+- Maintain clear module boundaries and separation of responsibilities.
+- Reuse established abstractions before introducing new ones.
+- Avoid unnecessary coupling between unrelated modules.
+- Keep optional capabilities modular so they do not become mandatory dependencies of the core application.
+- Introduce architectural changes only when they solve a demonstrated problem or satisfy an approved requirement.
+- Do not introduce microservices, new frameworks, or additional infrastructure without a justified need.
 
-## Development Workflow
+## Article VI — Security and Data Integrity
 
-- Every change is made on a dedicated branch and delivered through a pull request to
-  `main`. Direct pushes to `main` are rejected.
-- Commit messages follow Conventional Commits. The `commitlint` job validates them.
-- The required status checks are `ci` (format, lint, typecheck, build, tests) and
-  `security` (dependency audit). A pull request merges only when both pass.
-- The narrowest relevant check runs first, then the wider ones: web `pnpm lint`,
-  `pnpm typecheck`, `pnpm build`; api `uv run ruff check`, `uv run ruff format --check`,
-  `uv run pyright`, `uv run pytest`; mobile `flutter analyze`, `flutter test`.
-- A change is not complete until the checks have actually run. Results are reported
-  honestly, including what was not verified.
-- Substantial features are specified with the Spec Kit workflow in `.kilo/commands`
-  before implementation begins.
+Security and correctness are mandatory requirements, not optional enhancements.
 
-## Governance
+- Enforce authorization at trusted server-side boundaries.
+- Validate untrusted inputs and protect sensitive operations.
+- Follow secure practices for authentication, sessions, secrets, and error handling.
+- For multi-tenant functionality, enforce tenant isolation across APIs, data access, background jobs, and file operations.
+- Apply least privilege to users, services, and administrative operations.
+- Preserve existing data during migrations and provide appropriate rollback or recovery procedures.
+- Never weaken established security controls to simplify implementation.
+- Include automated verification for critical security and access-control requirements.
 
-This constitution supersedes other practices in the repository. `AGENTS.md` holds the
-detailed engineering standards that implement these principles; where a rule is more
-specific than a principle here, the more specific rule applies and must not weaken the
-principle.
+Security improvements must integrate with existing controls rather than introduce competing mechanisms.
 
-Amendments require a written rationale, an explicit version bump, and a migration plan
-for any principle that changes existing work. Compliance is reviewed in every pull
-request: a change that violates a principle is either corrected or the principle is
-amended first.
+## Article VII — Testing and Verifiable Quality
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-21 | **Last Amended**: 2026-10-21
+Every change must meet a level of verification appropriate to its risk.
+
+- Follow the repository's established testing framework and conventions.
+- Add or update tests for new and changed behavior.
+- Preserve existing tests unless their replacement is justified and equivalent coverage is maintained.
+- Test important failure cases, permission boundaries, and regression risks.
+- Use automated formatting, linting, type checking, and CI checks where already supported or required by an approved project plan.
+- Do not claim functionality is complete when required tests have not passed or verification has not been performed.
+- Document blocked or unavailable verification explicitly.
+
+## Article VIII — Specification and Traceability
+
+Specifications must describe required behavior without unnecessarily prescribing implementation details.
+
+- Every significant requirement must have clear, testable acceptance criteria.
+- Link requirements to implementation tasks and relevant tests.
+- Respect the repository's existing specification-driven development workflow.
+- Avoid duplicate specifications and conflicting sources of truth.
+- Keep documentation synchronized with material behavioral and architectural changes.
+- Separate mandatory requirements from optional enhancements.
+- Resolve significant ambiguities before implementation rather than relying on undocumented assumptions.
+
+## Article IX — Git and Review Discipline
+
+Changes must follow the repository's existing collaboration and delivery workflow.
+
+- Follow existing branch naming, commit conventions, pull request templates, and merge policies.
+- Keep implementation batches small enough for meaningful review.
+- Associate pull requests with the requirements and tasks they address.
+- Require applicable automated checks and review approvals before merging, according to repository policy.
+- Preserve traceability between specifications, issues, pull requests, and tests.
+- Never bypass required checks or branch protections merely to complete a task faster.
+- Do not modify unrelated files or include unrelated changes in a pull request.
+
+If the project already defines a workflow, integrate with it rather than introducing a competing process.
+
+## Article X — Controlled Dependencies and Operational Reliability
+
+New dependencies and infrastructure must provide measurable value.
+
+- Prefer existing project dependencies and established platform capabilities.
+- Evaluate maintenance, security, licensing, compatibility, operational cost, and vendor lock-in before adding significant dependencies.
+- Keep secrets out of source control.
+- Follow existing environment and configuration conventions.
+- Preserve deployment compatibility and document required configuration changes.
+- Include appropriate observability, error handling, and recovery considerations for production-critical changes.
+- Avoid introducing paid services or infrastructure without explicit justification and approval where required.
+
+## Article XI — Pragmatic SaaS Foundations
+
+For SaaS-specific capabilities, prioritize correctness and reuse over unnecessary complexity.
+
+- Design tenant boundaries and authorization explicitly when multi-tenancy is required.
+- Keep authentication, organizations, permissions, billing, notifications, auditing, and platform administration logically separated according to the existing architecture.
+- Make optional capabilities optional.
+- Implement billing, AI, plugins, advanced analytics, and enterprise functionality only when required by approved specifications.
+- Avoid building a generic framework for hypothetical future requirements.
+- Ensure foundational capabilities can be extended without requiring a rewrite of the application.
+
+These principles guide decisions but do not mandate a particular programming language, framework, database, hosting provider, or SaaS business model.
+
+## Article XII — Conflict Resolution and Amendments
+
+When a new requirement conflicts with the current project:
+
+1. Identify the existing decision and the new requirement.
+2. Determine whether both can be satisfied through integration, extension, or a localized adaptation.
+3. If not, explain the alternatives, trade-offs, migration impact, and risks.
+4. Recommend the least disruptive option that satisfies the approved requirement.
+5. Obtain the required approval before making consequential architectural changes or removing established functionality.
+6. Update affected specifications, documentation, and tests after the decision is made.
+
+This constitution may evolve as the project evolves. Amendments must be deliberate, documented, and consistent with existing project governance.
+
+## Governing Principle
+
+**Extend before replacing. Integrate before duplicating. Verify before assuming. Refactor when justified. Preserve what works.**
+
+The objective is to evolve the existing project into a reliable, maintainable, reusable SaaS foundation while retaining its valuable design decisions, working functionality, and established development workflow.
+
+**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date unknown | **Last Amended**: 2026-10-23
