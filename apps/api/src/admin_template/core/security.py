@@ -259,6 +259,73 @@ def require_workspace_role(required_role: WorkspaceRole):
 __all__ = [
     "bearer_scheme",
     "get_current_user",
+    "hash_password",
     "require_role",
     "require_workspace_role",
+    "verify_password",
 ]
+
+
+# ---------------------------------------------------------------------------
+# Password hashing (local auth) — stdlib only, scrypt KDF
+# ---------------------------------------------------------------------------
+
+import base64
+import hashlib
+import hmac
+import secrets
+
+_PASSWORD_SCHEME = "scrypt"
+_SCRYPT_N = 2**14
+_SCRYPT_R = 8
+_SCRYPT_P = 1
+_SCRYPT_DKLEN = 64
+_SALT_BYTES = 16
+
+
+def hash_password(password: str) -> str:
+    """Hash a password using scrypt. Returns a self-describing string."""
+    if not password:
+        raise ValueError("password must not be empty")
+    salt = secrets.token_bytes(_SALT_BYTES)
+    derived = hashlib.scrypt(
+        password.encode("utf-8"),
+        salt=salt,
+        n=_SCRYPT_N,
+        r=_SCRYPT_R,
+        p=_SCRYPT_P,
+        dklen=_SCRYPT_DKLEN,
+    )
+    return (
+        f"{_PASSWORD_SCHEME}${_SCRYPT_N}${_SCRYPT_R}${_SCRYPT_P}$"
+        f"{base64.b64encode(salt).decode('ascii')}$"
+        f"{base64.b64encode(derived).decode('ascii')}"
+    )
+
+
+def verify_password(password: str, password_hash: str) -> bool:
+    """Verify a password against a stored scrypt hash (constant-time)."""
+    try:
+        scheme, n, r, p, salt_b64, derived_b64 = password_hash.split("$")
+    except ValueError:
+        return False
+    if scheme != _PASSWORD_SCHEME:
+        return False
+    try:
+        n_i, r_i, p_i = int(n), int(r), int(p)
+        salt = base64.b64decode(salt_b64)
+        expected = base64.b64decode(derived_b64)
+    except (ValueError, TypeError):
+        return False
+    try:
+        derived = hashlib.scrypt(
+            password.encode("utf-8"),
+            salt=salt,
+            n=n_i,
+            r=r_i,
+            p=p_i,
+            dklen=len(expected),
+        )
+    except (ValueError, OverflowError):
+        return False
+    return hmac.compare_digest(derived, expected)
