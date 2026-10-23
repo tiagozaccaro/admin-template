@@ -24,11 +24,16 @@ class User(Base):
         primary_key=True,
         default=uuid.uuid4,
     )
-    keycloak_sub: Mapped[str] = mapped_column(
-        String(255), unique=True, index=True, nullable=False
+    keycloak_sub: Mapped[str | None] = mapped_column(
+        String(255), unique=True, index=True, nullable=True
     )
-    email: Mapped[str] = mapped_column(String(255), nullable=False)
+    email: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     display_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    email_verified: Mapped[bool] = mapped_column(default=False, nullable=False)
+    deleted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

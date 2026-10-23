@@ -28,6 +28,12 @@
       "command": ["npx", "-y", "@upstash/context7-mcp"],
       "enabled": true,
       "timeout": 10000
+    },
+    "postgres": {
+      "type": "local",
+      "command": ["npx", "-y", "pg-ro-mcp@0.1.0", "--database-url", "{env:MCP_POSTGRES_URL}"],
+      "enabled": true,
+      "timeout": 15000
     }
   }
 }

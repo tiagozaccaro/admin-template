@@ -85,7 +85,7 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { window.location.href = "/account" }}>
                 <RiUserLine />
                 Account
               </DropdownMenuItem>
