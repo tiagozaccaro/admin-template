@@ -1,0 +1,155 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g. v0.1.0)"
+        required: true
+        type: string
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+  REGISTRY: ghcr.io
+
+jobs:
+  web:
+    name: build web
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    environment: release
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          fetch-depth: 0
+
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+          run_install: false
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web
+        run: pnpm --filter @admin-template/web build
+
+      - name: Package web bundle
+        run: |
+          mkdir -p "$RUNNER_TEMP/web-bundle/apps/web/.next"
+          cp -r apps/web/.next/standalone/. "$RUNNER_TEMP/web-bundle/"
+          cp -r apps/web/.next/static "$RUNNER_TEMP/web-bundle/apps/web/.next/static"
+          cp -r apps/web/public "$RUNNER_TEMP/web-bundle/apps/web/public"
+          tar -czf "$RUNNER_TEMP/web-${{ env.RELEASE_TAG }}.tar.gz" \
+            -C "$RUNNER_TEMP/web-bundle" .
+
+      - name: Upload web artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: web-${{ env.RELEASE_TAG }}
+          path: ${{ runner.temp }}/web-${{ env.RELEASE_TAG }}.tar.gz
+          if-no-files-found: error
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name == 'push'
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push container image
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository }}:web-${{ env.RELEASE_TAG }}
+            ${{ env.REGISTRY }}/${{ github.repository }}:web-latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  api:
+    name: build api
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    environment: release
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          fetch-depth: 0
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name == 'push'
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push container image
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v7
+        with:
+          context: apps/api
+          file: apps/api/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository }}:api-${{ env.RELEASE_TAG }}
+            ${{ env.REGISTRY }}/${{ github.repository }}:api-latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  release:
+    name: publish release
+    needs: [web, api]
+    if: always() && needs.web.result == 'success' && needs.api.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - name: Download web artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: web-${{ env.RELEASE_TAG }}
+          path: artifacts/web
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: ${{ env.RELEASE_TAG }}
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(env.RELEASE_TAG, '-') }}
+          files: |
+            artifacts/**/*.tar.gz

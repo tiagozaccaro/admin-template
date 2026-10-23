@@ -31,7 +31,11 @@ $ARGUMENTS
    - Link the PR to the Issue using closing keywords (e.g., `Closes #ISSUE_NUMBER`).
    - Update the Issue status to reflect reality (closed only when completion criteria are satisfied).
    - Update release notes if a changelog or release draft is configured.
-5. **Delete the feature branch only when it is safe and permitted**
+5. **Cut the release tag when a release is requested**
+   - Only with explicit authorization, tag the merge commit: `git tag v<semver>` and `git push origin v<semver>`.
+   - The tag triggers the `release` workflow (`.github/workflows/release.yml`), which builds the web bundle, pushes the container images to `ghcr.io`, and publishes the GitHub release.
+   - Report the workflow run and the release URL; never report a release as published before the workflow succeeded.
+6. **Delete the feature branch only when it is safe and permitted**
    - Confirm `delete_branch_on_merge` is enabled on the repository.
    - Delete the branch: `gh pr delete <NUMBER>` or `git push origin --delete <branch>` only with explicit authorization.
 

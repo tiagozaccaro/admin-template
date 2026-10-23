@@ -85,30 +85,6 @@
 - created_at
 - INDEX(tenant_id, created_at)
 
-### AIConversation
-- id (uuid, PK)
-- tenant_id (FK Tenant)
-- user_id (FK User)
-- title
-- created_at, updated_at
-
-### AIMessage
-- id (uuid, PK)
-- conversation_id (FK AIConversation)
-- role (user/assistant/system/tool)
-- content (text)
-- created_at
-
-### AIToolExecution
-- id (uuid, PK)
-- conversation_id (FK AIConversation)
-- tool_name
-- arguments (json)
-- status (pending/approved/executed/failed/rejected)
-- result_summary
-- approved_by (FK User, nullable)
-- created_at
-
 ## Relationships
 - User 1..* ExternalIdentity
 - User 1..* Session
@@ -118,9 +94,6 @@
 - Tenant 1..* AuditEvent
 - User 1..1 UserPreferences
 - Tenant 1..1 TenantSettings
-- User 1..* AIConversation (tenant-scoped)
-- AIConversation 1..* AIMessage
-- AIConversation 1..* AIToolExecution
 
 ## Tenant scope
 Every tenant-owned entity carries tenant_id and is filtered by validated membership. Cross-tenant access fails closed.
@@ -130,5 +103,3 @@ Every tenant-owned entity carries tenant_id and is filtered by validated members
 - invitations: (tenant_id), (token_hash)
 - notifications: (user_id, read_at), (tenant_id, created_at)
 - audit_events: (tenant_id, created_at)
-- ai_conversations: (tenant_id, user_id)
-- ai_messages: (conversation_id, created_at)

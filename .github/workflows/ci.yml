@@ -5,53 +5,60 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   changed:
-    runs-on: ubuntu-latest
+    name: changed files
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
     outputs:
-      web: ${{ steps.filter.outputs.web }}
-      api: ${{ steps.filter.outputs.api }}
-      mobile: ${{ steps.filter.outputs.mobile }}
-      packages: ${{ steps.filter.outputs.packages }}
+      web: ${{ steps.filter.outputs.web_any_changed }}
+      api: ${{ steps.filter.outputs.api_any_changed }}
+      mobile: ${{ steps.filter.outputs.mobile_any_changed }}
+      packages: ${{ steps.filter.outputs.packages_any_changed }}
     steps:
       - uses: actions/checkout@v4
       - name: Filter changed paths
         uses: tj-actions/changed-files@v46
         id: filter
         with:
-          web: |-
-            **.ts
-            **.tsx
-            **.js
-            **.jsx
-            **.json
-            **.mjs
-            **.cjs
-            apps/web/**
-            packages/**
-            turbo.json
-            package.json
-            pnpm-lock.yaml
-            pnpm-workspace.yaml
-          api: |-
-            apps/api/**
-          mobile: |-
-            apps/mobile/**
-          packages: |-
-            packages/**
+          files_yaml: |
+            web:
+              - '**.ts'
+              - '**.tsx'
+              - '**.js'
+              - '**.jsx'
+              - '**.json'
+              - '**.mjs'
+              - '**.cjs'
+              - 'apps/web/**'
+              - 'packages/**'
+              - 'turbo.json'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+            api:
+              - 'apps/api/**'
+            mobile:
+              - 'apps/mobile/**'
+            packages:
+              - 'packages/**'
 
   web:
+    name: web
     needs: changed
     if: needs.changed.outputs.web == 'true' || needs.changed.outputs.packages == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: apps/web
@@ -72,7 +79,9 @@ jobs:
       - name: Install dependencies (frozen lockfile)
         run: pnpm install --frozen-lockfile
       - name: Format check
-        run: pnpm format
+        working-directory: ${{ github.workspace }}
+        run: |
+          pnpm exec prettier --check "apps/web/**/*.{ts,tsx}" "packages/**/*.{ts,tsx}"
       - name: Lint
         run: pnpm lint
       - name: Typecheck
@@ -81,9 +90,11 @@ jobs:
         run: pnpm build
 
   api:
+    name: api
     needs: changed
     if: needs.changed.outputs.api == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     services:
       postgres:
         image: pgvector/pgvector:pg16
@@ -126,9 +137,11 @@ jobs:
         run: uv run pytest --cov=src --cov-report=term-missing
 
   mobile:
+    name: mobile
     needs: changed
     if: needs.changed.outputs.mobile == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: apps/mobile
@@ -155,3 +168,94 @@ jobs:
         run: flutter analyze
       - name: Test
         run: flutter test
+
+  commitlint:
+    name: commitlint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check commit messages
+        uses: wagoid/commitlint-github-action@v6
+        with:
+          configFile: commitlint.config.mjs
+          failOnErrors: true
+
+  security:
+    name: security
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+          run_install: false
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+      - name: Audit JavaScript dependencies
+        run: pnpm audit --audit-level=high
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Audit Python dependencies
+        working-directory: apps/api
+        run: |
+          uv export --frozen --no-dev --no-hashes --no-emit-project \
+            --format requirements-txt -o "$RUNNER_TEMP/requirements.txt"
+          uvx pip-audit -r "$RUNNER_TEMP/requirements.txt"
+
+  ci:
+    name: CI
+    if: always()
+    needs: [web, api, mobile, commitlint, security]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Verify every required job succeeded
+        env:
+          WEB_RESULT: ${{ needs.web.result }}
+          API_RESULT: ${{ needs.api.result }}
+          MOBILE_RESULT: ${{ needs.mobile.result }}
+          COMMITLINT_RESULT: ${{ needs.commitlint.result }}
+          SECURITY_RESULT: ${{ needs.security.result }}
+        run: |
+          status=0
+          check_required() {
+            if [ "$2" != "success" ]; then
+              echo "::error::$1 did not succeed (result: $2)"
+              status=1
+            fi
+          }
+          check_optional() {
+            case "$2" in
+              success|skipped) ;;
+              *)
+                echo "::error::$1 did not succeed (result: $2)"
+                status=1
+                ;;
+            esac
+          }
+          check_required commitlint "$COMMITLINT_RESULT"
+          check_required security "$SECURITY_RESULT"
+          check_optional web "$WEB_RESULT"
+          check_optional api "$API_RESULT"
+          check_optional mobile "$MOBILE_RESULT"
+          exit $status

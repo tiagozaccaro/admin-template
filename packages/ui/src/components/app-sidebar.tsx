@@ -28,11 +28,6 @@ import {
 } from "@remixicon/react"
 
 const data = {
-  user: {
-    name: "Admin User",
-    email: "user@example.com",
-    avatar: "/placeholder.svg",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -80,7 +75,24 @@ const data = {
     },
   ],
 }
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  user,
+  onSignOut,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & {
+  user: { name: string; email: string; avatar: string }
+  onSignOut?: () => void
+}) {
+  function handleSignOut() {
+    if (onSignOut) {
+      onSignOut()
+      return
+    }
+    if (typeof window !== "undefined") {
+      window.location.href = "/auth/logout"
+    }
+  }
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -99,10 +111,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavSecondary
+          items={data.navSecondary}
+          className="mt-auto"
+          onItemClick={(item) => {
+            if (item.title === "Sign out" || item.title === "Log out") {
+              handleSignOut()
+            }
+          }}
+        />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} onSignOut={handleSignOut} />
       </SidebarFooter>
     </Sidebar>
   )

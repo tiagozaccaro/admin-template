@@ -20,7 +20,7 @@ services:
   postgres:
     image: postgres:16
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-admin-template}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin-template}
@@ -83,8 +83,10 @@ services:
 
   web:
     build:
-      context: ../apps/web
-      dockerfile: Dockerfile
+      # The web image is built from the repository root: the Dockerfile needs
+      # the pnpm workspace (lockfile and every workspace manifest).
+      context: ..
+      dockerfile: apps/web/Dockerfile
     environment:
       NEXT_PUBLIC_API_URL: http://api:8000
     depends_on:
