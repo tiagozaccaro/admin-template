@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  merge_group:
   workflow_dispatch:
 
 permissions:
@@ -21,13 +22,14 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
-      web: ${{ steps.filter.outputs.web_any_changed }}
-      api: ${{ steps.filter.outputs.api_any_changed }}
-      mobile: ${{ steps.filter.outputs.mobile_any_changed }}
-      packages: ${{ steps.filter.outputs.packages_any_changed }}
+      web: ${{ github.event_name == 'merge_group' || steps.filter.outputs.web_any_changed == 'true' }}
+      api: ${{ github.event_name == 'merge_group' || steps.filter.outputs.api_any_changed == 'true' }}
+      mobile: ${{ github.event_name == 'merge_group' || steps.filter.outputs.mobile_any_changed == 'true' }}
+      packages: ${{ github.event_name == 'merge_group' || steps.filter.outputs.packages_any_changed == 'true' }}
     steps:
       - uses: actions/checkout@v4
       - name: Filter changed paths
+        if: github.event_name != 'merge_group'
         uses: tj-actions/changed-files@v46
         id: filter
         with:
