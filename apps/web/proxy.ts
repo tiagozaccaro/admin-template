@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server"
 // Session cookie issued by the backend on successful authentication.
 const SESSION_COOKIE = "admin_template_session"
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const hasSession = request.cookies.has(SESSION_COOKIE)
 
   const { pathname } = request.nextUrl
