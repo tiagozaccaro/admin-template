@@ -14,7 +14,7 @@ import {
 } from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
 
-export function SignupForm({ onSubmit, ...props }: React.ComponentProps<typeof Card> & { onSubmit?: (data: { email: string; password: string; display_name?: string }) => void }) {
+export function SignupForm({ onSubmit, ...props }: Omit<React.ComponentProps<typeof Card>, "onSubmit"> & { onSubmit?: (data: { email: string; password: string; display_name?: string }) => void | Promise<void> }) {
   return (
     <Card {...props}>
       <CardHeader>
