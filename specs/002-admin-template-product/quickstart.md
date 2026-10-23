@@ -7,7 +7,7 @@
 1. Install dependencies: `pnpm install` (web), `uv sync` (api), `flutter pub get` (mobile).
 2. Configure env from `.env.example` files (no real secrets).
 3. Start PostgreSQL; apply migrations: `uv run alembic upgrade head`.
-4. Start API: `uv run uvicorn admin_template.main:app --reload`.
+4. Start API: `uv run uvicorn admin_template.api.main:app --reload`.
 5. Start web: `pnpm --filter web dev`.
 6. Run mobile: `flutter run` on a supported target.
 
