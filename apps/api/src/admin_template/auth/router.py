@@ -187,3 +187,183 @@ async def logout(
         samesite=settings.session_cookie_samesite,
     )
     return LogoutResponse(status="revoked")
+
+
+# ---------------------------------------------------------------------------
+# Local auth lifecycle (register / verify / reset / delete)
+# ---------------------------------------------------------------------------
+
+import hashlib
+import secrets
+from datetime import UTC, datetime, timedelta
+
+from pydantic import BaseModel as _BM
+
+from admin_template.core.db import db as _db
+from admin_template.core.email import EmailMessage, send_email
+from admin_template.core.security import hash_password
+from admin_template.modules.identity.models.email_verification_token import (
+    EmailVerificationToken,
+)
+from admin_template.modules.identity.models.password_reset_token import (
+    PasswordResetToken,
+)
+
+
+class RegisterRequest(_BM):
+    email: str
+    password: str
+    display_name: str | None = None
+
+
+class TokenRequest(_BM):
+    token: str
+
+
+class ResetRequest(_BM):
+    email: str
+
+
+class ResetConfirmRequest(_BM):
+    token: str
+    new_password: str
+
+
+def _hash_token(raw: str) -> str:
+    return hashlib.sha256(raw.encode()).hexdigest()
+
+
+async def _session_factory():
+    if _db.session_factory is None:
+        _db.init()
+    assert _db.session_factory is not None
+    return _db.session_factory
+
+
+@router.post("/register", summary="Register with email/password")
+async def register(payload: RegisterRequest) -> dict:
+    async with (await _session_factory())() as session:
+        from sqlalchemy import select
+
+        result = await session.execute(select(User).where(User.email == payload.email))
+        if result.scalars().first() is not None:
+            raise HTTPException(status_code=409, detail="Email already registered")
+        user = User(
+            email=payload.email,
+            display_name=payload.display_name,
+            password_hash=hash_password(payload.password),
+            email_verified=False,
+        )
+        session.add(user)
+        await session.flush()
+
+        raw = secrets.token_urlsafe(32)
+        session.add(
+            EmailVerificationToken(
+                user_id=user.id,
+                token_hash=_hash_token(raw),
+                expires_at=datetime.now(UTC) + timedelta(hours=24),
+            )
+        )
+        await session.commit()
+        await session.refresh(user)
+
+    await send_email(
+        EmailMessage(
+            to=payload.email,
+            subject="Verify your email",
+            body=f"Use this token to verify: {raw}",
+        )
+    )
+    return {"status": "registered", "user_id": str(user.id)}
+
+
+@router.post("/verify-email", summary="Verify email with token")
+async def verify_email(payload: TokenRequest) -> dict:
+    async with (await _session_factory())() as session:
+        from sqlalchemy import select
+
+        result = await session.execute(
+            select(EmailVerificationToken).where(
+                EmailVerificationToken.token_hash == _hash_token(payload.token)
+            )
+        )
+        tok = result.scalars().first()
+        if tok is None or tok.used_at is not None:
+            raise HTTPException(status_code=400, detail="Invalid or used token")
+        if tok.expires_at < datetime.now(UTC):
+            raise HTTPException(status_code=400, detail="Token expired")
+        user = await session.get(User, tok.user_id)
+        if user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        user.email_verified = True
+        tok.used_at = datetime.now(UTC)
+        await session.commit()
+    return {"status": "verified"}
+
+
+@router.post("/request-reset", summary="Request password reset")
+async def request_reset(payload: ResetRequest) -> dict:
+    async with (await _session_factory())() as session:
+        from sqlalchemy import select
+
+        result = await session.execute(select(User).where(User.email == payload.email))
+        user = result.scalars().first()
+        if user is not None and user.deleted_at is None:
+            raw = secrets.token_urlsafe(32)
+            session.add(
+                PasswordResetToken(
+                    user_id=user.id,
+                    token_hash=_hash_token(raw),
+                    expires_at=datetime.now(UTC) + timedelta(hours=1),
+                )
+            )
+            await session.commit()
+            await send_email(
+                EmailMessage(
+                    to=payload.email,
+                    subject="Password reset",
+                    body=f"Use this token to reset: {raw}",
+                )
+            )
+    return {"status": "ok"}
+
+
+@router.post("/reset-password", summary="Reset password with token")
+async def reset_password(payload: ResetConfirmRequest) -> dict:
+    async with (await _session_factory())() as session:
+        from sqlalchemy import select
+
+        result = await session.execute(
+            select(PasswordResetToken).where(
+                PasswordResetToken.token_hash == _hash_token(payload.token)
+            )
+        )
+        tok = result.scalars().first()
+        if tok is None or tok.used_at is not None:
+            raise HTTPException(status_code=400, detail="Invalid or used token")
+        if tok.expires_at < datetime.now(UTC):
+            raise HTTPException(status_code=400, detail="Token expired")
+        user = await session.get(User, tok.user_id)
+        if user is None or user.deleted_at is not None:
+            raise HTTPException(status_code=404, detail="User not found")
+        user.password_hash = hash_password(payload.new_password)
+        tok.used_at = datetime.now(UTC)
+        await session.commit()
+    return {"status": "reset"}
+
+
+@router.delete("/account", summary="Soft-delete account")
+async def delete_account(
+    user: Annotated[User, Depends(get_current_user_from_session)],
+) -> dict:
+    async with (await _session_factory())() as session:
+        db_user = await session.get(User, user.id)
+        if db_user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        db_user.deleted_at = datetime.now(UTC)
+        db_user.email = f"deleted-{db_user.id}@example.invalid"
+        db_user.display_name = None
+        db_user.password_hash = None
+        await session.commit()
+    return {"status": "deleted"}
