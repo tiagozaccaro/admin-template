@@ -26,7 +26,7 @@ jobs:
       mobile: ${{ steps.filter.outputs.mobile_any_changed }}
       packages: ${{ steps.filter.outputs.packages_any_changed }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Filter changed paths
         uses: tj-actions/changed-files@v46
         id: filter
@@ -63,7 +63,7 @@ jobs:
       run:
         working-directory: apps/web
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Enable Corepack (pnpm)
         run: corepack enable
       - name: Setup pnpm
@@ -111,7 +111,7 @@ jobs:
     env:
       DATABASE_URL: postgresql+asyncpg://admin-template:admin-template@postgres:5432/admin-template
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
@@ -146,7 +146,7 @@ jobs:
       run:
         working-directory: apps/mobile
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Cache Flutter
         uses: actions/cache@v4
         with:
@@ -174,7 +174,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Check commit messages
@@ -190,7 +190,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Enable Corepack (pnpm)
         run: corepack enable
       - name: Setup pnpm
