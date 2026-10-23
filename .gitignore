@@ -46,6 +46,9 @@ __pycache__
 # Local Kilo plan scratch space
 .kilo/plans/
 
+# opencode local goal/session state (commands and config stay tracked)
+.opencode/goals/
+
 # spec kit
 # Machine-local Spec Kit state (see .specify/.gitignore).
 .specify/feature.json
