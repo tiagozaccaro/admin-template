@@ -5,8 +5,9 @@ from __future__ import annotations
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Query, status
+from fastapi.responses import RedirectResponse, Response
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
 
 from admin_template.auth.oidc import (
@@ -28,6 +29,7 @@ from admin_template.modules.identity.service import (
 )
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
 class AuthorizationStartResponse(BaseModel):
@@ -157,11 +159,31 @@ async def me(
 
 @router.post("/logout", response_model=LogoutResponse, summary="Logout")
 async def logout(
-    session_id: str,
+    response: Response,
+    session_id: str | None = Query(default=None),
+    session_cookie: str | None = Cookie(
+        default=None, alias=settings.session_cookie_name
+    ),
+    credentials: Annotated[
+        HTTPAuthorizationCredentials | None, Depends(bearer_scheme)
+    ] = None,
 ) -> LogoutResponse:
     """Revoke a server-side session (logout)."""
-    try:
-        await revoke_session(uuid.UUID(session_id))
-    except (ValueError, AttributeError):
-        pass
+    token = (
+        session_id
+        or session_cookie
+        or (credentials.credentials if credentials else None)
+    )
+    if token:
+        try:
+            await revoke_session(uuid.UUID(token))
+        except (ValueError, AttributeError):
+            pass
+    response.delete_cookie(
+        key=settings.session_cookie_name,
+        path="/",
+        httponly=True,
+        secure=settings.session_cookie_secure,
+        samesite=settings.session_cookie_samesite,
+    )
     return LogoutResponse(status="revoked")
