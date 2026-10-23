@@ -6,6 +6,7 @@ Sensitive values are resolved from environment variables or Docker
 """
 
 import json
+from pathlib import Path
 from typing import Annotated, Literal
 
 from pydantic import Field, field_validator
@@ -15,8 +16,9 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
+    _env_files = [Path.cwd() / ".env", Path(__file__).resolve().parents[3] / ".env"]
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=[str(p) for p in _env_files if p.is_file()],
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
