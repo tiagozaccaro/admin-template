@@ -21,36 +21,37 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
-      web: ${{ steps.filter.outputs.web }}
-      api: ${{ steps.filter.outputs.api }}
-      mobile: ${{ steps.filter.outputs.mobile }}
-      packages: ${{ steps.filter.outputs.packages }}
+      web: ${{ steps.filter.outputs.web_any_changed }}
+      api: ${{ steps.filter.outputs.api_any_changed }}
+      mobile: ${{ steps.filter.outputs.mobile_any_changed }}
+      packages: ${{ steps.filter.outputs.packages_any_changed }}
     steps:
       - uses: actions/checkout@v4
       - name: Filter changed paths
         uses: tj-actions/changed-files@v46
         id: filter
         with:
-          web: |-
-            **.ts
-            **.tsx
-            **.js
-            **.jsx
-            **.json
-            **.mjs
-            **.cjs
-            apps/web/**
-            packages/**
-            turbo.json
-            package.json
-            pnpm-lock.yaml
-            pnpm-workspace.yaml
-          api: |-
-            apps/api/**
-          mobile: |-
-            apps/mobile/**
-          packages: |-
-            packages/**
+          files_yaml: |
+            web:
+              - '**.ts'
+              - '**.tsx'
+              - '**.js'
+              - '**.jsx'
+              - '**.json'
+              - '**.mjs'
+              - '**.cjs'
+              - 'apps/web/**'
+              - 'packages/**'
+              - 'turbo.json'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+            api:
+              - 'apps/api/**'
+            mobile:
+              - 'apps/mobile/**'
+            packages:
+              - 'packages/**'
 
   web:
     name: web
@@ -222,7 +223,7 @@ jobs:
           uvx pip-audit -r "$RUNNER_TEMP/requirements.txt"
 
   ci:
-    name: ci
+    name: CI
     if: always()
     needs: [web, api, mobile, commitlint, security]
     runs-on: ubuntu-24.04
