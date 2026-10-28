@@ -96,6 +96,11 @@ class Settings(BaseSettings):
     # OpenTelemetry trace export endpoint
     otlp_endpoint: str = "http://localhost:4318/v1/traces"
 
+    # Kilo gateway (OpenAI-compatible)
+    kilo_api_base: str = "https://api.kilo.ai/v1"
+    kilo_api_key: str | None = None
+    kilo_model: str = "kilo-auto/free"
+
     def model_post_init(self, /, __context) -> None:
         """Resolve Docker `_FILE` secret mounts after field init.
 
