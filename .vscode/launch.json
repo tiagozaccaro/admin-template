@@ -15,6 +15,11 @@
       "name": "Full Stack",
       "configurations": ["Web (Next.js)", "API (FastAPI)", "Mobile (Flutter)"],
       "stopAll": true
+    },
+    {
+      "name": "Full Stack + Agent",
+      "configurations": ["Web (Next.js)", "API (FastAPI)", "Agent (Python)"],
+      "stopAll": true
     }
   ],
   "configurations": [
