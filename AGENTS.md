@@ -53,6 +53,13 @@ This block is written and re-added by `turbo` before repository-scoped commands 
 - Never claim checks passed unless executed. Distinguish passed/failed/skipped/blocked.
 - Inspect final diff and report unresolved risks.
 
+## Fixing, not removing
+
+- When asked to fix a bug or broken behavior, diagnose the root cause and repair it in place.
+- Do not "fix" by deleting, rolling back, gutting, or commenting out the offending code unless the user explicitly requests removal.
+- Preserve existing functionality, UI, and tests; if a change must remove code, justify it in the completion report and confirm with the user first.
+- Never silently drop features, imports, or components to make checks pass.
+
 # Admin Template Engineering Standards
 
 ## Role

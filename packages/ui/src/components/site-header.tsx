@@ -1,5 +1,6 @@
 import { Separator } from "@workspace/ui/components/separator"
 import { SidebarTrigger } from "@workspace/ui/components/sidebar"
+import { AgentSidebarTrigger } from "@workspace/ui/components/agent-sidebar-trigger"
 
 export function SiteHeader() {
   return (
@@ -11,6 +12,7 @@ export function SiteHeader() {
           className="mx-2 h-4 data-vertical:self-auto"
         />
         <h1 className="text-base font-medium">Documents</h1>
+        <div className="ml-auto" />
       </div>
     </header>
   )

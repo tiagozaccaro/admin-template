@@ -2,9 +2,7 @@
 
 import * as React from "react"
 
-import { NavDocuments } from "@workspace/ui/components/nav-documents"
 import { NavMain } from "@workspace/ui/components/nav-main"
-import { NavSecondary } from "@workspace/ui/components/nav-secondary"
 import { NavUser } from "@workspace/ui/components/nav-user"
 import {
   Sidebar,
@@ -15,17 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
-import {
-  RiDashboardLine,
-  RiBarChartLine,
-  RiGroupLine,
-  RiSettingsLine,
-  RiFileChartLine,
-  RiFileTextLine,
-  RiQuestionLine,
-  RiLogoutBoxLine,
-  RiCommandLine,
-} from "@remixicon/react"
+import { RiDashboardLine, RiCommandLine, RiRobot2Line } from "@remixicon/react"
 
 const data = {
   navMain: [
@@ -35,38 +23,9 @@ const data = {
       icon: <RiDashboardLine />,
     },
     {
-      title: "Items",
-      url: "/items",
-      icon: <RiFileTextLine />,
-    },
-    {
-      title: "Account",
-      url: "/account",
-      icon: <RiSettingsLine />,
-    },
-  ],
-  documents: [
-    {
-      name: "Reports",
-      url: "#",
-      icon: <RiFileChartLine />,
-    },
-    {
-      name: "Activity log",
-      url: "#",
-      icon: <RiFileTextLine />,
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Help",
-      url: "#",
-      icon: <RiQuestionLine />,
-    },
-    {
-      title: "Sign out",
-      url: "#",
-      icon: <RiLogoutBoxLine />,
+      title: "Chat",
+      url: "/chat",
+      icon: <RiRobot2Line />,
     },
   ],
 }
@@ -105,16 +64,6 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary
-          items={data.navSecondary}
-          className="mt-auto"
-          onItemClick={(item) => {
-            if (item.title === "Sign out" || item.title === "Log out") {
-              handleSignOut()
-            }
-          }}
-        />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} onSignOut={handleSignOut} />

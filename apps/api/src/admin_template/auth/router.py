@@ -25,6 +25,7 @@ from admin_template.core.settings import settings
 from admin_template.modules.identity.models.user import User
 from admin_template.modules.identity.service import (
     IdentityLinkError,
+    IdentityServiceUnavailableError,
     get_or_create_user_from_claims,
 )
 
@@ -119,6 +120,11 @@ async def google_callback(
     except IdentityLinkError as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
+            detail=str(exc),
+        )
+    except IdentityServiceUnavailableError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=str(exc),
         )
 
