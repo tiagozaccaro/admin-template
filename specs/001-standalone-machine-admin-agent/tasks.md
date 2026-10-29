@@ -12,17 +12,17 @@
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-- [ ] T005 Create core API agents module package at `apps/api/src/admin_template/modules/agents/__init__.py`
-- [ ] T006 [P] Create Agent model in `apps/api/src/admin_template/modules/agents/models.py`
-- [ ] T007 [P] Create AgentSession model in `apps/api/src/admin_template/modules/agents/models.py`
-- [ ] T008 [P] Create AuditEntry model in `apps/api/src/admin_template/modules/agents/models.py`
-- [ ] T009 Create Alembic migration for agent tables in `apps/api/migrations/versions/`
-- [ ] T010 Create agent service in `apps/api/src/admin_template/modules/agents/service.py`
-- [ ] T011 Create agent router in `apps/api/src/admin_template/modules/agents/router.py`
-- [ ] T012 Wire agent router in `apps/api/src/admin_template/api/main.py`
-- [ ] T013 [P] Create agent daemon entrypoint in `apps/agent/src/admin_template_agent/main.py`
-- [ ] T014 [P] Create agent config in `apps/agent/src/admin_template_agent/config.py`
-- [ ] T015 [P] Create agent auth in `apps/agent/src/admin_template_agent/auth.py`
+- [x] T005 Create core API agents module package at `apps/api/src/admin_template/modules/agents/__init__.py`
+- [x] T006 [P] Create Agent model in `apps/api/src/admin_template/modules/agents/models.py`
+- [x] T007 [P] Create AgentSession model in `apps/api/src/admin_template/modules/agents/models.py`
+- [x] T008 [P] Create AuditEntry model in `apps/api/src/admin_template/modules/agents/models.py`
+- [x] T009 Create Alembic migration for agent tables in `apps/api/migrations/versions/`
+- [x] T010 Create agent service in `apps/api/src/admin_template/modules/agents/service.py`
+- [x] T011 Create agent router in `apps/api/src/admin_template/modules/agents/router.py`
+- [x] T012 Wire agent router in `apps/api/src/admin_template/api/main.py`
+- [x] T013 [P] Create agent daemon entrypoint in `apps/agent/src/admin_template_agent/main.py`
+- [x] T014 [P] Create agent config in `apps/agent/src/admin_template_agent/config.py`
+- [x] T015 [P] Create agent auth in `apps/agent/src/admin_template_agent/auth.py`
 
 ## Phase 3: User Story 1 - Connect to local agent and chat (Priority: P1)
 
