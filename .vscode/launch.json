@@ -34,6 +34,15 @@
       "preLaunchTask": "prepare: all dependencies"
     },
     {
+      "name": "Agent (Python)",
+      "type": "python",
+      "request": "launch",
+      "module": "admin_template_agent.main",
+      "cwd": "${workspaceFolder}/apps/agent",
+      "console": "integratedTerminal",
+      "python": "${workspaceFolder}/apps/agent/.venv/bin/python"
+    },
+    {
       "name": "Mobile (Flutter)",
       "type": "dart",
       "request": "launch",

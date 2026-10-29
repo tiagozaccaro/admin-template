@@ -22,6 +22,16 @@
       "problemMatcher": []
     },
     {
+      "label": "install: agent dependencies",
+      "type": "shell",
+      "command": "uv",
+      "args": ["sync"],
+      "options": {
+        "cwd": "${workspaceFolder}/apps/agent"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "install: mobile dependencies",
       "type": "shell",
       "command": "flutter",
