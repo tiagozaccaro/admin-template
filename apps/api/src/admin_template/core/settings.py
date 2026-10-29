@@ -31,7 +31,7 @@ class Settings(BaseSettings):
 
     # Server
     api_port: int = 8000
-    cors_origins: Annotated[list[str], NoDecode] = []
+    cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:3000"]
 
     @field_validator("cors_origins", mode="before")
     @classmethod
@@ -52,6 +52,9 @@ class Settings(BaseSettings):
 
     # Redis (queue + cache + sessions)
     redis_url: str = "redis://localhost:6379/0"
+
+    # Chat models (JSON list of {provider, model})
+    chat_models: str = '[{"provider":"openai","model":"gpt-4o"},{"provider":"anthropic","model":"claude-3-5-sonnet-latest"}]'
 
     # Keycloak OIDC
     keycloak_jwks_url: str | None = Field(

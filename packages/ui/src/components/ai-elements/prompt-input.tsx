@@ -68,7 +68,7 @@ export function PromptInput({
   onSubmit,
   disabled,
 }: {
-  onSubmit: (text: string) => void
+  onSubmit: (text: string, model: string) => void
   disabled?: boolean
 }) {
   const [text, setText] = React.useState("")
@@ -88,7 +88,7 @@ export function PromptInput({
       return
     }
 
-    onSubmit(text)
+    onSubmit(text, model)
     setText("")
     setFiles([])
   }
