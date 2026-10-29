@@ -5,10 +5,10 @@
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 Create `apps/agent` project structure per plan.md
-- [ ] T002 Initialize Python project with pyproject.toml in `apps/agent/pyproject.toml`
-- [ ] T003 [P] Configure ruff/pyright in `apps/agent/pyproject.toml`
-- [ ] T004 Create Dockerfile at `apps/agent/Dockerfile`
+- [x] T001 Create `apps/agent` project structure per plan.md
+- [x] T002 Initialize Python project with pyproject.toml in `apps/agent/pyproject.toml`
+- [x] T003 [P] Configure ruff/pyright in `apps/agent/pyproject.toml`
+- [x] T004 Create Dockerfile at `apps/agent/Dockerfile`
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
