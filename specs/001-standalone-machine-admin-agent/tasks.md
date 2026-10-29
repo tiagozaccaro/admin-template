@@ -62,12 +62,12 @@
 
 ## Final Phase: Polish & Cross-Cutting Concerns
 
-- [ ] T034 [P] MCP client integration in `apps/agent/src/admin_template_agent/mcp.py`
-- [ ] T035 [P] Skills loader in `apps/agent/src/admin_template_agent/skills.py`
-- [ ] T036 [P] Mobile agent list screen in `apps/mobile/lib/features/agents/agent_list_screen.dart`
-- [ ] T037 [P] Mobile chat screen in `apps/mobile/lib/features/agents/agent_chat_screen.dart`
-- [ ] T038 Documentation updates in `docs/agent.md`
-- [ ] T039 Run quickstart validation
+- [x] T034 [P] MCP client integration in `apps/agent/src/admin_template_agent/mcp.py`
+- [x] T035 [P] Skills loader in `apps/agent/src/admin_template_agent/skills.py`
+- [x] T036 [P] Mobile agent list screen in `apps/mobile/lib/features/agents/agent_list_screen.dart`
+- [x] T037 [P] Mobile chat screen in `apps/mobile/lib/features/agents/agent_chat_screen.dart`
+- [x] T038 Documentation updates in `docs/agent.md`
+- [x] T039 Run quickstart validation
 
 ## Dependencies
 
