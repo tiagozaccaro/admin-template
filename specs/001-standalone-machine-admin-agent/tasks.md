@@ -43,11 +43,11 @@
 **Goal**: Register and health-check remote agents.
 **Independent Test**: Register by URL+token, verify health, chat.
 
-- [ ] T024 [US2] Implement registry CRUD service in `apps/api/src/admin_template/modules/agents/service.py`
-- [ ] T025 [US2] Implement registry router endpoints in `apps/api/src/admin_template/modules/agents/router.py`
-- [ ] T026 [US2] Health check background task in `apps/api/src/admin_template/modules/agents/health.py`
-- [ ] T027 [US2] Web agents management page in `apps/web/app/agents/page.tsx`
-- [ ] T028 [US2] Web register agent form in `apps/web/components/register-agent-form.tsx`
+- [x] T024 [US2] Implement registry CRUD service in `apps/api/src/admin_template/modules/agents/service.py`
+- [x] T025 [US2] Implement registry router endpoints in `apps/api/src/admin_template/modules/agents/router.py`
+- [x] T026 [US2] Health check background task in `apps/api/src/admin_template/modules/agents/health.py`
+- [x] T027 [US2] Web agents management page in `apps/web/app/agents/page.tsx`
+- [x] T028 [US2] Web register agent form in `apps/web/components/register-agent-form.tsx`
 
 ## Phase 5: User Story 3 - Approve destructive actions (Priority: P3)
 
