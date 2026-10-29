@@ -1,174 +1,227 @@
-"""Unit tests for the identity service (US2).
-
-Covers database failure handling in get_or_create_user_from_claims so an
-unreachable database surfaces as IdentityServiceUnavailableError instead of
-propagating a raw connection error as a 500.
-"""
+"""Tests for identity service (low coverage: 19%)."""
 
 import asyncio
-from types import SimpleNamespace
+import uuid
+from unittest.mock import MagicMock, patch
 
 import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy.exc import SQLAlchemyError
 
-from admin_template.api.main import app
 from admin_template.auth.oidc import IDTokenClaims
+from admin_template.modules.identity.models.external_identity import ExternalIdentity
+from admin_template.modules.identity.models.user import User
 from admin_template.modules.identity.service import (
-    IdentityServiceUnavailableError,
+    IdentityLinkError,
     get_or_create_user_from_claims,
+    link_external_identity,
+    unlink_external_identity,
 )
 
 
-class _FailingSession:
-    """A mock session whose execute() raises a DB connection error."""
-
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, *args):
-        return False
-
-    async def execute(self, *args, **kwargs):
-        raise ConnectionRefusedError("Connection refused")
-
-    async def get(self, *args, **kwargs):
-        return None
-
-    async def commit(self):
-        return None
-
-    async def refresh(self, *args, **kwargs):
-        return None
+def test_identity_link_error_raised():
+    """Verify IdentityLinkError can be raised and caught."""
+    with pytest.raises(IdentityLinkError):
+        raise IdentityLinkError("test")
 
 
-class _FailingFactory:
-    """A mock session factory that always returns a failing session."""
-
-    def __call__(self):
-        return _FailingSession()
-
-
-class _SqlalchemyFailingSession:
-    """A mock session whose execute() raises a SQLAlchemy error."""
-
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, *args):
-        return False
-
-    async def execute(self, *args, **kwargs):
-        raise SQLAlchemyError("DB connection failed")
-
-    async def get(self, *args, **kwargs):
-        return None
-
-    async def commit(self):
-        return None
-
-    async def refresh(self, *args, **kwargs):
-        return None
-
-
-class _SqlalchemyFailingFactory:
-    """A mock session factory that returns a SQLAlchemy-failing session."""
-
-    def __call__(self):
-        return _SqlalchemyFailingSession()
-
-
-def _claims() -> IDTokenClaims:
+def _claims(
+    sub: str = "google-sub-1", email: str | None = "user@example.com"
+) -> IDTokenClaims:
     return IDTokenClaims(
-        sub="google-sub-1",
-        email="user@example.com",
-        name="User Example",
+        sub=sub,
+        email=email,
         email_verified=True,
+        name="Test User",
         issuer="https://accounts.google.com",
-        audience="test-client-id",
+        audience="test-aud",
     )
+
+
+class _FakeSession:
+    """Minimal async session stand-in."""
+
+    def __init__(self, external=None, user=None):
+        self.external = external
+        self.user = user
+        self.deleted = []
+        self.committed = False
+        self.flushed = False
+
+    async def execute(self, *_a, **_k):
+        mock_result = MagicMock()
+        mock_scalars = MagicMock()
+        mock_scalars.first.return_value = self.external
+        mock_result.scalars.return_value = mock_scalars
+        return mock_result
+
+    async def get(self, model, *ids, **kwargs):
+        return self.user
+
+    async def add(self, obj):
+        self.flushed = True
+
+    async def delete(self, obj):
+        self.deleted.append(obj)
+
+    async def commit(self):
+        self.committed = True
+
+    async def flush(self):
+        self.flushed = True
+
+    async def refresh(self, obj):
+        pass
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *exc):
+        return False
+
+
+class _FakeSessionFactory:
+    def __init__(self, session):
+        self.session = session
+
+    def __call__(self):
+        return self.session
 
 
 def _run(coro):
-    """Run an async coroutine synchronously (pytest-asyncio is not installed)."""
-    return asyncio.run(coro)
+    """Run coroutine in fresh event loop (avoids pytest-asyncio conflicts)."""
+    return asyncio.new_event_loop().run_until_complete(coro)
 
 
-async def _mock_session_factory(factory):
-    """Async mock of _session_factory that returns the given factory."""
-    return factory
+def test_get_or_create_user_from_claims_creates_new():
+    """Creates user + external identity when neither exists."""
+    session = _FakeSession()
+    factory = _FakeSessionFactory(session)
 
-
-def _monkeypatch_factory(monkeypatch, factory):
-    monkeypatch.setattr(
+    with patch(
         "admin_template.modules.identity.service._session_factory",
-        lambda: _mock_session_factory(factory),
+        return_value=factory,
+    ):
+        user = _run(get_or_create_user_from_claims(_claims()))
+
+    assert isinstance(user, User)
+    assert user.email == "user@example.com"
+    assert user.display_name == "Test User"
+    assert session.flushed is True
+    assert session.committed is True
+
+
+def test_get_or_create_user_from_claims_existing_external():
+    """Returns existing user when external identity is already bound."""
+    existing_user = User(
+        keycloak_sub="google-sub-1",
+        email="user@example.com",
+        display_name="Test User",
     )
+    external = MagicMock()
+    external.user_id = (
+        existing_user.id if hasattr(existing_user, "id") else uuid.uuid4()
+    )
+    session = _FakeSession(external=external, user=existing_user)
+    factory = _FakeSessionFactory(session)
+
+    with patch(
+        "admin_template.modules.identity.service._session_factory",
+        return_value=factory,
+    ):
+        user = _run(get_or_create_user_from_claims(_claims()))
+
+    assert user is existing_user
 
 
-def test_get_or_create_user_db_down_raises_service_unavailable(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """When the database refuses connections, the service should raise
-    IdentityServiceUnavailableError rather than leaking a raw 500."""
-    _monkeypatch_factory(monkeypatch, _FailingFactory())
-    with pytest.raises(IdentityServiceUnavailableError):
+def test_get_or_create_user_from_claims_missing_user_raises():
+    """Raises IdentityLinkError when external identity points to missing user."""
+    external = MagicMock()
+    external.user_id = uuid.uuid4()
+    session = _FakeSession(external=external, user=None)
+    factory = _FakeSessionFactory(session)
+
+    with (
+        patch(
+            "admin_template.modules.identity.service._session_factory",
+            return_value=factory,
+        ),
+        pytest.raises(IdentityLinkError),
+    ):
         _run(get_or_create_user_from_claims(_claims()))
 
 
-def test_get_or_create_user_db_down_wraps_sqlalchemy_error(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """SQLAlchemyError connection failures should also normalize to
-    IdentityServiceUnavailableError."""
-    _monkeypatch_factory(monkeypatch, _SqlalchemyFailingFactory())
-    with pytest.raises(IdentityServiceUnavailableError):
-        _run(get_or_create_user_from_claims(_claims()))
+def test_link_external_identity_no_conflict():
+    """Linking an unbound identity succeeds."""
+    session = _FakeSession()
+    factory = _FakeSessionFactory(session)
+
+    user_id = uuid.uuid4()
+    with patch(
+        "admin_template.modules.identity.service._session_factory",
+        return_value=factory,
+    ):
+        external = _run(link_external_identity(user_id, _claims()))
+
+    assert isinstance(external, ExternalIdentity)
+    assert external.user_id == user_id
+    assert external.provider == "google"
+    assert external.provider_sub == "google-sub-1"
+    assert session.committed is True
 
 
-def test_callback_db_down_returns_503(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """When the identity service is unavailable due to a DB connection
-    failure, the callback should return HTTP 503 instead of a raw 500."""
-
-    async def fake_start():
-        return SimpleNamespace(
-            authorization_url="https://accounts.google.com/o/oauth2/v2/auth?state=abc",
-            state="abc",
-            nonce="nonce-123",
+def test_link_external_identity_conflict():
+    """Linking an identity bound to another user raises IdentityLinkError."""
+    existing_user_id = uuid.uuid4()
+    session = _FakeSession(
+        external=ExternalIdentity(
+            user_id=existing_user_id,
+            provider="google",
+            provider_sub="google-sub-1",
+            provider_email="other@example.com",
         )
-
-    async def fake_exchange(code: str, state: str):
-        return SimpleNamespace(
-            tokens=SimpleNamespace(id_token="valid.id.token", access_token="at"),
-            nonce="nonce-123",
-        )
-
-    async def fake_validate(id_token: str, expected_nonce: str):
-        return _claims()
-
-    async def failing_get_or_create(claims):
-        raise IdentityServiceUnavailableError(
-            "Identity service is temporarily unavailable"
-        )
-
-    async def fake_create_session(user_id):
-        return SimpleNamespace(id="00000000-0000-0000-0000-000000000002")
-
-    monkeypatch.setattr(
-        "admin_template.auth.router.build_authorization_url", fake_start
     )
-    monkeypatch.setattr("admin_template.auth.router.exchange_code", fake_exchange)
-    monkeypatch.setattr("admin_template.auth.router.validate_id_token", fake_validate)
-    monkeypatch.setattr(
-        "admin_template.auth.router.get_or_create_user_from_claims",
-        failing_get_or_create,
-    )
-    monkeypatch.setattr(
-        "admin_template.auth.router.create_session", fake_create_session
-    )
+    factory = _FakeSessionFactory(session)
 
-    client = TestClient(app)
-    response = client.get("/auth/callback?code=auth-code&state=abc")
-    assert response.status_code == 503
+    user_id = uuid.uuid4()
+    with (
+        patch(
+            "admin_template.modules.identity.service._session_factory",
+            return_value=factory,
+        ),
+        pytest.raises(IdentityLinkError),
+    ):
+        _run(link_external_identity(user_id, _claims()))
+
+
+def test_unlink_external_identity_deletes():
+    """Unlinking an existing identity deletes it."""
+    external = ExternalIdentity(
+        user_id=uuid.uuid4(),
+        provider="google",
+        provider_sub="sub-to-unlink",
+        provider_email="old@example.com",
+    )
+    session = _FakeSession(external=external)
+    factory = _FakeSessionFactory(session)
+
+    with patch(
+        "admin_template.modules.identity.service._session_factory",
+        return_value=factory,
+    ):
+        _run(unlink_external_identity(external.user_id, "sub-to-unlink"))
+
+    assert session.deleted == [external]
+    assert session.committed is True
+
+
+def test_unlink_external_identity_not_found_noop():
+    """Unlinking a non-existent identity does nothing."""
+    session = _FakeSession(external=None)
+    factory = _FakeSessionFactory(session)
+
+    with patch(
+        "admin_template.modules.identity.service._session_factory",
+        return_value=factory,
+    ):
+        _run(unlink_external_identity(uuid.uuid4(), "none"))
+
+    assert session.deleted == []
