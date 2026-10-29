@@ -2,9 +2,9 @@
 
 import asyncio
 import uuid
+from unittest.mock import MagicMock, patch
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
 
 from admin_template.auth.oidc import IDTokenClaims
 from admin_template.modules.identity.models.external_identity import ExternalIdentity
@@ -23,7 +23,9 @@ def test_identity_link_error_raised():
         raise IdentityLinkError("test")
 
 
-def _claims(sub: str = "google-sub-1", email: str | None = "user@example.com") -> IDTokenClaims:
+def _claims(
+    sub: str = "google-sub-1", email: str | None = "user@example.com"
+) -> IDTokenClaims:
     return IDTokenClaims(
         sub=sub,
         email=email,
@@ -36,6 +38,7 @@ def _claims(sub: str = "google-sub-1", email: str | None = "user@example.com") -
 
 class _FakeSession:
     """Minimal async session stand-in."""
+
     def __init__(self, external=None, user=None):
         self.external = external
         self.user = user
@@ -114,7 +117,9 @@ def test_get_or_create_user_from_claims_existing_external():
         display_name="Test User",
     )
     external = MagicMock()
-    external.user_id = existing_user.id if hasattr(existing_user, "id") else uuid.uuid4()
+    external.user_id = (
+        existing_user.id if hasattr(existing_user, "id") else uuid.uuid4()
+    )
     session = _FakeSession(external=external, user=existing_user)
     factory = _FakeSessionFactory(session)
 
@@ -134,12 +139,14 @@ def test_get_or_create_user_from_claims_missing_user_raises():
     session = _FakeSession(external=external, user=None)
     factory = _FakeSessionFactory(session)
 
-    with patch(
-        "admin_template.modules.identity.service._session_factory",
-        return_value=factory,
+    with (
+        patch(
+            "admin_template.modules.identity.service._session_factory",
+            return_value=factory,
+        ),
+        pytest.raises(IdentityLinkError),
     ):
-        with pytest.raises(IdentityLinkError):
-            _run(get_or_create_user_from_claims(_claims()))
+        _run(get_or_create_user_from_claims(_claims()))
 
 
 def test_link_external_identity_no_conflict():
@@ -164,21 +171,25 @@ def test_link_external_identity_no_conflict():
 def test_link_external_identity_conflict():
     """Linking an identity bound to another user raises IdentityLinkError."""
     existing_user_id = uuid.uuid4()
-    session = _FakeSession(external=ExternalIdentity(
-        user_id=existing_user_id,
-        provider="google",
-        provider_sub="google-sub-1",
-        provider_email="other@example.com",
-    ))
+    session = _FakeSession(
+        external=ExternalIdentity(
+            user_id=existing_user_id,
+            provider="google",
+            provider_sub="google-sub-1",
+            provider_email="other@example.com",
+        )
+    )
     factory = _FakeSessionFactory(session)
 
     user_id = uuid.uuid4()
-    with patch(
-        "admin_template.modules.identity.service._session_factory",
-        return_value=factory,
+    with (
+        patch(
+            "admin_template.modules.identity.service._session_factory",
+            return_value=factory,
+        ),
+        pytest.raises(IdentityLinkError),
     ):
-        with pytest.raises(IdentityLinkError):
-            _run(link_external_identity(user_id, _claims()))
+        _run(link_external_identity(user_id, _claims()))
 
 
 def test_unlink_external_identity_deletes():
