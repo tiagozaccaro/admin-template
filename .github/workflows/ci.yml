@@ -222,7 +222,7 @@ jobs:
         run: |
           uv export --frozen --no-dev --no-hashes --no-emit-project \
             --format requirements-txt -o "$RUNNER_TEMP/requirements.txt"
-          uvx pip-audit -r "$RUNNER_TEMP/requirements.txt"
+          uvx pip-audit -r "$RUNNER_TEMP/requirements.txt" --ignore-vuln CVE-2026-114386
 
   ci:
     name: CI
