@@ -29,14 +29,14 @@
 **Goal**: Default agent on server; web chat works.
 **Independent Test**: Start agent, send chat, receive stream.
 
-- [ ] T016 [US1] Implement Pydantic AI agent core in `apps/agent/src/admin_template_agent/agent/core.py`
-- [ ] T017 [P] [US1] Implement filesystem tool in `apps/agent/src/admin_template_agent/agent/tools/filesystem.py`
-- [ ] T018 [P] [US1] Implement shell tool in `apps/agent/src/admin_template_agent/agent/tools/shell.py`
-- [ ] T019 [US1] Implement chat streaming endpoint in `apps/agent/src/admin_template_agent/routers/chat.py`
-- [ ] T020 [US1] Implement session persistence in `apps/agent/src/admin_template_agent/session.py`
-- [ ] T021 [US1] Web agent selector component in `apps/web/components/agent-selector.tsx`
-- [ ] T022 [US1] Web chat page targeting agent in `apps/web/app/agents/[id]/page.tsx`
-- [ ] T023 [US1] Update web chat component to use selected agent in `apps/web/components/chat.tsx`
+- [x] T016 [US1] Implement Pydantic AI agent core in `apps/agent/src/admin_template_agent/agent/core.py`
+- [x] T017 [P] [US1] Implement filesystem tool in `apps/agent/src/admin_template_agent/agent/tools/filesystem.py`
+- [x] T018 [P] [US1] Implement shell tool in `apps/agent/src/admin_template_agent/agent/tools/shell.py`
+- [x] T019 [US1] Implement chat streaming endpoint in `apps/agent/src/admin_template_agent/routers/chat.py`
+- [x] T020 [US1] Implement session persistence in `apps/agent/src/admin_template_agent/session.py`
+- [x] T021 [US1] Web agent selector component in `apps/web/components/agent-selector.tsx`
+- [x] T022 [US1] Web chat page targeting agent in `apps/web/app/agents/[id]/page.tsx`
+- [x] T023 [US1] Update web chat component to use selected agent in `apps/web/components/chat.tsx`
 
 ## Phase 4: User Story 2 - Register remote agent (Priority: P2)
 
