@@ -33,7 +33,7 @@ class Settings(BaseSettings):
 
     # Server
     api_port: int = 8000
-    cors_origins: Annotated[list[str], NoDecode] = []
+    cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:3000"]
 
     @field_validator("cors_origins", mode="before")
     @classmethod
@@ -54,6 +54,9 @@ class Settings(BaseSettings):
 
     # Redis (queue + cache + sessions)
     redis_url: str = "redis://localhost:6379/0"
+
+    # Chat models (JSON list of {provider, model})
+    chat_models: str = '[{"provider":"openai","model":"gpt-4o"},{"provider":"anthropic","model":"claude-3-5-sonnet-latest"}]'
 
     # Keycloak OIDC
     keycloak_jwks_url: str | None = Field(
@@ -97,6 +100,11 @@ class Settings(BaseSettings):
 
     # OpenTelemetry trace export endpoint
     otlp_endpoint: str = "http://localhost:4318/v1/traces"
+
+    # Kilo gateway (OpenAI-compatible)
+    kilo_api_base: str = "https://api.kilo.ai/v1"
+    kilo_api_key: str | None = None
+    kilo_model: str = "kilo-auto/free"
 
     def model_post_init(self, /, __context) -> None:
         """Resolve Docker `_FILE` secret mounts after field init.
