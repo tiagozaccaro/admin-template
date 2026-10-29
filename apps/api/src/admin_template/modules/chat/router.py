@@ -1,3 +1,6 @@
+import os
+import tempfile
+
 from fastapi import APIRouter
 from pydantic import BaseModel
 from pydantic_ai import Agent
@@ -28,9 +31,11 @@ class ChatRequest(BaseModel):
 
 @router.post("/chat")
 async def chat(req: ChatRequest):
+    workspace = os.path.join(tempfile.gettempdir(), "admin-template-agent")
+    os.makedirs(workspace, exist_ok=True)
     agent = Agent(
         make_model(req.model),
-        capabilities=[FileSystem("."), Shell()],
+        capabilities=[FileSystem(workspace), Shell(cwd=workspace)],
     )
     prompt = req.messages[-1].get("content", "") if req.messages else ""
     result = await agent.run(prompt)
