@@ -23,7 +23,10 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
-  if (!hasSession && pathname.startsWith("/dashboard")) {
+  if (
+    !hasSession &&
+    (pathname.startsWith("/dashboard") || pathname.startsWith("/chat"))
+  ) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 

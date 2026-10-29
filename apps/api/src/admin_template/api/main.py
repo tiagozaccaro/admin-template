@@ -6,6 +6,7 @@ from admin_template.api.v1.router import router as v1_router
 from admin_template.auth.router import router as auth_router
 from admin_template.core.obs import healthz, readyz
 from admin_template.core.settings import settings
+from admin_template.modules.chat.router import router as chat_router
 
 app = FastAPI(title="Admin Template API", version="0.1.0")
 
@@ -19,6 +20,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(v1_router, prefix="/api/v1")
+app.include_router(chat_router, prefix="/api/v1")
 
 
 @app.get("/health")

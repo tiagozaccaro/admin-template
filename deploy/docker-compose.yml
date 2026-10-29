@@ -65,6 +65,9 @@ services:
       REDIS_URL: redis://redis:6379
       KEYCLOAK_JWKS_URL: http://keycloak:8080/realms/admin-template/protocol/openid-connect/certs
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/admin-template
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
     depends_on:
       postgres:
         condition: service_healthy

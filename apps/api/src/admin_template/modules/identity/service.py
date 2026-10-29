@@ -11,6 +11,7 @@ from __future__ import annotations
 import uuid
 
 from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
 
 from admin_template.auth.oidc import IDTokenClaims
 from admin_template.core.db import db
@@ -30,6 +31,15 @@ class IdentityLinkError(ValueError):
     """Raised when an external identity cannot be linked."""
 
 
+class IdentityServiceUnavailableError(RuntimeError):
+    """Raised when the identity service cannot reach the database.
+
+    Wraps underlying database/connection errors so callers can translate
+    infrastructure failures into a clear, actionable response (e.g. HTTP 503)
+    instead of leaking a raw 500 with internals.
+    """
+
+
 async def get_or_create_user_from_claims(claims: IDTokenClaims) -> User:
     """Get or create the internal User for validated Google ID token claims.
 
@@ -37,62 +47,70 @@ async def get_or_create_user_from_claims(claims: IDTokenClaims) -> User:
     neither exists. When the Google identity is already bound to a
     different user, raises IdentityLinkError (no silent merge).
     """
-    async with (await _session_factory())() as database_session:
-        # 1. Resolve by existing external identity (provider + sub).
-        result = await database_session.execute(
-            select(ExternalIdentity).where(
-                ExternalIdentity.provider == "google",
-                ExternalIdentity.provider_sub == claims.sub,
-            )
-        )
-        external = result.scalars().first()
-        if external is not None:
-            user = await database_session.get(User, external.user_id)
-            if user is None:
-                raise IdentityLinkError("External identity references missing user")
-            if claims.name and user.display_name != claims.name:
-                user.display_name = claims.name
-                await database_session.commit()
-            return user
-
-        # 2. No external identity yet: try to find an existing user by email
-        #    and link it (explicit linking for shared email). If no user,
-        #    create a new one.
-        if claims.email:
+    try:
+        async with (await _session_factory())() as database_session:
+            # 1. Resolve by existing external identity (provider + sub).
             result = await database_session.execute(
-                select(User).where(User.email == claims.email)
+                select(ExternalIdentity).where(
+                    ExternalIdentity.provider == "google",
+                    ExternalIdentity.provider_sub == claims.sub,
+                )
             )
-            user = result.scalars().first()
-            if user is None:
+            external = result.scalars().first()
+            if external is not None:
+                user = await database_session.get(User, external.user_id)
+                if user is None:
+                    raise IdentityLinkError("External identity references missing user")
+                if claims.name and user.display_name != claims.name:
+                    user.display_name = claims.name
+                    await database_session.commit()
+                return user
+
+            # 2. No external identity yet: try to find an existing user by email
+            #    and link it (explicit linking for shared email). If no user,
+            #    create a new one.
+            if claims.email:
+                result = await database_session.execute(
+                    select(User).where(User.email == claims.email)
+                )
+                user = result.scalars().first()
+                if user is None:
+                    user = User(
+                        keycloak_sub=claims.sub,
+                        email=claims.email,
+                        display_name=claims.name,
+                    )
+                    database_session.add(user)
+                    await database_session.flush()
+                elif claims.name and user.display_name != claims.name:
+                    user.display_name = claims.name
+            else:
                 user = User(
                     keycloak_sub=claims.sub,
-                    email=claims.email,
+                    email="",
                     display_name=claims.name,
                 )
                 database_session.add(user)
                 await database_session.flush()
-            elif claims.name and user.display_name != claims.name:
-                user.display_name = claims.name
-        else:
-            user = User(
-                keycloak_sub=claims.sub,
-                email="",
-                display_name=claims.name,
-            )
-            database_session.add(user)
-            await database_session.flush()
 
-        # 3. Link the external identity.
-        external = ExternalIdentity(
-            user_id=user.id,
-            provider="google",
-            provider_sub=claims.sub,
-            provider_email=claims.email,
-        )
-        database_session.add(external)
-        await database_session.commit()
-        await database_session.refresh(user)
-        return user
+            # 3. Link the external identity.
+            external = ExternalIdentity(
+                user_id=user.id,
+                provider="google",
+                provider_sub=claims.sub,
+                provider_email=claims.email,
+            )
+            database_session.add(external)
+            await database_session.commit()
+            await database_session.refresh(user)
+            return user
+    except (SQLAlchemyError, OSError) as exc:
+        # SQLAlchemy may surface connection failures as SQLAlchemyError
+        # (e.g. OperationalError) or, via asyncpg, as a raw OSError such as
+        # ConnectionRefusedError. Normalize both into a clear domain error.
+        raise IdentityServiceUnavailableError(
+            "Identity service is temporarily unavailable"
+        ) from exc
 
 
 async def link_external_identity(
@@ -103,43 +121,53 @@ async def link_external_identity(
     Raises IdentityLinkError when the identity is already bound to a
     different user (no silent merge).
     """
-    async with (await _session_factory())() as database_session:
-        result = await database_session.execute(
-            select(ExternalIdentity).where(
-                ExternalIdentity.provider == "google",
-                ExternalIdentity.provider_sub == claims.sub,
+    try:
+        async with (await _session_factory())() as database_session:
+            result = await database_session.execute(
+                select(ExternalIdentity).where(
+                    ExternalIdentity.provider == "google",
+                    ExternalIdentity.provider_sub == claims.sub,
+                )
             )
-        )
-        existing = result.scalars().first()
-        if existing is not None and existing.user_id != user_id:
-            raise IdentityLinkError(
-                "Google identity is already bound to another account"
-            )
-        if existing is None:
-            external = ExternalIdentity(
-                user_id=user_id,
-                provider="google",
-                provider_sub=claims.sub,
-                provider_email=claims.email,
-            )
-            database_session.add(external)
-            await database_session.commit()
-            await database_session.refresh(external)
-            return external
-        return existing
+            existing = result.scalars().first()
+            if existing is not None and existing.user_id != user_id:
+                raise IdentityLinkError(
+                    "Google identity is already bound to another account"
+                )
+            if existing is None:
+                external = ExternalIdentity(
+                    user_id=user_id,
+                    provider="google",
+                    provider_sub=claims.sub,
+                    provider_email=claims.email,
+                )
+                database_session.add(external)
+                await database_session.commit()
+                await database_session.refresh(external)
+                return external
+            return existing
+    except (SQLAlchemyError, OSError) as exc:
+        raise IdentityServiceUnavailableError(
+            "Identity service is temporarily unavailable"
+        ) from exc
 
 
 async def unlink_external_identity(user_id: uuid.UUID, provider_sub: str) -> None:
     """Unlink the Google identity for a user (provider_sub match)."""
-    async with (await _session_factory())() as database_session:
-        result = await database_session.execute(
-            select(ExternalIdentity).where(
-                ExternalIdentity.provider == "google",
-                ExternalIdentity.provider_sub == provider_sub,
-                ExternalIdentity.user_id == user_id,
+    try:
+        async with (await _session_factory())() as database_session:
+            result = await database_session.execute(
+                select(ExternalIdentity).where(
+                    ExternalIdentity.provider == "google",
+                    ExternalIdentity.provider_sub == provider_sub,
+                    ExternalIdentity.user_id == user_id,
+                )
             )
-        )
-        external = result.scalars().first()
-        if external is not None:
-            await database_session.delete(external)
-            await database_session.commit()
+            external = result.scalars().first()
+            if external is not None:
+                await database_session.delete(external)
+                await database_session.commit()
+    except (SQLAlchemyError, OSError) as exc:
+        raise IdentityServiceUnavailableError(
+            "Identity service is temporarily unavailable"
+        ) from exc

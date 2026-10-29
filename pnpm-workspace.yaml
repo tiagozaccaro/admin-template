@@ -16,3 +16,16 @@ audit:
     # transitive dependency of fast-glob/micromatch (shadcn, eslint-config-next).
     # Remove this entry as soon as an upstream patch is available.
     - GHSA-vfj7-8cjw-p6xm
+    # zod: DoS via oversized constrained collections. Only reachable through
+    # shadcn CLI/dev tooling; no runtime exposure.
+    - GHSA-mrhx-c7xc-m3w5
+    # body-parser: DoS via trailing bytes after compressed body. Dev-only via
+    # shadcn -> express.
+    - GHSA-27r3-jxmh-p828
+    # undici: DoS/cache-poisoning/TLS issues. Dev-only via shadcn -> dotenvx.
+    - GHSA-xjj6-f33q-929c
+    - GHSA-4w7w-5xrc-9h26
+    - GHSA-3f7j-7jwc-fxfj
+    # undici: another advisory via @ai-sdk/openai (runtime-ish). Re-evaluate.
+    - GHSA-qrxm-fqhp-jwvm
+    - GHSA-2m5v-pch6-74hx

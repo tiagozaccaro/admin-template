@@ -1,7 +1,7 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
-import { DashboardLayoutClient } from "@/app/dashboard/dashboard-layout-client"
+import { DashboardLayoutClient } from "@/components/dashboard-layout-client"
 import { getApiUrl } from "@/lib/api"
 
 type ApiUser = {
