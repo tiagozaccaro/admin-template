@@ -1,5 +1,11 @@
 {
   "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "All (Web + API + Agent)",
+      "configurations": ["Web (Next.js)", "API (FastAPI)", "Agent (Python)"]
+    }
+  ],
   "configurations": [
     {
       "name": "Web (Next.js)",
