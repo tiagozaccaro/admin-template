@@ -2,8 +2,19 @@
   "version": "0.2.0",
   "compounds": [
     {
-      "name": "All (Web + API + Agent)",
-      "configurations": ["Web (Next.js)", "API (FastAPI)", "Agent (Python)"]
+      "name": "Web + API",
+      "configurations": ["Web (Next.js)", "API (FastAPI)"],
+      "stopAll": true
+    },
+    {
+      "name": "Mobile + API",
+      "configurations": ["Mobile (Flutter)", "API (FastAPI)"],
+      "stopAll": true
+    },
+    {
+      "name": "Full Stack",
+      "configurations": ["Web (Next.js)", "API (FastAPI)", "Mobile (Flutter)"],
+      "stopAll": true
     }
   ],
   "configurations": [
