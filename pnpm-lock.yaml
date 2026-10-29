@@ -140,8 +140,8 @@ importers:
         specifier: ^8.0.1
         version: 8.0.6(@babel/core@8.0.6)(eslint@10.13.0(jiti@2.7.0)(supports-color@8.1.1))
       '@babel/preset-typescript':
-        specifier: ^8.0.1
-        version: 8.0.1(@babel/core@8.0.6)
+        specifier: ^8.0.7
+        version: 8.0.7(@babel/core@8.0.6)
       '@eslint/js':
         specifier: ^10
         version: 10.0.1(eslint@10.13.0(jiti@2.7.0)(supports-color@8.1.1))
@@ -575,8 +575,8 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
-  '@babel/preset-typescript@8.0.1':
-    resolution: {integrity: sha512-qrPhQIN1NLrPmzgazF9XKQqXrOcp/WJly+K+6ReFonn24FZqRJO7clxOJo6Ni75L+2vAqI3cHVU2OJLBxoPp5A==}
+  '@babel/preset-typescript@8.0.7':
+    resolution: {integrity: sha512-sUFLFphAG6YNjCnJpSKpyoNxkfyeM2KNuUjJJN0R6dZusMcK2V3Fg11MVHPFvb37AZeDNocc+xM748vdh9z82Q==}
     engines: {node: ^22.18.0 || >=24.11.0}
     peerDependencies:
       '@babel/core': ^8.0.0
@@ -5512,7 +5512,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/preset-typescript@8.0.1(@babel/core@8.0.6)':
+  '@babel/preset-typescript@8.0.7(@babel/core@8.0.6)':
     dependencies:
       '@babel/core': 8.0.6
       '@babel/helper-plugin-utils': 8.0.1(@babel/core@8.0.6)
