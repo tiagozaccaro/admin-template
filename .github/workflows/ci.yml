@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: Filter changed paths
         if: github.event_name != 'merge_group'
-        uses: tj-actions/changed-files@v46
+        uses: tj-actions/changed-files@v47
         id: filter
         with:
           files_yaml: |
