@@ -54,11 +54,11 @@
 **Goal**: Approval gates and audit log.
 **Independent Test**: Destructive request requires approval and audit entry.
 
-- [ ] T029 [US3] Implement tool guardrails in `apps/agent/src/admin_template_agent/agent/guardrails.py`
-- [ ] T030 [US3] Implement audit logging in `apps/agent/src/admin_template_agent/audit.py`
-- [ ] T031 [US3] Implement audit persistence in `apps/api/src/admin_template/modules/agents/audit.py`
-- [ ] T032 [US3] Web approval dialog in `apps/web/components/approval-dialog.tsx`
-- [ ] T033 [US3] Web audit log view in `apps/web/app/agents/audit/page.tsx`
+- [x] T029 [US3] Implement tool guardrails in `apps/agent/src/admin_template_agent/agent/guardrails.py`
+- [x] T030 [US3] Implement audit logging in `apps/agent/src/admin_template_agent/audit.py`
+- [x] T031 [US3] Implement audit persistence in `apps/api/src/admin_template/modules/agents/audit.py`
+- [x] T032 [US3] Web approval dialog in `apps/web/components/approval-dialog.tsx`
+- [x] T033 [US3] Web audit log view in `apps/web/app/agents/audit/page.tsx`
 
 ## Final Phase: Polish & Cross-Cutting Concerns
 
