@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { Button } from "@workspace/ui/components/button"
 import {
   SidebarGroup,
@@ -19,6 +20,16 @@ export function NavMain({
     icon?: React.ReactNode
   }[]
 }) {
+  const [pathname, setPathname] = React.useState("")
+  React.useEffect(() => {
+    setPathname(window.location.pathname)
+  }, [])
+
+  function isActive(url: string) {
+    if (!url || url === "#") return false
+    return pathname === url || pathname.startsWith(url + "/")
+  }
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -46,6 +57,7 @@ export function NavMain({
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 tooltip={item.title}
+                isActive={isActive(item.url)}
                 render={<a href={item.url} />}
               >
                 {item.icon}

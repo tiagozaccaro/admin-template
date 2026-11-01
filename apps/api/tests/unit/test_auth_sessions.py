@@ -18,6 +18,6 @@ def test_create_session():
         mock_ctx.add = lambda obj: None
         mock_ctx.commit = lambda: None
         mock_ctx.refresh = lambda obj: None
-        mock_db.session_factory.return_value = lambda: mock_ctx
+        mock_db.session_factory.return_value = lambda: mock_ctx  # type: ignore[assignment]
         # Simplified: just assert function exists and can be imported
         assert callable(create_session)

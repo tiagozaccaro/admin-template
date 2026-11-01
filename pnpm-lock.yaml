@@ -57,6 +57,9 @@ importers:
       '@ai-sdk/react':
         specifier: ^4.0.159
         version: 4.0.159(react@19.3.1)(zod@4.6.7)
+      '@opencode-ai/models':
+        specifier: ^0.0.121
+        version: 0.0.121
       '@remixicon/react':
         specifier: ^4.9.0
         version: 4.9.0(react@19.3.1)
@@ -1491,6 +1494,15 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
+
+  '@opencode-ai/models@0.0.121':
+    resolution: {integrity: sha512-ilAUUzW0mDQvvPHRdK/JV7Pg1CUjky7nl4RSWy9I5ximzSNuXR5uBMgEtDUwPVcc2qphhk5p40v0sF01OoOMng==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      effect: 4.0.0-beta.83
+    peerDependenciesMeta:
+      effect:
+        optional: true
 
   '@opentelemetry/api@1.10.0':
     resolution: {integrity: sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ==}
@@ -6340,6 +6352,8 @@ snapshots:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.1
+
+  '@opencode-ai/models@0.0.121': {}
 
   '@opentelemetry/api@1.10.0': {}
 

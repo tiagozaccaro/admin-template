@@ -30,6 +30,12 @@ async def create_tenant(
     user: Annotated[User, Depends(get_current_user_from_session)],
 ):
     tenant = await tenants_service.create_tenant(user.id, name, slug)
+    try:
+        from admin_template.modules.agents import service as agent_service
+
+        await agent_service.provision_default_agent(tenant.id)
+    except Exception:
+        pass
     return {"id": str(tenant.id), "name": tenant.name, "slug": tenant.slug}
 
 

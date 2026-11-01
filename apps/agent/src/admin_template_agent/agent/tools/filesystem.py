@@ -1,3 +1,11 @@
-def read_file(path):
-    with open(path) as f:
-        return f.read()
+from pathlib import Path
+
+
+def read_file(path: str) -> str:
+    return Path(path).read_text()
+
+
+def write_file(path: str, content: str) -> None:
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(content)

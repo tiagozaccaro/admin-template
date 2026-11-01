@@ -7,6 +7,7 @@ import uuid
 from sqlalchemy import select
 
 from admin_template.core.db import db
+from admin_template.core.settings import settings
 from admin_template.modules.tenancy.models.tenant import Tenant
 from admin_template.modules.tenancy.models.tenant_membership import (
     TenantMembership,
@@ -34,6 +35,19 @@ async def create_tenant(owner_id: uuid.UUID, name: str, slug: str) -> Tenant:
         session.add(membership)
         await session.commit()
         await session.refresh(tenant)
+
+        # FR-010: provision the default local agent for self-hosted servers
+        # when configured. Best-effort: failures must not roll back the tenant.
+        if getattr(settings, "provision_default_agent", False):
+            try:
+                from admin_template.modules.agents import service as agent_service
+
+                await agent_service.provision_default_agent(
+                    tenant.id, session=session
+                )
+            except Exception:
+                pass
+
         return tenant
 
 

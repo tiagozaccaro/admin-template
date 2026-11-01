@@ -3,22 +3,46 @@
   "compounds": [
     {
       "name": "Web + API",
-      "configurations": ["Web (Next.js)", "API (FastAPI)"],
+      "configurations": [
+        "Web (Next.js)",
+        "API (FastAPI)"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "Agent + Web + API",
+      "configurations": [
+        "Agent (Python)",
+        "Web (Next.js)",
+        "API (FastAPI)"
+      ],
       "stopAll": true
     },
     {
       "name": "Mobile + API",
-      "configurations": ["Mobile (Flutter)", "API (FastAPI)"],
+      "configurations": [
+        "Mobile (Flutter)",
+        "API (FastAPI)"
+      ],
       "stopAll": true
     },
     {
       "name": "Full Stack",
-      "configurations": ["Web (Next.js)", "API (FastAPI)", "Mobile (Flutter)"],
+      "configurations": [
+        "Web (Next.js)",
+        "API (FastAPI)",
+        "Mobile (Flutter)"
+      ],
       "stopAll": true
     },
     {
       "name": "Full Stack + Agent",
-      "configurations": ["Web (Next.js)", "API (FastAPI)", "Agent (Python)"],
+      "configurations": [
+        "Web (Next.js)",
+        "API (FastAPI)",
+        "Mobile (Flutter)",
+        "Agent (Python)"
+      ],
       "stopAll": true
     }
   ],
@@ -62,7 +86,11 @@
       "module": "admin_template_agent.main",
       "cwd": "${workspaceFolder}/apps/agent",
       "console": "integratedTerminal",
-      "python": "${workspaceFolder}/apps/agent/.venv/bin/python"
+      "python": "${workspaceFolder}/apps/agent/.venv/bin/python",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/apps/agent/src"
+      },
+      "preLaunchTask": "prepare: all dependencies"
     },
     {
       "name": "Mobile (Flutter)",
@@ -71,23 +99,6 @@
       "program": "${workspaceFolder}/apps/mobile/lib/main.dart",
       "cwd": "${workspaceFolder}/apps/mobile",
       "preLaunchTask": "prepare: all dependencies"
-    }
-  ],
-  "compounds": [
-    {
-      "name": "Web + API",
-      "configurations": ["Web (Next.js)", "API (FastAPI)"],
-      "stopAll": true
-    },
-    {
-      "name": "Mobile + API",
-      "configurations": ["Mobile (Flutter)", "API (FastAPI)"],
-      "stopAll": true
-    },
-    {
-      "name": "Full Stack",
-      "configurations": ["Web (Next.js)", "API (FastAPI)", "Mobile (Flutter)"],
-      "stopAll": true
     }
   ]
 }

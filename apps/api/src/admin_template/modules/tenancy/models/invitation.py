@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, String, func
+from sqlalchemy import DateTime, ForeignKey, Index, String, func
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -18,6 +18,10 @@ class Invitation(Base):
     """Pending membership invitation with expiration/revocation."""
 
     __tablename__ = "invitation"
+    __table_args__ = (
+        Index("ix_invitation_tenant_id", "tenant_id"),
+        Index("ix_invitation_email", "email"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -26,8 +30,9 @@ class Invitation(Base):
         UUID(as_uuid=True),
         ForeignKey("tenant.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
-    email: Mapped[str] = mapped_column(String(255), nullable=False)
+    email: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     role: Mapped[TenantRole] = mapped_column(
         SAEnum(TenantRole, values_callable=lambda obj: [e.value for e in obj]),
         nullable=False,

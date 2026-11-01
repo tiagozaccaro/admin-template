@@ -26,10 +26,12 @@ class Settings(BaseSettings):
 
     # Application
     app_name: str = "Admin Template API"
+    app_description: str = "Admin template application settings."
     app_version: str = "0.1.0"
     environment: str = "development"
     debug: bool = False
     log_level: str = "INFO"
+    maintenance_mode: bool = False
 
     # Server
     api_port: int = 8000
@@ -55,8 +57,20 @@ class Settings(BaseSettings):
     # Redis (queue + cache + sessions)
     redis_url: str = "redis://localhost:6379/0"
 
-    # Chat models (JSON list of {provider, model})
-    chat_models: str = '[{"provider":"openai","model":"gpt-4o"},{"provider":"anthropic","model":"claude-3-5-sonnet-latest"}]'
+    # Chat providers (JSON list of provider IDs from models.dev). The agent
+    # uses these to enumerate available models for chat.
+    chat_models: str = '["openai", "anthropic"]'
+
+    # Provider credentials (per-provider API key / base URL). These are
+    # consumed by the agent daemon to construct its LLM client; the model
+    # itself is selected from the chat_models list above.
+    provider_settings: str = Field(
+        default="{}",
+        description=(
+            "JSON object of provider -> {api_key, base_url} consumed by the "
+            "agent daemon to construct its LLM client."
+        ),
+    )
 
     # Keycloak OIDC
     keycloak_jwks_url: str | None = Field(
@@ -106,6 +120,24 @@ class Settings(BaseSettings):
     kilo_api_key: str | None = None
     kilo_model: str = "kilo-auto/free"
 
+    # Default local agent provisioning (FR-010)
+    provision_default_agent: bool = Field(
+        default=True,
+        description="Whether to auto-provision a default local agent for tenants",
+    )
+    default_agent_url: str = Field(
+        default="http://localhost:8100",
+        description="URL of the default local agent daemon",
+    )
+    default_agent_token: str | None = Field(
+        default=None,
+        description="Bearer token for the default local agent",
+    )
+    default_agent_name: str = Field(
+        default="local-agent",
+        description="Display name of the default local agent",
+    )
+
     def model_post_init(self, /, __context) -> None:
         """Resolve Docker `_FILE` secret mounts after field init.
 
@@ -115,7 +147,7 @@ class Settings(BaseSettings):
         """
         if self.database_url is None and self.database_url_file:
             try:
-                with open(self.database_url_file, "r", encoding="utf-8") as fh:
+                with open(self.database_url_file, encoding="utf-8") as fh:
                     object.__setattr__(self, "database_url", fh.read().strip())
             except FileNotFoundError:
                 pass

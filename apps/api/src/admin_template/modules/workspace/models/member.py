@@ -6,7 +6,7 @@ role (owner/member/viewer). Composite primary key (workspace_id, user_id).
 
 import uuid
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy import Enum as SAEnum
@@ -18,7 +18,7 @@ from admin_template.modules.identity.models.user import User
 from admin_template.modules.workspace.models.workspace import Workspace
 
 
-class WorkspaceRole(str, Enum):
+class WorkspaceRole(StrEnum):
     """Workspace membership roles (deny-by-default, least privilege)."""
 
     OWNER = "owner"
