@@ -137,8 +137,8 @@ importers:
         specifier: ^8.0.1
         version: 8.0.6
       '@babel/eslint-parser':
-        specifier: ^8.0.1
-        version: 8.0.6(@babel/core@8.0.6)(eslint@10.13.0(jiti@2.7.0)(supports-color@8.1.1))
+        specifier: ^8.0.7
+        version: 8.0.7(@babel/core@8.0.6)(eslint@10.13.0(jiti@2.7.0)(supports-color@8.1.1))
       '@babel/preset-typescript':
         specifier: ^8.0.7
         version: 8.0.7(@babel/core@8.0.6)
@@ -368,8 +368,8 @@ packages:
     resolution: {integrity: sha512-5zwYt1V4ji3mXKKRIAkohSJ29WepxNwxQi+7y7P5AcVPh1dcxnZBU2cfxHnPwS+u9+lZnXPsv30TQaF2xg+Tfg==}
     engines: {node: ^22.18.0 || >=24.11.0}
 
-  '@babel/eslint-parser@8.0.6':
-    resolution: {integrity: sha512-mXx93HLovamLnDDLQ4i48gm4HHtaoqJrbMAuJqrMfpCGJkJ5M4sXhRgKGTrxykg1P8tAN5myrJxsRZuMuTq+OQ==}
+  '@babel/eslint-parser@8.0.7':
+    resolution: {integrity: sha512-ik5I+U64QuQQPohw0A1wVWPR+vTRYVfWBDLOLc1KwZQ2SKayQLD52DgoB3W/kmwc4MP1E37qh7nZuDD9xsKYcA==}
     engines: {node: ^22.18.0 || >=24.11.0}
     peerDependencies:
       '@babel/core': ^8.0.0
@@ -5251,13 +5251,13 @@ snapshots:
       obug: 2.2.1
       verkit: 0.3.2
 
-  '@babel/eslint-parser@8.0.6(@babel/core@8.0.6)(eslint@10.13.0(jiti@2.7.0)(supports-color@8.1.1))':
+  '@babel/eslint-parser@8.0.7(@babel/core@8.0.6)(eslint@10.13.0(jiti@2.7.0)(supports-color@8.1.1))':
     dependencies:
       '@babel/core': 8.0.6
       eslint: 10.13.0(jiti@2.7.0)(supports-color@8.1.1)
       eslint-scope: 9.1.2
       eslint-visitor-keys: 5.0.1
-      verkit: 0.3.2
+      verkit: 0.5.0
 
   '@babel/generator@7.29.7':
     dependencies:
