@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  agent:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: admin-template-agent:latest
+    container_name: admin-template-agent
+    ports:
+      - "8100:8100"
+    environment:
+      - AGENT_HOST=0.0.0.0
+      - AGENT_PORT=8100
+      - AGENT_NAME=local-agent
+      - MODEL=${MODEL:-test}
+      - MODEL_PROVIDER=${MODEL_PROVIDER:-openai}
+      - MODEL_API_KEY=${MODEL_API_KEY:-}
+      - MODEL_API_BASE=${MODEL_API_BASE:-}
+      - AGENT_TOKEN=${AGENT_TOKEN:-}
+      - AGENT_ADMIN_TOKEN=${AGENT_ADMIN_TOKEN:-}
+      - API_URL=${API_URL:-http://localhost:8000}
+      - API_TOKEN=${API_TOKEN:-}
+      - ALLOW_SHELL=${ALLOW_SHELL:-false}
+      - REQUIRE_APPROVAL_FOR_DESTRUCTIVE=${REQUIRE_APPROVAL_FOR_DESTRUCTIVE:-true}
+      - MCP_SERVERS=${MCP_SERVERS:-}
+      - SKILLS_DIR=${SKILLS_DIR:-skills}
+      - SESSION_STORE_PATH=${SESSION_STORE_PATH:-.agent-sessions.json}
+      - AUDIT_LOG_PATH=${AUDIT_LOG_PATH:-audit.log}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT:-http://localhost:4318/v1/traces}
+    volumes:
+      - ./skills:/app/skills
+      - agent-sessions:/app/.agent-sessions.json
+      - agent-audit:/app/audit.log
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  agent-sessions:
+  agent-audit:

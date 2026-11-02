@@ -13,7 +13,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
-import { RiDashboardLine, RiCommandLine, RiRobot2Line } from "@remixicon/react"
+import {
+  RiDashboardLine,
+  RiCommandLine,
+  RiRobot2Line,
+  RiSettings2Line,
+} from "@remixicon/react"
 
 const data = {
   navMain: [
@@ -26,6 +31,11 @@ const data = {
       title: "Chat",
       url: "/chat",
       icon: <RiRobot2Line />,
+    },
+    {
+      title: "Settings",
+      url: "/settings",
+      icon: <RiSettings2Line />,
     },
   ],
 }

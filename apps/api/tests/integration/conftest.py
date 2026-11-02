@@ -18,9 +18,7 @@ def mock_auth(monkeypatch: pytest.MonkeyPatch):
         "admin_template.auth.sessions.get_current_user_from_session",
         fake_get_current_user,
     )
-    monkeypatch.setattr(
-        sessions, "get_current_user_from_session", fake_get_current_user
-    )
+    monkeypatch.setattr(sessions, "get_current_user_from_session", fake_get_current_user)
 
 
 @pytest.fixture

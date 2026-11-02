@@ -113,9 +113,7 @@ async def get_or_create_user_from_claims(claims: IDTokenClaims) -> User:
         ) from exc
 
 
-async def link_external_identity(
-    user_id: uuid.UUID, claims: IDTokenClaims
-) -> ExternalIdentity:
+async def link_external_identity(user_id: uuid.UUID, claims: IDTokenClaims) -> ExternalIdentity:
     """Explicitly link a Google identity to an existing user.
 
     Raises IdentityLinkError when the identity is already bound to a
@@ -131,9 +129,7 @@ async def link_external_identity(
             )
             existing = result.scalars().first()
             if existing is not None and existing.user_id != user_id:
-                raise IdentityLinkError(
-                    "Google identity is already bound to another account"
-                )
+                raise IdentityLinkError("Google identity is already bound to another account")
             if existing is None:
                 external = ExternalIdentity(
                     user_id=user_id,

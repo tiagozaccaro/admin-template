@@ -30,8 +30,7 @@ async def get_tenant_membership(
     async with (await _session_factory())() as session:
         result = await session.execute(
             TenantMembership.__table__.select().where(
-                (TenantMembership.tenant_id == tenant_id)
-                & (TenantMembership.user_id == user.id)
+                (TenantMembership.tenant_id == tenant_id) & (TenantMembership.user_id == user.id)
             )
         )
         row = result.first()

@@ -4,9 +4,9 @@ from fastapi.responses import JSONResponse
 
 from admin_template.api.v1.router import router as v1_router
 from admin_template.auth.router import router as auth_router
+from admin_template.core.db import db
 from admin_template.core.obs import healthz, readyz
 from admin_template.core.settings import settings
-from admin_template.modules.chat.router import router as chat_router
 
 app = FastAPI(title="Admin Template API", version="0.1.0")
 
@@ -20,7 +20,44 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(v1_router, prefix="/api/v1")
-app.include_router(chat_router, prefix="/api/v1")
+
+
+@app.on_event("startup")
+async def _on_startup() -> None:
+    """Initialize database and start background health checks."""
+    db.init()
+    try:
+        from admin_template.modules.agents.health import start_health_check_loop
+
+        start_health_check_loop()
+    except Exception:
+        # Health check loop is best-effort; never block app startup.
+        pass
+    try:
+        from admin_template.core.settings import settings
+        from admin_template.modules.agents import service as agent_service
+
+        if getattr(settings, "provision_default_agent", False):
+            # Try to provision for all existing tenants
+            from admin_template.core.db import db as _db
+
+            if _db.session_factory is None:
+                _db.init()
+            from sqlalchemy import select
+
+            from admin_template.modules.tenancy.models.tenant import Tenant
+
+            if _db.session_factory is not None:
+                async with _db.session_factory() as session:
+                    result = await session.execute(select(Tenant))
+                    tenants = list(result.scalars().all())
+                for tenant in tenants:
+                    try:
+                        await agent_service.provision_default_agent(tenant.id)
+                    except Exception:
+                        pass
+    except Exception:
+        pass
 
 
 @app.get("/health")
@@ -41,9 +78,7 @@ async def readyz_ready():
     ready = bool(result.get("ready", False))
     return JSONResponse(
         content=result,
-        status_code=status.HTTP_200_OK
-        if ready
-        else status.HTTP_503_SERVICE_UNAVAILABLE,
+        status_code=status.HTTP_200_OK if ready else status.HTTP_503_SERVICE_UNAVAILABLE,
     )
 
 

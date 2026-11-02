@@ -19,7 +19,9 @@ class OAuthClient {
     required this.redirectUri,
     this.scope = "openid profile email",
     SecureStorage? storage,
-  }) : _storage = storage ?? InMemorySecureStorage();
+    http.Client? httpClient,
+  }) : _storage = storage ?? InMemorySecureStorage(),
+       _httpClient = httpClient ?? http.Client();
 
   /// OIDC issuer URL, e.g.
   /// `https://accounts.google.com`
@@ -28,6 +30,7 @@ class OAuthClient {
   final String redirectUri;
   final String scope;
   final SecureStorage _storage;
+  final http.Client _httpClient;
 
   String get authorizationEndpoint => "$issuer/oauth2/v2/auth";
   String get tokenEndpoint => "$issuer/oauth2/v2/token";
@@ -86,7 +89,7 @@ class OAuthClient {
     await _storage.delete(_verifierKey);
     await _storage.delete(_stateKey);
 
-    final response = await http.post(
+    final response = await _httpClient.post(
       Uri.parse(tokenEndpoint),
       headers: <String, String>{
         "Content-Type": "application/x-www-form-urlencoded",

@@ -15,17 +15,13 @@ from admin_template.auth.oidc import GoogleOIDCConfig, google_oidc_config
 def _set_google_env(
     monkeypatch: pytest.MonkeyPatch,
     client_id: str | None = "test-client-id",
-    client_secret: str | None = "test-client-secret",
+    client_secret: str | None = "test-client-secret",  # noqa: S107 — test fixture default
     redirect_uri: str | None = "http://localhost:8000/auth/callback",
     issuer: str = "https://accounts.google.com",
 ) -> None:
     monkeypatch.setattr("admin_template.auth.oidc.settings.google_client_id", client_id)
-    monkeypatch.setattr(
-        "admin_template.auth.oidc.settings.google_client_secret", client_secret
-    )
-    monkeypatch.setattr(
-        "admin_template.auth.oidc.settings.google_redirect_uri", redirect_uri
-    )
+    monkeypatch.setattr("admin_template.auth.oidc.settings.google_client_secret", client_secret)
+    monkeypatch.setattr("admin_template.auth.oidc.settings.google_redirect_uri", redirect_uri)
     monkeypatch.setattr("admin_template.auth.oidc.settings.google_issuer", issuer)
 
 

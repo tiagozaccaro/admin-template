@@ -19,7 +19,15 @@ depends_on = None
 def upgrade() -> None:
     op.alter_column("user", "keycloak_sub", existing_type=sa.String(255), nullable=True)
     op.add_column("user", sa.Column("password_hash", sa.String(255), nullable=True))
-    op.add_column("user", sa.Column("email_verified", sa.Boolean(), nullable=False, server_default=sa.text("false")))
+    op.add_column(
+        "user",
+        sa.Column(
+            "email_verified",
+            sa.Boolean(),
+            nullable=False,
+            server_default=sa.text("false"),
+        ),
+    )
     op.add_column("user", sa.Column("deleted_at", sa.DateTime(timezone=True), nullable=True))
     op.create_index("ix_user_email", "user", ["email"], unique=False)
 
@@ -30,7 +38,12 @@ def upgrade() -> None:
         sa.Column("token_hash", sa.String(255), nullable=False),
         sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("used_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("token_hash", name="uq_email_verification_token_hash"),
@@ -44,7 +57,12 @@ def upgrade() -> None:
         sa.Column("token_hash", sa.String(255), nullable=False),
         sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("used_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("token_hash", name="uq_password_reset_token_hash"),

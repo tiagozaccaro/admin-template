@@ -18,7 +18,8 @@ pnpm test
 
 echo "[pre-commit] API checks..."
 cd apps/api
-uv run ruff format --check src tests
+uv run ruff format src tests
+git add -A
 uv run ruff check src tests
 uv run pyright
 cd ../..
@@ -27,7 +28,8 @@ if command -v flutter >/dev/null 2>&1; then
   echo "[pre-commit] Mobile checks..."
   cd apps/mobile
   flutter pub get
-  dart format --output=none --set-exit-if-changed .
+  dart format .
+  git add -A
   flutter analyze
   flutter test
   cd ../..

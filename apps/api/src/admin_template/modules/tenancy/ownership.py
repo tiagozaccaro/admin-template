@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 
-from sqlalchemy import update
+from sqlalchemy import select, update
 
 from admin_template.core.db import db
 from admin_template.modules.tenancy.models.tenant import Tenant
@@ -19,6 +19,13 @@ async def _session_factory():
         db.init()
     assert db.session_factory is not None
     return db.session_factory
+
+
+async def get_default_tenant(user_id: uuid.UUID) -> Tenant | None:
+    """Return the tenant owned by the user, or None."""
+    async with (await _session_factory())() as session:
+        result = await session.execute(select(Tenant).where(Tenant.owner_user_id == user_id))
+        return result.scalars().first()
 
 
 async def transfer_ownership(

@@ -51,18 +51,14 @@ async def create_session(user_id: uuid.UUID) -> Session:
 async def get_session_by_id(session_id: uuid.UUID) -> Session | None:
     """Return a session by id, or None when not found."""
     async with (await _session_factory())() as database_session:
-        result = await database_session.execute(
-            select(Session).where(Session.id == session_id)
-        )
+        result = await database_session.execute(select(Session).where(Session.id == session_id))
         return result.scalars().first()
 
 
 async def is_session_valid(session_id: uuid.UUID) -> bool:
     """Return True when the session exists, is not revoked, and not expired."""
     async with (await _session_factory())() as database_session:
-        result = await database_session.execute(
-            select(Session).where(Session.id == session_id)
-        )
+        result = await database_session.execute(select(Session).where(Session.id == session_id))
         session = result.scalars().first()
         if session is None or session.revoked_at is not None:
             return False
@@ -72,9 +68,7 @@ async def is_session_valid(session_id: uuid.UUID) -> bool:
 async def revoke_session(session_id: uuid.UUID) -> None:
     """Revoke a session by id (no-op when already revoked/missing)."""
     async with (await _session_factory())() as database_session:
-        result = await database_session.execute(
-            select(Session).where(Session.id == session_id)
-        )
+        result = await database_session.execute(select(Session).where(Session.id == session_id))
         session = result.scalars().first()
         if session is not None and session.revoked_at is None:
             session.revoked_at = datetime.now(UTC)
@@ -84,9 +78,7 @@ async def revoke_session(session_id: uuid.UUID) -> None:
 async def rotate_session(session_id: uuid.UUID) -> Session:
     """Revoke the given session and create a fresh one for the same user."""
     async with (await _session_factory())() as database_session:
-        result = await database_session.execute(
-            select(Session).where(Session.id == session_id)
-        )
+        result = await database_session.execute(select(Session).where(Session.id == session_id))
         session = result.scalars().first()
         if session is None:
             raise ValueError("Session not found")
@@ -94,8 +86,7 @@ async def rotate_session(session_id: uuid.UUID) -> Session:
         session.revoked_at = datetime.now(UTC)
         new_session = Session(
             user_id=user_id,
-            expires_at=datetime.now(UTC)
-            + timedelta(minutes=settings.session_ttl_minutes),
+            expires_at=datetime.now(UTC) + timedelta(minutes=settings.session_ttl_minutes),
         )
         database_session.add(new_session)
         await database_session.commit()
@@ -104,12 +95,8 @@ async def rotate_session(session_id: uuid.UUID) -> Session:
 
 
 async def get_current_user_from_session(
-    session_id: Annotated[
-        str | None, Cookie(alias=settings.session_cookie_name)
-    ] = None,
-    credentials: Annotated[
-        HTTPAuthorizationCredentials | None, Depends(_bearer_scheme)
-    ] = None,
+    session_id: Annotated[str | None, Cookie(alias=settings.session_cookie_name)] = None,
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer_scheme)] = None,
 ) -> User:
     """Dependency: resolve the authenticated User from a session cookie or
     bearer token (deny-by-default).
@@ -134,9 +121,7 @@ async def get_current_user_from_session(
         ) from exc
 
     async with (await _session_factory())() as database_session:
-        result = await database_session.execute(
-            select(Session).where(Session.id == session_uuid)
-        )
+        result = await database_session.execute(select(Session).where(Session.id == session_uuid))
         session = result.scalars().first()
         if (
             session is None

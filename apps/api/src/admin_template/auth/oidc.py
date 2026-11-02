@@ -78,9 +78,7 @@ _AUTH_REQUESTS: dict[str, AuthRequest] = {}
 
 
 def store_auth_request(state: str, nonce: str, code_verifier: str) -> None:
-    _AUTH_REQUESTS[state] = AuthRequest(
-        state=state, nonce=nonce, code_verifier=code_verifier
-    )
+    _AUTH_REQUESTS[state] = AuthRequest(state=state, nonce=nonce, code_verifier=code_verifier)
 
 
 def pop_auth_request(state: str) -> AuthRequest | None:
