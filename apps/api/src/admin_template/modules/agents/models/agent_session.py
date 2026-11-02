@@ -53,10 +53,7 @@ class AgentSession(Base):
     )
 
     def __repr__(self) -> str:
-        return (
-            f"AgentSession(id={self.id!r}, agent_id={self.agent_id!r}, "
-            f"user_id={self.user_id!r})"
-        )
+        return f"AgentSession(id={self.id!r}, agent_id={self.agent_id!r}, user_id={self.user_id!r})"
 
 
 __all__ = ["AgentSession"]

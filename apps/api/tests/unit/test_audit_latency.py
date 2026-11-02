@@ -33,7 +33,7 @@ def test_persist_audit_within_one_second() -> None:
         user_id=user_id,
         agent_id=agent_id,
         tool_name="write_file",
-        args={"path": "/tmp/test.txt"},
+        args={"path": "/tmp/test.txt"},  # noqa: S108 — test fixture path
         result_summary="written",
         status="ok",
     )
@@ -45,9 +45,11 @@ def test_persist_audit_within_one_second() -> None:
     session.commit = AsyncMock()
     # Simulate the DB assigning a UUID on refresh.
     assigned_id = uuid.uuid4()
+
     async def _refresh(obj):
         obj.id = assigned_id
         return obj
+
     session.refresh = AsyncMock(side_effect=_refresh)
     session.close = AsyncMock()
 
@@ -59,7 +61,7 @@ def test_persist_audit_within_one_second() -> None:
                 user_id=user_id,
                 agent_id=agent_id,
                 tool_name="write_file",
-                args={"path": "/tmp/test.txt"},
+                args={"path": "/tmp/test.txt"},  # noqa: S108 — test fixture path
                 result_summary="written",
                 status="ok",
             )
@@ -99,9 +101,7 @@ def test_update_audit_status_marks_entry() -> None:
     session.close = AsyncMock()
 
     with _patch_factory(session):
-        updated = asyncio.run(
-            update_audit_status(audit_id, "ok", result_summary="done")
-        )
+        updated = asyncio.run(update_audit_status(audit_id, "ok", result_summary="done"))
 
     assert updated is not None
     assert updated.status == "ok"

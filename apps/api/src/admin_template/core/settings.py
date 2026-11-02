@@ -49,9 +49,7 @@ class Settings(BaseSettings):
 
     # Database (postgres + asyncpg). Resolved from DATABASE_URL or a
     # DATABASE_URL_FILE Docker secret mount; no default (must be provided).
-    database_url: str | None = Field(
-        default=None, description="SQLAlchemy async database URL"
-    )
+    database_url: str | None = Field(default=None, description="SQLAlchemy async database URL")
     database_url_file: str | None = None
 
     # Redis (queue + cache + sessions)
@@ -73,20 +71,14 @@ class Settings(BaseSettings):
     )
 
     # Keycloak OIDC
-    keycloak_jwks_url: str | None = Field(
-        default=None, description="Keycloak JWKS endpoint URL"
-    )
+    keycloak_jwks_url: str | None = Field(default=None, description="Keycloak JWKS endpoint URL")
     keycloak_issuer: str | None = Field(default=None, description="Keycloak issuer URL")
     keycloak_audience: str = "admin-template-api"
     access_token_expire_minutes: int = 5
 
     # Google OIDC
-    google_client_id: str | None = Field(
-        default=None, description="Google OAuth client ID"
-    )
-    google_client_secret: str | None = Field(
-        default=None, description="Google OAuth client secret"
-    )
+    google_client_id: str | None = Field(default=None, description="Google OAuth client ID")
+    google_client_secret: str | None = Field(default=None, description="Google OAuth client secret")
     google_issuer: str = Field(
         default="https://accounts.google.com", description="Google OIDC issuer"
     )
@@ -108,9 +100,7 @@ class Settings(BaseSettings):
     session_cookie_samesite: Literal["lax", "strict", "none"] = Field(
         default="lax", description="Session cookie SameSite attribute"
     )
-    session_ttl_minutes: int = Field(
-        default=60 * 24 * 7, description="Session TTL in minutes"
-    )
+    session_ttl_minutes: int = Field(default=60 * 24 * 7, description="Session TTL in minutes")
 
     # OpenTelemetry trace export endpoint
     otlp_endpoint: str = "http://localhost:4318/v1/traces"

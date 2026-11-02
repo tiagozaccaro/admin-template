@@ -56,9 +56,7 @@ def _mock_ownership(monkeypatch: pytest.MonkeyPatch) -> None:
         tenant.id = uuid.uuid4()
         return tenant
 
-    monkeypatch.setattr(
-        ownership_service, "get_default_tenant", fake_get_default_tenant
-    )
+    monkeypatch.setattr(ownership_service, "get_default_tenant", fake_get_default_tenant)
 
 
 @pytest.fixture
@@ -97,9 +95,7 @@ def test_create_agent_requires_admin_role(client: TestClient, rbac) -> None:
     assert response.status_code == 403, response.text
 
 
-def test_create_agent_allows_owner_role(
-    client: TestClient, rbac, monkeypatch
-) -> None:
+def test_create_agent_allows_owner_role(client: TestClient, rbac, monkeypatch) -> None:
     """POST / must allow OWNER role and return 201."""
     user = _make_user(TenantRole.OWNER)
     tenant_id = uuid.uuid4()
@@ -140,9 +136,7 @@ def test_delete_agent_requires_admin_role(client: TestClient, rbac) -> None:
     assert response.status_code == 403, response.text
 
 
-def test_delete_agent_allows_admin_role(
-    client: TestClient, rbac, monkeypatch
-) -> None:
+def test_delete_agent_allows_admin_role(client: TestClient, rbac, monkeypatch) -> None:
     """DELETE /{id} must allow ADMIN role and return 204."""
     user = _make_user(TenantRole.ADMIN)
 
@@ -177,7 +171,4 @@ def test_viewer_role_blocked_on_all_mutations(client: TestClient, rbac) -> None:
         ).status_code
         == 403
     )
-    assert (
-        client.delete("/api/v1/agents/" + str(uuid.uuid4())).status_code
-        == 403
-    )
+    assert client.delete("/api/v1/agents/" + str(uuid.uuid4())).status_code == 403

@@ -34,7 +34,7 @@ async def create_tenant(
         from admin_template.modules.agents import service as agent_service
 
         await agent_service.provision_default_agent(tenant.id)
-    except Exception:
+    except Exception:  # noqa: S110, BLE001 — best-effort agent provisioning
         pass
     return {"id": str(tenant.id), "name": tenant.name, "slug": tenant.slug}
 

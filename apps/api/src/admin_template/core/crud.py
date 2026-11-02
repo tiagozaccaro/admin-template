@@ -20,9 +20,7 @@ class CRUDBase[ModelType: Base]:
     async def get(self, db: AsyncSession, id: uuid.UUID | str) -> ModelType | None:
         return await db.get(self.model, id)
 
-    async def get_multi(
-        self, db: AsyncSession, skip: int = 0, limit: int = 100
-    ) -> list[ModelType]:
+    async def get_multi(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> list[ModelType]:
         result = await db.execute(select(self.model).offset(skip).limit(limit))
         return list(result.scalars().all())
 

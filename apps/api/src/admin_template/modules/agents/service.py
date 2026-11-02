@@ -47,9 +47,7 @@ async def get_agent_by_token(
     session = await _get_session(session)
     try:
         digest = hash_token(token)
-        result = await session.execute(
-            select(Agent).where(Agent.token_hash == digest)
-        )
+        result = await session.execute(select(Agent).where(Agent.token_hash == digest))
         return result.scalars().first()
     finally:
         if own_session:
@@ -64,9 +62,7 @@ async def list_agents(
     own_session = session is None
     session = await _get_session(session)
     try:
-        result = await session.execute(
-            select(Agent).where(Agent.tenant_id == tenant_id)
-        )
+        result = await session.execute(select(Agent).where(Agent.tenant_id == tenant_id))
         return list(result.scalars().all())
     finally:
         if own_session:
@@ -116,9 +112,7 @@ async def register_agent(
             )
         )
         if existing.scalars().first() is not None:
-            raise ValueError(
-                f"An agent named {name!r} already exists for this tenant"
-            )
+            raise ValueError(f"An agent named {name!r} already exists for this tenant")
 
         agent = Agent(
             name=name,

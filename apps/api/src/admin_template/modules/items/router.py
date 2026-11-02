@@ -33,11 +33,7 @@ async def create_item(
     membership: Annotated[TenantMembership, Depends(get_tenant_membership)] = None,  # type: ignore[assignment]
     db: Annotated[AsyncSession, Depends(get_session)] = None,  # type: ignore[assignment]
 ):
-    if (
-        membership is None
-        or membership.tenant_id != tenant_id
-        or item_in.tenant_id != tenant_id
-    ):
+    if membership is None or membership.tenant_id != tenant_id or item_in.tenant_id != tenant_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Not a member of this tenant"
         )

@@ -21,9 +21,7 @@ class Agent(Base):
     """A registered standalone admin agent daemon."""
 
     __tablename__ = "agent"
-    __table_args__ = (
-        Index("ix_agent_name_tenant_id", "name", "tenant_id", unique=True),
-    )
+    __table_args__ = (Index("ix_agent_name_tenant_id", "name", "tenant_id", unique=True),)
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -37,9 +35,7 @@ class Agent(Base):
     # outbound requests (health probes, audit pushes) to the daemon. Stored
     # separately from token_hash so the probe path never needs to reverse
     # the SHA-256 (FR-003).
-    health_token: Mapped[str | None] = mapped_column(
-        String(512), nullable=True, index=True
-    )
+    health_token: Mapped[str | None] = mapped_column(String(512), nullable=True, index=True)
     capabilities: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     tenant_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -47,12 +43,8 @@ class Agent(Base):
         nullable=False,
         index=True,
     )
-    status: Mapped[str] = mapped_column(
-        String(32), default="offline", nullable=False, index=True
-    )
-    last_seen_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    status: Mapped[str] = mapped_column(String(32), default="offline", nullable=False, index=True)
+    last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

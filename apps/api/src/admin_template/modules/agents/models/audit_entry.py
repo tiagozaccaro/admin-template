@@ -45,18 +45,13 @@ class AuditEntry(Base):
     tool_name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     args: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     result_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
-    status: Mapped[str] = mapped_column(
-        String(32), default="pending", nullable=False, index=True
-    )
+    status: Mapped[str] = mapped_column(String(32), default="pending", nullable=False, index=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
     def __repr__(self) -> str:
-        return (
-            f"AuditEntry(id={self.id!r}, tool_name={self.tool_name!r}, "
-            f"status={self.status!r})"
-        )
+        return f"AuditEntry(id={self.id!r}, tool_name={self.tool_name!r}, status={self.status!r})"
 
 
 __all__ = ["AuditEntry"]

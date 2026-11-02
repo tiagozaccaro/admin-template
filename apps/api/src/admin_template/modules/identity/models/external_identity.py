@@ -21,9 +21,7 @@ class ExternalIdentity(Base):
 
     __tablename__ = "external_identity"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("user.id", ondelete="CASCADE"),
@@ -38,18 +36,13 @@ class ExternalIdentity(Base):
     )
 
     __table_args__ = (
-        UniqueConstraint(
-            "provider", "provider_sub", name="uq_external_identity_provider_sub"
-        ),
+        UniqueConstraint("provider", "provider_sub", name="uq_external_identity_provider_sub"),
     )
 
     user: Mapped["User"] = relationship("User", foreign_keys=[user_id])
 
     def __repr__(self) -> str:
-        return (
-            f"ExternalIdentity(provider={self.provider!r}, "
-            f"provider_sub={self.provider_sub!r})"
-        )
+        return f"ExternalIdentity(provider={self.provider!r}, provider_sub={self.provider_sub!r})"
 
 
 __all__ = ["ExternalIdentity"]

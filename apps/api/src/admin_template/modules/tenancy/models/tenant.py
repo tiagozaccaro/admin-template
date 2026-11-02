@@ -15,13 +15,9 @@ class Tenant(Base):
     """Tenant (organization) with settings and members."""
 
     __tablename__ = "tenant"
-    __table_args__ = (
-        Index("ix_tenant_slug", "slug", unique=True),
-    )
+    __table_args__ = (Index("ix_tenant_slug", "slug", unique=True),)
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     slug: Mapped[str] = mapped_column(String(255), nullable=False)
     branding: Mapped[dict | None] = mapped_column(JSONB, nullable=True)

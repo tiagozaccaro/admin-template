@@ -82,8 +82,6 @@ class HealthResponse(BaseModel):
     latency_ms: int | None = None
 
 
-
-
 class AuditEntryResponse(BaseModel):
     id: uuid.UUID
     tenant_id: uuid.UUID
@@ -144,9 +142,7 @@ async def chat_with_agent(
     tenant_id = await _get_tenant_id(user)
     agent = await agent_service.get_agent(agent_id, tenant_id)
     if agent is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
     prompt_input = body.get("prompt_input") or body.get("message") or ""
     if not prompt_input:
         raise HTTPException(
@@ -218,8 +214,7 @@ async def _check_agent_admin_role(user: User, tenant_id: uuid.UUID) -> bool:
     async with db.session_factory() as session:
         result = await session.execute(
             TenantMembership.__table__.select().where(
-                (TenantMembership.tenant_id == tenant_id)
-                & (TenantMembership.user_id == user.id)
+                (TenantMembership.tenant_id == tenant_id) & (TenantMembership.user_id == user.id)
             )
         )
         row = result.first()
@@ -261,9 +256,7 @@ async def list_agents(
 async def create_agent(
     body: AgentCreate,
     user: Annotated[User, Depends(get_current_user_from_session)],
-    admin: Annotated[
-        tuple[User, uuid.UUID], Depends(_require_agent_admin)
-    ],
+    admin: Annotated[tuple[User, uuid.UUID], Depends(_require_agent_admin)],
 ):
     tenant_id = await _get_tenant_id(user)
     try:
@@ -275,9 +268,7 @@ async def create_agent(
             capabilities=body.capabilities,
         )
     except ValueError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail=str(exc)
-        ) from exc
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
     return _agent_response(agent)
 
 
@@ -289,9 +280,7 @@ async def get_agent(
     tenant_id = await _get_tenant_id(user)
     agent = await agent_service.get_agent(agent_id, tenant_id)
     if agent is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
     return _agent_response(agent)
 
 
@@ -312,9 +301,7 @@ async def update_agent(
         capabilities=body.capabilities,
     )
     if agent is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
     return _agent_response(agent)
 
 
@@ -327,9 +314,7 @@ async def delete_agent(
     tenant_id = await _get_tenant_id(user)
     deleted = await agent_service.delete_agent(agent_id, tenant_id)
     if not deleted:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
 
 
 @router.post("/{agent_id}/health", response_model=HealthResponse)
@@ -341,9 +326,7 @@ async def health_check_agent(
     tenant_id = await _get_tenant_id(user)
     agent = await agent_service.get_agent(agent_id, tenant_id)
     if agent is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
     status_value, latency_ms = await _probe_agent(agent)
     await agent_service.update_agent_status(
         agent.id,
@@ -375,7 +358,7 @@ async def _probe_agent(agent: Agent) -> tuple[str, int | None]:
                 latency = int((time.perf_counter() - started) * 1000)
                 if resp2.status_code == 200:
                     return "healthy", latency
-            except Exception:
+            except Exception:  # noqa: S110 — best-effort fallback
                 pass
             return "unhealthy", latency
         return "unhealthy", latency
@@ -400,9 +383,7 @@ def _agent_response(agent: Agent) -> AgentResponse:
 @router.post("/audit", response_model=AuditEntryResponse, status_code=status.HTTP_201_CREATED)
 async def create_audit(
     body: dict,
-    credentials: Annotated[
-        HTTPAuthorizationCredentials | None, Depends(_bearer_scheme)
-    ],
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer_scheme)],
 ):
     """Accept an audit record pushed by a registered agent daemon.
 
@@ -456,9 +437,7 @@ async def create_audit(
 async def update_audit(
     audit_id: uuid.UUID,
     body: dict,
-    credentials: Annotated[
-        HTTPAuthorizationCredentials | None, Depends(_bearer_scheme)
-    ],
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer_scheme)],
 ):
     """Update an audit entry's status/summary (pushed by the agent daemon)."""
     if credentials is None or not credentials.credentials:
@@ -479,9 +458,7 @@ async def update_audit(
         result_summary=body.get("result_summary"),
     )
     if entry is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Audit entry not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Audit entry not found")
     return AuditEntryResponse(
         id=entry.id,
         tenant_id=entry.tenant_id,
@@ -498,5 +475,3 @@ async def update_audit(
 # ---------------------------------------------------------------------------
 # Audit log
 # ---------------------------------------------------------------------------
-
-

@@ -40,6 +40,7 @@ async def _on_startup() -> None:
         if getattr(settings, "provision_default_agent", False):
             # Try to provision for all existing tenants
             from admin_template.core.db import db as _db
+
             if _db.session_factory is None:
                 _db.init()
             from sqlalchemy import select
@@ -77,9 +78,7 @@ async def readyz_ready():
     ready = bool(result.get("ready", False))
     return JSONResponse(
         content=result,
-        status_code=status.HTTP_200_OK
-        if ready
-        else status.HTTP_503_SERVICE_UNAVAILABLE,
+        status_code=status.HTTP_200_OK if ready else status.HTTP_503_SERVICE_UNAVAILABLE,
     )
 
 

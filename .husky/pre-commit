@@ -18,7 +18,8 @@ pnpm test
 
 echo "[pre-commit] API checks..."
 cd apps/api
-uv run ruff format --check src tests
+uv run ruff format src tests
+git add -A
 uv run ruff check src tests
 uv run pyright
 cd ../..

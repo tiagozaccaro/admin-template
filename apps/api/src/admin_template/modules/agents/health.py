@@ -31,9 +31,7 @@ async def _probe_agent(agent: Agent) -> str:
     """
     url = agent.url.rstrip("/") + "/health"
     headers: dict[str, str] = {}
-    token = getattr(agent, "health_token", None) or getattr(
-        agent, "token_hash", None
-    )
+    token = getattr(agent, "health_token", None) or getattr(agent, "token_hash", None)
     if token:
         headers["Authorization"] = f"Bearer {token}"
     try:
@@ -49,7 +47,7 @@ async def _probe_agent(agent: Agent) -> str:
                     resp2 = await client.get(url)
                 if resp2.status_code == 200:
                     return "healthy"
-            except Exception:
+            except Exception:  # noqa: S110 — best-effort fallback
                 pass
         return "unhealthy"
     except Exception:
@@ -84,9 +82,7 @@ async def health_check_loop(interval_seconds: float = 30) -> None:
     """Background loop that runs health checks on a fixed interval."""
     global _stop_event
     _stop_event = asyncio.Event()
-    logger.info(
-        "Health check loop started (interval=%ss)", interval_seconds
-    )
+    logger.info("Health check loop started (interval=%ss)", interval_seconds)
     while not _stop_event.is_set():
         try:
             await _run_health_checks()
@@ -104,9 +100,7 @@ def start_health_check_loop(interval_seconds: float | None = None) -> None:
     global _health_task
     if _health_task is not None and not _health_task.done():
         return
-    interval = interval_seconds or getattr(
-        settings, "agent_health_interval_seconds", 30
-    )
+    interval = interval_seconds or getattr(settings, "agent_health_interval_seconds", 30)
     try:
         loop = asyncio.get_running_loop()
     except RuntimeError:

@@ -42,10 +42,8 @@ async def create_tenant(owner_id: uuid.UUID, name: str, slug: str) -> Tenant:
             try:
                 from admin_template.modules.agents import service as agent_service
 
-                await agent_service.provision_default_agent(
-                    tenant.id, session=session
-                )
-            except Exception:
+                await agent_service.provision_default_agent(tenant.id)
+            except Exception:  # noqa: S110, BLE001 — best-effort agent provisioning
                 pass
 
         return tenant
@@ -54,9 +52,7 @@ async def create_tenant(owner_id: uuid.UUID, name: str, slug: str) -> Tenant:
 async def list_tenants(user_id: uuid.UUID) -> list[Tenant]:
     async with (await _session_factory())() as session:
         result = await session.execute(
-            select(Tenant)
-            .join(TenantMembership)
-            .where(TenantMembership.user_id == user_id)
+            select(Tenant).join(TenantMembership).where(TenantMembership.user_id == user_id)
         )
         return list(result.scalars().all())
 

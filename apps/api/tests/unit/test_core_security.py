@@ -4,9 +4,7 @@
 def test_jwt_validation_path_exists():
     from admin_template.core import security
 
-    assert callable(
-        getattr(security, "validate_token", None) or security.validate_token
-    )
+    assert callable(getattr(security, "validate_token", None) or security.validate_token)
 
 
 def test_rbac_permission_check_exists():

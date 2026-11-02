@@ -8,6 +8,7 @@ import uuid
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+from fastapi.testclient import TestClient
 
 from admin_template.api.main import app
 from admin_template.auth.sessions import get_current_user_from_session
@@ -24,9 +25,7 @@ def _patch_ownership_and_db(monkeypatch):
         tenant.id = uuid.uuid4()
         return tenant
 
-    monkeypatch.setattr(
-        ownership_service, "get_default_tenant", fake_get_default_tenant
-    )
+    monkeypatch.setattr(ownership_service, "get_default_tenant", fake_get_default_tenant)
 
     membership_row = MagicMock()
     membership_row.role = "member"
@@ -46,14 +45,12 @@ def _patch_ownership_and_db(monkeypatch):
 
 @pytest.fixture
 def client() -> "TestClient":
-    from fastapi.testclient import TestClient
-
     return TestClient(app)
 
 
 def set_membership_role(role: str) -> None:
     """Override the mocked membership row's role for the current test."""
-    session = test_db.session_factory.return_value
+    session = test_db.session_factory.return_value  # type: ignore[attr-defined]
     session.execute.return_value.first.return_value.role = role
 
 

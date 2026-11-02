@@ -24,9 +24,7 @@ async def _session_factory():
 async def get_default_tenant(user_id: uuid.UUID) -> Tenant | None:
     """Return the tenant owned by the user, or None."""
     async with (await _session_factory())() as session:
-        result = await session.execute(
-            select(Tenant).where(Tenant.owner_user_id == user_id)
-        )
+        result = await session.execute(select(Tenant).where(Tenant.owner_user_id == user_id))
         return result.scalars().first()
 
 

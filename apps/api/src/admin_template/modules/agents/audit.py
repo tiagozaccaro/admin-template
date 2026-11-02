@@ -73,9 +73,7 @@ async def update_audit_status(
     own_session = session is None
     session = await _get_session(session)
     try:
-        result = await session.execute(
-            select(AuditEntry).where(AuditEntry.id == audit_id)
-        )
+        result = await session.execute(select(AuditEntry).where(AuditEntry.id == audit_id))
         entry = result.scalars().first()
         if entry is None:
             return None

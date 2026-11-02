@@ -9,7 +9,11 @@ No tokens are ever logged.
 
 from __future__ import annotations
 
+import base64
+import hashlib
+import hmac
 import json
+import secrets
 import time
 import uuid
 from typing import Annotated, Any
@@ -173,9 +177,7 @@ def require_role(*roles: str):
     ) -> dict[str, Any]:
         realm_roles = set(user.get("realm_access", {}).get("roles", []))
         client_roles = set(
-            user.get("resource_access", {})
-            .get(settings.keycloak_audience, {})
-            .get("roles", [])
+            user.get("resource_access", {}).get(settings.keycloak_audience, {}).get("roles", [])
         )
         user_roles = realm_roles | client_roles
         if not set(roles) & user_roles:
@@ -235,9 +237,7 @@ def require_workspace_role(required_role: WorkspaceRole):
             )
         )
         memberships = result.scalars().all()
-        user_membership = next(
-            (m for m in memberships if str(m.user_id) == keycloak_sub), None
-        )
+        user_membership = next((m for m in memberships if str(m.user_id) == keycloak_sub), None)
         if user_membership is None:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -270,12 +270,7 @@ __all__ = [
 # Password hashing (local auth) — stdlib only, scrypt KDF
 # ---------------------------------------------------------------------------
 
-import base64
-import hashlib
-import hmac
-import secrets
-
-_PASSWORD_SCHEME = "scrypt"
+_PASSWORD_SCHEME = "scrypt"  # noqa: S105 — algorithm name, not a password
 _SCRYPT_N = 2**14
 _SCRYPT_R = 8
 _SCRYPT_P = 1

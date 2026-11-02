@@ -23,9 +23,7 @@ def test_identity_link_error_raised():
         raise IdentityLinkError("test")
 
 
-def _claims(
-    sub: str = "google-sub-1", email: str | None = "user@example.com"
-) -> IDTokenClaims:
+def _claims(sub: str = "google-sub-1", email: str | None = "user@example.com") -> IDTokenClaims:
     return IDTokenClaims(
         sub=sub,
         email=email,
@@ -117,9 +115,7 @@ def test_get_or_create_user_from_claims_existing_external():
         display_name="Test User",
     )
     external = MagicMock()
-    external.user_id = (
-        existing_user.id if hasattr(existing_user, "id") else uuid.uuid4()
-    )
+    external.user_id = existing_user.id if hasattr(existing_user, "id") else uuid.uuid4()
     session = _FakeSession(external=external, user=existing_user)
     factory = _FakeSessionFactory(session)
 
