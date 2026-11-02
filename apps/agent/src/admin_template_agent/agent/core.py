@@ -33,8 +33,8 @@ logger = logging.getLogger(__name__)
 
 # Per-chat-turn approval registry. Tools read this to suspend on
 # destructive actions; the SSE endpoint writes it before streaming.
-_approvals_ctx: contextvars.ContextVar[ApprovalRegistry | None] = (
-    contextvars.ContextVar("agent_approvals", default=None)
+_approvals_ctx: contextvars.ContextVar[ApprovalRegistry | None] = contextvars.ContextVar(
+    "agent_approvals", default=None
 )
 
 
@@ -69,7 +69,7 @@ def _make_model() -> Any:
     unavailable so the agent can still start in local/test mode.
     """
     try:
-        from pydantic_ai.models.openai import OpenAIModel
+        from pydantic_ai.models.openai import OpenAIChatModel
     except Exception:  # pragma: no cover - dependency optional at runtime
         return "test"
 
@@ -97,7 +97,7 @@ def _make_model() -> Any:
     if not kwargs:
         return config.model
     try:
-        return OpenAIModel(model_name, **kwargs)
+        return OpenAIChatModel(model_name, **kwargs)
     except Exception:
         logger.warning("Failed to construct OpenAI model; using test model")
         return "test"
@@ -120,13 +120,13 @@ class AgentCore:
 
     def _register_tools(self) -> None:
         @self.agent.tool
-        def read_file_tool(ctx: RunContext[None], path: str) -> str:
+        def read_file_tool(ctx: RunContext[object], path: str) -> str:
             """Read a file from the local filesystem."""
             return read_file(path)
 
         @self.agent.tool
         def write_file_tool(
-            ctx: RunContext[None],
+            ctx: RunContext[object],
             path: str,
             content: str,
         ) -> str:
@@ -148,9 +148,7 @@ class AgentCore:
                     f"write {len(content)} bytes to {path}",
                 )
                 if not approved:
-                    update_audit_status(
-                        audit_id, "denied", "user denied write_file"
-                    )
+                    update_audit_status(audit_id, "denied", "user denied write_file")
                     return "denied by user"
                 write_file(path, content)
                 update_audit_status(audit_id, "ok", "written")
@@ -167,7 +165,7 @@ class AgentCore:
             return "written"
 
         @self.agent.tool
-        def shell_tool(ctx: RunContext[None], command: str) -> str:
+        def shell_tool(ctx: RunContext[object], command: str) -> str:
             """Run a shell command."""
             approvals = _approvals_ctx.get()
             if requires_approval("shell"):
@@ -181,9 +179,7 @@ class AgentCore:
                 if approvals is None:
                     return "approval required"
                 if not config.allow_shell:
-                    update_audit_status(
-                        audit_id, "denied", "shell tool disabled"
-                    )
+                    update_audit_status(audit_id, "denied", "shell tool disabled")
                     return "shell tool disabled"
                 approved = approvals.request_approval(
                     "shell",
@@ -191,9 +187,7 @@ class AgentCore:
                     f"run shell command: {command}",
                 )
                 if not approved:
-                    update_audit_status(
-                        audit_id, "denied", "user denied shell command"
-                    )
+                    update_audit_status(audit_id, "denied", "user denied shell command")
                     return "denied by user"
                 result = run_shell(command)
                 update_audit_status(

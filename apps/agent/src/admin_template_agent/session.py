@@ -10,9 +10,7 @@ forwarded to it so the daemon can persist history to the core API's
 from __future__ import annotations
 
 import logging
-import uuid
 from collections.abc import Awaitable, Callable
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -33,22 +31,16 @@ class SessionStore:
         self.sessions[session_id] = history
 
     def append(self, session_id: str, role: str, content: str) -> None:
-        self.sessions.setdefault(session_id, []).append(
-            {"role": role, "content": content}
-        )
+        self.sessions.setdefault(session_id, []).append({"role": role, "content": content})
         if self._persistence is not None:
             try:
                 import asyncio
 
                 loop = asyncio.get_event_loop()
                 if loop.is_running():
-                    asyncio.ensure_future(
-                        self._persistence(session_id, role, content)
-                    )
+                    asyncio.ensure_future(self._persistence(session_id, role, content))
                 else:
-                    loop.run_until_complete(
-                        self._persistence(session_id, role, content)
-                    )
+                    loop.run_until_complete(self._persistence(session_id, role, content))
             except RuntimeError:
                 # No running loop: fire-and-forget is not possible; log.
                 logger.debug(

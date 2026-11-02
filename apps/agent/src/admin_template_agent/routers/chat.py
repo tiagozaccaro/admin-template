@@ -38,8 +38,16 @@ _sessions = SessionStore()
 _approvals_by_session: dict[str, ApprovalRegistry] = {}
 
 _TOOLS: list[dict] = [
-    {"name": "read_file", "description": "Read a file from the local filesystem", "destructive": False},
-    {"name": "write_file", "description": "Write content to a file on the local filesystem", "destructive": True},
+    {
+        "name": "read_file",
+        "description": "Read a file from the local filesystem",
+        "destructive": False,
+    },
+    {
+        "name": "write_file",
+        "description": "Write content to a file on the local filesystem",
+        "destructive": True,
+    },
     {"name": "shell", "description": "Run a shell command", "destructive": True},
 ]
 
@@ -80,9 +88,7 @@ def _fetch_core_models() -> list[dict]:
                 "owned_by": entry.get("provider"),
             }
             for entry in chat_models
-            if isinstance(entry, dict)
-            and entry.get("model")
-            and entry.get("provider")
+            if isinstance(entry, dict) and entry.get("model") and entry.get("provider")
         ]
     except Exception:
         logger.warning("Failed to fetch models from core API")
@@ -284,9 +290,7 @@ async def chat_agent(
                     yield event
                 latency_ms = int((time.perf_counter() - started) * 1000)
                 if not first_token_emitted:
-                    payload = json.dumps(
-                        {"delta": chunk, "first_token_ms": latency_ms}
-                    )
+                    payload = json.dumps({"delta": chunk, "first_token_ms": latency_ms})
                     first_token_emitted = True
                 else:
                     payload = json.dumps({"delta": chunk})

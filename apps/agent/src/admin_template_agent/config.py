@@ -39,9 +39,7 @@ class Config(BaseSettings):
     # Model / LLM
     model: str = "test"
     model_provider: str = "openai"
-    model_api_key: str | None = Field(
-        default=None, description="LLM API key (or set via env)"
-    )
+    model_api_key: str | None = Field(default=None, description="LLM API key (or set via env)")
     model_api_base: str | None = Field(
         default=None, description="Custom OpenAI-compatible base URL"
     )
@@ -65,9 +63,7 @@ class Config(BaseSettings):
 
     # Tools
     allowed_paths: list[str] | None = None
-    allow_shell: bool = Field(
-        default=False, description="Whether shell tool is enabled"
-    )
+    allow_shell: bool = Field(default=False, description="Whether shell tool is enabled")
     require_approval_for_destructive: bool = Field(
         default=True,
         description="Whether destructive tools require approval",
@@ -85,9 +81,7 @@ class Config(BaseSettings):
     mcp_servers: list[str] | None = None
 
     # Skills
-    skills_dir: str = Field(
-        default="skills", description="Directory of skill markdown bundles"
-    )
+    skills_dir: str = Field(default="skills", description="Directory of skill markdown bundles")
 
     # Sessions
     session_store_path: str = Field(
@@ -96,9 +90,7 @@ class Config(BaseSettings):
     )
 
     # Audit
-    audit_log_path: str = Field(
-        default="audit.log", description="Path to the JSON-lines audit log"
-    )
+    audit_log_path: str = Field(default="audit.log", description="Path to the JSON-lines audit log")
 
     # Observability
     otlp_endpoint: str = "http://localhost:4318/v1/traces"

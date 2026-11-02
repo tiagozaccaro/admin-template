@@ -10,7 +10,6 @@ retried on the next call.
 from __future__ import annotations
 
 import logging
-import os
 import threading
 import uuid
 from datetime import UTC, datetime

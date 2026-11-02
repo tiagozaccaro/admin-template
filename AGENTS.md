@@ -381,6 +381,7 @@ behavior — not merely for generating code quickly.
 
 - Never commit directly to `main`; work on a dedicated branch for each task.
 - Never rewrite shared history or force-push without explicit approval.
+- Never commit if checks fail (lint, typecheck, build, or tests).
 - Follow Conventional Commits (`<type>(<scope>): <subject>`); the `commitlint` CI job
   enforces it on every pull request.
 - For issue-driven work, reference the corresponding GitHub issue and close it from the

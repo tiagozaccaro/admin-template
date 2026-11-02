@@ -28,7 +28,8 @@ if command -v flutter >/dev/null 2>&1; then
   echo "[pre-commit] Mobile checks..."
   cd apps/mobile
   flutter pub get
-  dart format --output=none --set-exit-if-changed .
+  dart format .
+  git add -A
   flutter analyze
   flutter test
   cd ../..

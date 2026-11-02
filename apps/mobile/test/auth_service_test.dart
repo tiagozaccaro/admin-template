@@ -26,7 +26,10 @@ void main() {
     await storage.write('admin_template_mobile_access_token', 'abc');
     await storage.write('admin_template_mobile_refresh_token', 'ref');
     final future = DateTime.now().add(const Duration(hours: 1));
-    await storage.write('admin_template_mobile_expires_at', future.toIso8601String());
+    await storage.write(
+      'admin_template_mobile_expires_at',
+      future.toIso8601String(),
+    );
 
     final client = OAuthClient(
       issuer: 'http://localhost:8080/realms/admin-template',
@@ -67,7 +70,10 @@ void main() {
     await service.handleCallback('code-1', 'state-1');
     expect(service.isAuthenticated, isTrue);
     expect(service.accessToken, 'access-123');
-    expect(await storage.read('admin_template_mobile_access_token'), 'access-123');
+    expect(
+      await storage.read('admin_template_mobile_access_token'),
+      'access-123',
+    );
   });
 
   test('logout clears session', () async {

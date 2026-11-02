@@ -46,7 +46,7 @@ class ApprovalRegistry:
         tool_name: str,
         args: dict[str, Any],
         summary: str,
-    ) -> str:
+    ) -> bool:
         """Register a pending approval and block until resolved.
 
         Returns the approval id (also pushed onto `queue` for the SSE

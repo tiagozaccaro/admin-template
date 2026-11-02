@@ -1,4 +1,5 @@
 import "dart:convert";
+
 import "package:flutter/material.dart";
 import "package:http/http.dart" as http;
 
@@ -83,9 +84,7 @@ class _AgentChatScreenState extends State<AgentChatScreen> {
           // Treat as raw text delta.
           if (!mounted) continue;
           setState(() {
-            final idx = _messages.indexWhere(
-              (m) => m.id == assistantMsg.id,
-            );
+            final idx = _messages.indexWhere((m) => m.id == assistantMsg.id);
             if (idx >= 0) {
               _messages[idx] = _ChatMessage(
                 role: "assistant",
@@ -171,7 +170,10 @@ class _AgentChatScreenState extends State<AgentChatScreen> {
   }
 
   Future<void> _approve(String approvalId, bool approved) async {
-    final endpoint = _endpoint.replaceFirst(RegExp(r"/chat/agent$"), "/approve/$approvalId");
+    final endpoint = _endpoint.replaceFirst(
+      RegExp(r"/chat/agent$"),
+      "/approve/$approvalId",
+    );
     try {
       final request = http.Request("POST", Uri.parse(endpoint));
       request.headers["Content-Type"] = "application/json";
@@ -186,17 +188,12 @@ class _AgentChatScreenState extends State<AgentChatScreen> {
     }
   }
 
-  void _showApprovalDialog(
-    String approvalId,
-    Map<String, dynamic> approval,
-  ) {
+  void _showApprovalDialog(String approvalId, Map<String, dynamic> approval) {
     if (!mounted) return;
     final toolName = approval["tool_name"] as String? ?? "unknown";
     final summary = approval["summary"] as String? ?? "";
     final args = approval["args"] as Map<String, dynamic>? ?? {};
-    final argsText = args.entries
-        .map((e) => "${e.key}: ${e.value}")
-        .join(", ");
+    final argsText = args.entries.map((e) => "${e.key}: ${e.value}").join(", ");
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -252,9 +249,9 @@ class _AgentChatScreenState extends State<AgentChatScreen> {
                     decoration: BoxDecoration(
                       color: isUser
                           ? Theme.of(context).colorScheme.primaryContainer
-                          : Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerHighest,
+                          : Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(message.content),

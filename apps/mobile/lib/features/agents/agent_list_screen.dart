@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:http/http.dart" as http;
+
 import "dart:convert";
 
 import "agent_chat_screen.dart";
@@ -35,21 +36,21 @@ class _AgentListScreenState extends State<AgentListScreen> {
     try {
       final client = http.Client();
       try {
-        final resp = await client.get(
-          Uri.parse("$_apiBase/api/v1/agents"),
-        );
+        final resp = await client.get(Uri.parse("$_apiBase/api/v1/agents"));
         if (resp.statusCode != 200) {
           throw Exception("HTTP ${resp.statusCode}");
         }
         final body = jsonDecode(resp.body) as List;
         final agents = body
-            .map((e) => _Agent(
-                  id: e["id"] as String,
-                  name: e["name"] as String,
-                  url: e["url"] as String,
-                  token: e["token"] as String?,
-                  status: e["status"] as String? ?? "offline",
-                ))
+            .map(
+              (e) => _Agent(
+                id: e["id"] as String,
+                name: e["name"] as String,
+                url: e["url"] as String,
+                token: e["token"] as String?,
+                status: e["status"] as String? ?? "offline",
+              ),
+            )
             .toList();
         if (!mounted) return;
         setState(() {
@@ -85,9 +86,7 @@ class _AgentListScreenState extends State<AgentListScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     if (_error != null) {
       return Scaffold(
@@ -101,15 +100,9 @@ class _AgentListScreenState extends State<AgentListScreen> {
                 const SizedBox(height: 12),
                 const Text("Failed to load agents"),
                 const SizedBox(height: 8),
-                Text(
-                  _error!,
-                  textAlign: TextAlign.center,
-                ),
+                Text(_error!, textAlign: TextAlign.center),
                 const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: _load,
-                  child: const Text("Retry"),
-                ),
+                FilledButton(onPressed: _load, child: const Text("Retry")),
               ],
             ),
           ),
@@ -164,11 +157,11 @@ class _AgentListScreenState extends State<AgentListScreen> {
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
                         AgentChatScreen(
-                      agentId: agent.id,
-                      agentName: agent.name,
-                      agentUrl: agent.url,
-                      token: agent.token,
-                    ),
+                          agentId: agent.id,
+                          agentName: agent.name,
+                          agentUrl: agent.url,
+                          token: agent.token,
+                        ),
                   ),
                 );
               },

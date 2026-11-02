@@ -7,7 +7,9 @@ import 'package:mobile/features/auth/auth_gate.dart';
 import 'package:mobile/features/auth/login_screen.dart';
 
 void main() {
-  testWidgets('AuthGate shows login screen when unauthenticated', (tester) async {
+  testWidgets('AuthGate shows login screen when unauthenticated', (
+    tester,
+  ) async {
     final storage = InMemorySecureStorage();
     final oauthClient = OAuthClient(
       issuer: 'http://localhost:8080/realms/admin-template',
@@ -17,7 +19,9 @@ void main() {
     );
     final authService = AuthService(oauthClient, storage: storage);
 
-    await tester.pumpWidget(MaterialApp(home: AuthGate(authService: authService)));
+    await tester.pumpWidget(
+      MaterialApp(home: AuthGate(authService: authService)),
+    );
     await tester.pump();
 
     expect(find.text('Sign in'), findsOneWidget);
@@ -34,7 +38,9 @@ void main() {
     );
     final authService = AuthService(oauthClient, storage: storage);
 
-    await tester.pumpWidget(MaterialApp(home: LoginScreen(authService: authService)));
+    await tester.pumpWidget(
+      MaterialApp(home: LoginScreen(authService: authService)),
+    );
     await tester.pump();
 
     expect(find.text('Sign in'), findsOneWidget);

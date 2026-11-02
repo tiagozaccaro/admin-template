@@ -10,8 +10,6 @@ import asyncio
 import json
 from unittest.mock import patch
 
-import pytest
-
 from admin_template_agent.routers.chat import _agent
 
 
@@ -38,6 +36,7 @@ def _collect_events(response) -> list:
 def test_first_token_ms_emitted_within_budget() -> None:
     """SC-002: first_token_ms must be present and under the 3s budget."""
     with patch.object(_agent, "chat_stream") as mock_stream:
+
         async def _fake_stream(message, approvals=None):
             yield "Hello"
             yield " world"
@@ -56,9 +55,7 @@ def test_first_token_ms_emitted_within_budget() -> None:
 
     assert events, "SSE stream emitted no events"
     first = events[0]
-    assert "first_token_ms" in first, (
-        f"first event missing first_token_ms: {first}"
-    )
+    assert "first_token_ms" in first, f"first event missing first_token_ms: {first}"
     assert first["first_token_ms"] >= 0
     assert first["first_token_ms"] < 3000, (
         f"first_token_ms={first['first_token_ms']} exceeds 3s SC-002 budget"
@@ -72,6 +69,7 @@ def test_first_token_ms_emitted_within_budget() -> None:
 def test_first_token_ms_absent_when_no_tokens() -> None:
     """An empty stream still completes with a done event."""
     with patch.object(_agent, "chat_stream") as mock_stream:
+
         async def _empty(message, approvals=None):
             return
             yield  # pragma: no cover
