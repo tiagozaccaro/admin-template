@@ -5,6 +5,7 @@ Revises:
 Create Date: 2026-10-30 00:00:00.000000
 
 """
+
 from __future__ import annotations
 
 from typing import Sequence, Union
@@ -63,12 +64,8 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
     )
-    op.create_index(
-        "ix_agent_tenant_id", "agent", ["tenant_id"], unique=False
-    )
-    op.create_index(
-        "ix_agent_status", "agent", ["status"], unique=False
-    )
+    op.create_index("ix_agent_tenant_id", "agent", ["tenant_id"], unique=False)
+    op.create_index("ix_agent_status", "agent", ["status"], unique=False)
     op.create_index(
         "ix_agent_name_tenant_id",
         "agent",

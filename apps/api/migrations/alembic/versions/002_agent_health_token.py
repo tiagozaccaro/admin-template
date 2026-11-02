@@ -5,6 +5,7 @@ Revises: 001_agent_tables
 Create Date: 2026-11-01 00:00:00.000000
 
 """
+
 from __future__ import annotations
 
 from typing import Sequence, Union

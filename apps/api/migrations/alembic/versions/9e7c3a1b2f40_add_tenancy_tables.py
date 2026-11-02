@@ -5,6 +5,7 @@ Revises: f1a2b3c4d5e6
 Create Date: 2026-10-31 00:00:00.000000
 
 """
+
 from __future__ import annotations
 
 from typing import Sequence, Union
@@ -52,9 +53,7 @@ def upgrade() -> None:
             ondelete="RESTRICT",
         ),
     )
-    op.create_index(
-        "ix_tenant_slug", "tenant", ["slug"], unique=True
-    )
+    op.create_index("ix_tenant_slug", "tenant", ["slug"], unique=True)
 
     op.create_table(
         "tenant_membership",
@@ -99,12 +98,8 @@ def upgrade() -> None:
         ),
         sa.UniqueConstraint("user_id", "tenant_id", name="uq_tenant_membership_user_tenant"),
     )
-    op.create_index(
-        "ix_tenant_membership_user_id", "tenant_membership", ["user_id"]
-    )
-    op.create_index(
-        "ix_tenant_membership_tenant_id", "tenant_membership", ["tenant_id"]
-    )
+    op.create_index("ix_tenant_membership_user_id", "tenant_membership", ["user_id"])
+    op.create_index("ix_tenant_membership_tenant_id", "tenant_membership", ["tenant_id"])
 
     op.create_table(
         "invitation",
