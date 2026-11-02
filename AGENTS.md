@@ -19,7 +19,252 @@ Read `docs/README.md` inside that installed package first, then read the relevan
 This block is written and re-added by `turbo` before repository-scoped commands when an AI agent is detected. In the Turborepo source repository, its template is defined in `crates/turborepo-cli/src/cli/agent_guidance.rs`. Removing the managed block while updates are enabled means a later qualifying invocation will add it again. Set `"agentGuidance": false` in the root `turbo.json` or `turbo.jsonc` to opt out; this does not remove an existing block. Keep the block committed with your work to avoid an uncommitted change on the next agent invocation.
 <!-- END:turborepo-agent-rules -->
 
-# Admin Template Kilo Code Rules
+# Engineering Execution Contract
+
+## Mission
+
+Deliver the complete requested outcome, not the smallest implementation
+that appears to satisfy the request.
+
+You are responsible for investigating, planning, implementing, testing,
+and verifying the task. Do not stop after producing a basic scaffold,
+mockup, placeholder, or happy-path-only implementation.
+
+## 1. Understand before coding
+
+Before modifying files:
+
+1. Inspect the repository structure and relevant existing code.
+2. Read the project's AGENTS.md, README, package manifests, and applicable
+   architecture and design documentation.
+3. Identify existing patterns, reusable components, conventions, and tests.
+4. Determine the full scope of the user's request and its implied requirements.
+5. Identify dependencies, integration points, security concerns, and risks.
+6. Maintain a concrete task checklist.
+
+Do not replace existing functionality unnecessarily. Do not invent a
+new architecture when an established project pattern already exists.
+
+## 2. Define complete acceptance criteria
+
+Translate the request into observable acceptance criteria BEFORE coding.
+
+Consider every relevant category:
+
+- Core functionality and business rules
+- UI/UX and visual consistency
+- Loading, empty, success, error, and disabled states
+- Input validation and edge cases
+- Authentication, authorization, and data isolation
+- Persistence, API integration, and error handling
+- Responsive layouts and accessibility
+- Logging, observability, and useful error messages
+- Unit, integration, regression, and end-to-end tests
+- Documentation, configuration, and migrations where applicable
+
+Only include categories relevant to the task, but investigate them
+deliberately. Do not silently omit important requirements.
+
+If the request is ambiguous, make reasonable decisions consistent with
+the repository. Ask only when a decision materially affects correctness,
+security, cost, or irreversible behaviour.
+
+## 3. Implement the complete solution
+
+- Implement all acceptance criteria, not just the easiest subset.
+- Integrate with the real application architecture and existing services.
+- Reuse existing components and abstractions where appropriate.
+- Replace relevant placeholders, mocks, TODOs, and temporary shortcuts.
+- Handle realistic failure cases and boundary conditions.
+- Keep changes focused, maintainable, typed, and consistent with the project.
+- Do not introduce unnecessary dependencies or duplicate functionality.
+- Do not claim a feature works if it is only simulated or partially wired.
+- Do not silently downgrade scope because implementation is difficult.
+
+For UI work, prioritize a coherent, production-quality experience over
+a bare collection of components. Verify the actual rendered result when
+browser testing is available.
+
+## 4. Work until the acceptance criteria are satisfied
+
+After each meaningful implementation stage:
+
+1. Run the relevant tests, type checks, linting, and build.
+2. Inspect failures and fix regressions introduced by your changes.
+3. Check the implementation against the acceptance criteria.
+4. Continue with missing functionality and uncovered edge cases.
+5. Repeat until all feasible criteria pass.
+
+Do not stop merely because:
+- The code compiles.
+- A page renders.
+- One happy-path test passes.
+- The first implementation is complete.
+- A tool call fails.
+- The task takes multiple iterations.
+
+When a tool fails, investigate the cause and use a reasonable alternative.
+Never conceal a failure or claim verification that did not happen.
+
+## 5. Verify independently
+
+Before declaring completion:
+
+- Review the actual diff.
+- Check for incomplete implementations, dead code, TODOs, placeholders,
+  broken integrations, missing states, and accidental scope changes.
+- Run the strongest relevant tests available.
+- Review security and regression risks.
+- Verify every acceptance criterion against implementation or test evidence.
+- Fix any material issues found during the review.
+
+Use a separate review agent when available and practical. Treat review
+findings as work to resolve, not as a report to produce and ignore.
+
+## 6. Completion gate
+
+The task is COMPLETE only when:
+
+- All required acceptance criteria are implemented.
+- Relevant verification commands have been executed.
+- Introduced failures have been fixed or clearly explained.
+- Remaining limitations are explicitly documented.
+- The final diff has been inspected.
+
+If blocked by missing credentials, unavailable infrastructure, or another
+genuine external dependency, complete all independent work first.
+Report the exact blocker and what remains. Never describe partial work
+as a fully completed task.
+
+## 7. Final report
+
+Summarize:
+1. What was implemented.
+2. Which acceptance criteria were satisfied.
+3. Which tests, checks, and builds actually ran, with their results.
+4. Any known limitations or incomplete work.
+5. Any important decisions or follow-up actions.
+
+Be concise in the report, but thorough in the implementation.
+
+---
+
+# Global Engineering Standards
+
+## Primary objective
+
+Deliver the complete requested outcome, not merely a plausible first
+implementation. Optimize for correctness, completeness, maintainability,
+and verified behaviour rather than minimum lines changed.
+
+## Required workflow
+
+For every substantial task:
+
+1. Inspect the repository, applicable AGENTS.md files, and relevant code.
+2. Identify existing conventions, dependencies, and integration points.
+3. Derive explicit, testable acceptance criteria.
+4. Track implementation work using a checklist or todo tool.
+5. Implement the complete scope in small, verifiable increments.
+6. Run appropriate checks and fix failures caused by the changes.
+7. Review the diff and check for missing requirements.
+8. Verify the acceptance criteria before reporting completion.
+
+Do not spend excessive time planning straightforward tasks. Begin
+implementation once the scope and risks are understood.
+
+## No superficial implementations
+
+Never consider a task complete merely because:
+
+- A page renders or a component exists.
+- An endpoint returns a response.
+- The code compiles.
+- The happy path works.
+- A mock implementation resembles a real integration.
+- A checklist was created or a plan was written.
+- The first implementation has been produced.
+
+Implement the requested behaviour and connect it to the actual application.
+
+Do not silently replace requested functionality with placeholders, mock
+data, hardcoded values, stubs, TODOs, or reduced scope.
+
+If a requirement cannot be completed, explain the specific blocker and
+finish all independent work that can reasonably be completed.
+
+## Scope and edge cases
+
+For each relevant requirement, consider:
+
+- Normal behaviour and boundary conditions.
+- Invalid inputs and validation.
+- Loading, empty, success, and failure states.
+- Persistence and integration behaviour.
+- Authentication and authorization.
+- Security and tenant/data isolation where applicable.
+- Accessibility and responsive behaviour for user interfaces.
+- Backward compatibility and regression risk.
+- Automated tests and documentation.
+
+Do not add irrelevant complexity. Focus on requirements justified by
+the task and existing architecture.
+
+## Verification is mandatory
+
+Discover the repository's actual commands instead of guessing them.
+
+Run the strongest practical relevant checks, including tests, linting,
+type checking, builds, and integration or browser tests where available.
+
+Inspect failures. Fix failures introduced by your changes. Rerun affected
+checks after repairs.
+
+Never claim that a command passed unless it actually ran successfully.
+If a check is unavailable, explain why and use the best feasible alternative.
+
+## Efficient autonomy
+
+Make ordinary implementation decisions independently when they are
+reversible and consistent with the project.
+
+Ask before destructive operations, irreversible external actions,
+unexpected paid services, or materially ambiguous security decisions.
+
+Do not ask permission for routine code edits, test execution, or ordinary
+debugging when the environment already permits them.
+
+When a tool fails, diagnose the error and try a reasonable alternative.
+Do not repeatedly retry the same failed action without changing strategy.
+
+## Independent review
+
+For substantial changes, use an available read-only review agent when
+practical. Give it the original request and acceptance criteria.
+
+Resolve material findings, then rerun the relevant checks. Do not confuse
+producing a review report with fixing the problems it identifies.
+
+## Completion report
+
+Report:
+
+- What was implemented.
+- Which acceptance criteria were satisfied.
+- Which verification commands ran and their actual outcomes.
+- Known limitations, unverified behaviour, and external blockers.
+
+Be concise in the report and thorough in the work.
+
+## Project-specific instructions
+
+Follow the repository's own AGENTS.md, architecture documents, established
+patterns, and test commands. More specific project requirements refine
+these global rules; do not silently disregard conflicts.
+
+---
+
+# Admin Template OpenCode Rules
 
 ## Repository understanding
 
@@ -136,6 +381,7 @@ behavior — not merely for generating code quickly.
 
 - Never commit directly to `main`; work on a dedicated branch for each task.
 - Never rewrite shared history or force-push without explicit approval.
+- Never commit if checks fail (lint, typecheck, build, or tests).
 - Follow Conventional Commits (`<type>(<scope>): <subject>`); the `commitlint` CI job
   enforces it on every pull request.
 - For issue-driven work, reference the corresponding GitHub issue and close it from the

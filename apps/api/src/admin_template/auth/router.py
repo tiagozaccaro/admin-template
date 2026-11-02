@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
+import hashlib
+import secrets
 import uuid
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Query, status
 from fastapi.responses import RedirectResponse, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
+from pydantic import BaseModel as _BM
 
 from admin_template.auth.oidc import (
     AuthorizationUrlResult,
@@ -21,7 +25,16 @@ from admin_template.auth.sessions import (
     get_current_user_from_session,
     revoke_session,
 )
+from admin_template.core.db import db as _db
+from admin_template.core.email import EmailMessage, send_email
+from admin_template.core.security import hash_password
 from admin_template.core.settings import settings
+from admin_template.modules.identity.models.email_verification_token import (
+    EmailVerificationToken,
+)
+from admin_template.modules.identity.models.password_reset_token import (
+    PasswordResetToken,
+)
 from admin_template.modules.identity.models.user import User
 from admin_template.modules.identity.service import (
     IdentityLinkError,
@@ -106,9 +119,7 @@ async def google_callback(
     # Validate the ID token, including the nonce bound to the original
     # authorization request (replay protection).
     try:
-        claims = await validate_id_token(
-            id_token=id_token, expected_nonce=token_result.nonce
-        )
+        claims = await validate_id_token(id_token=id_token, expected_nonce=token_result.nonce)
     except ValueError as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -167,19 +178,11 @@ async def me(
 async def logout(
     response: Response,
     session_id: str | None = Query(default=None),
-    session_cookie: str | None = Cookie(
-        default=None, alias=settings.session_cookie_name
-    ),
-    credentials: Annotated[
-        HTTPAuthorizationCredentials | None, Depends(bearer_scheme)
-    ] = None,
+    session_cookie: str | None = Cookie(default=None, alias=settings.session_cookie_name),
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)] = None,
 ) -> LogoutResponse:
     """Revoke a server-side session (logout)."""
-    token = (
-        session_id
-        or session_cookie
-        or (credentials.credentials if credentials else None)
-    )
+    token = session_id or session_cookie or (credentials.credentials if credentials else None)
     if token:
         try:
             await revoke_session(uuid.UUID(token))
@@ -198,22 +201,6 @@ async def logout(
 # ---------------------------------------------------------------------------
 # Local auth lifecycle (register / verify / reset / delete)
 # ---------------------------------------------------------------------------
-
-import hashlib
-import secrets
-from datetime import UTC, datetime, timedelta
-
-from pydantic import BaseModel as _BM
-
-from admin_template.core.db import db as _db
-from admin_template.core.email import EmailMessage, send_email
-from admin_template.core.security import hash_password
-from admin_template.modules.identity.models.email_verification_token import (
-    EmailVerificationToken,
-)
-from admin_template.modules.identity.models.password_reset_token import (
-    PasswordResetToken,
-)
 
 
 class RegisterRequest(_BM):

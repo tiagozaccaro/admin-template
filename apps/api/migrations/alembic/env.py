@@ -23,10 +23,20 @@ if config.config_file_name is not None:
 # Import all domain models so they are registered on the shared
 # SQLAlchemy Base.metadata for Alembic autogenerate support.
 from admin_template.db.base import Base
+from admin_template.modules.agents.models import (  # noqa: F401
+    AuditEntry,
+    Agent,
+    AgentSession,
+)
 from admin_template.modules.identity.models import (
     external_identity,  # noqa: F401
     session,  # noqa: F401
     user,  # noqa: F401
+)
+from admin_template.modules.tenancy.models import (  # noqa: F401
+    Invitation,
+    Tenant,
+    TenantMembership,
 )
 from admin_template.modules.workspace.models import (
     member,  # noqa: F401

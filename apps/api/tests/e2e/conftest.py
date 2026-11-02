@@ -68,18 +68,12 @@ def patch_auth_for_smoke(monkeypatch: pytest.MonkeyPatch) -> None:
             return _FakeUser()
         raise _AuthError("Invalid session")
 
-    monkeypatch.setattr(
-        "admin_template.auth.router.build_authorization_url", fake_start
-    )
+    monkeypatch.setattr("admin_template.auth.router.build_authorization_url", fake_start)
     monkeypatch.setattr("admin_template.auth.router.exchange_code", fake_exchange)
     monkeypatch.setattr("admin_template.auth.router.validate_id_token", fake_validate)
     monkeypatch.setattr(
         "admin_template.auth.router.get_or_create_user_from_claims",
         fake_get_or_create,
     )
-    monkeypatch.setattr(
-        "admin_template.auth.router.create_session", fake_create_session
-    )
-    monkeypatch.setattr(
-        "admin_template.auth.router.revoke_session", fake_revoke_session
-    )
+    monkeypatch.setattr("admin_template.auth.router.create_session", fake_create_session)
+    monkeypatch.setattr("admin_template.auth.router.revoke_session", fake_revoke_session)

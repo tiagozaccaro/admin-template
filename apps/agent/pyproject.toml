@@ -1,0 +1,50 @@
+[project]
+name = "admin-template-agent"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic-ai>=1.0",
+    "pydantic-ai-harness[code-mode]>=0.1.0",
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "httpx>=0.28.1",
+    "pyyaml>=6.0",
+    "mcp>=1.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6",
+    "pyright>=1.1",
+    "pytest>=9.2.0",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W", "I", "UP", "B", "BLE", "C4", "SIM",
+]
+ignore = [
+    "B008",  # FastAPI Depends() in defaults is idiomatic
+    "B006",  # mutable default args in function signatures
+    "B904",  # raise from in exception chains
+    "SIM105",  # try/except/pass -> contextlib.suppress
+    "SIM117",  # nested with statements
+    "UP028",  # yield over for loop
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/admin_template_agent/agent/core.py" = ["BLE001"]
+"src/admin_template_agent/audit.py" = ["BLE001"]
+"src/admin_template_agent/routers/chat.py" = ["BLE001", "E501"]
+"src/admin_template_agent/mcp.py" = ["BLE001"]
+"src/admin_template_agent/agent/tools/*.py" = ["E501"]
+
+[tool.pyright]
+pythonVersion = "3.12"
+extraPaths = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

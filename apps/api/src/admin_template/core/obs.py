@@ -141,9 +141,7 @@ def metrics() -> PlainTextResponse:
     )
 
 
-def bind_request_context(
-    request_id: str | None = None, trace_id: str | None = None
-) -> None:
+def bind_request_context(request_id: str | None = None, trace_id: str | None = None) -> None:
     """Bind request-scoped contextvars for structured logging."""
     if request_id:
         structlog.contextvars.bind_contextvars(request_id=request_id)

@@ -6,6 +6,7 @@ Sensitive values are resolved from environment variables or Docker
 """
 
 import json
+from pathlib import Path
 from typing import Annotated, Literal
 
 from pydantic import Field, field_validator
@@ -15,8 +16,9 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
+    _env_files = [Path.cwd() / ".env", Path(__file__).resolve().parents[3] / ".env"]
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=[str(p) for p in _env_files if p.is_file()],
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
@@ -24,10 +26,12 @@ class Settings(BaseSettings):
 
     # Application
     app_name: str = "Admin Template API"
+    app_description: str = "Admin template application settings."
     app_version: str = "0.1.0"
     environment: str = "development"
     debug: bool = False
     log_level: str = "INFO"
+    maintenance_mode: bool = False
 
     # Server
     api_port: int = 8000
@@ -45,32 +49,36 @@ class Settings(BaseSettings):
 
     # Database (postgres + asyncpg). Resolved from DATABASE_URL or a
     # DATABASE_URL_FILE Docker secret mount; no default (must be provided).
-    database_url: str | None = Field(
-        default=None, description="SQLAlchemy async database URL"
-    )
+    database_url: str | None = Field(default=None, description="SQLAlchemy async database URL")
     database_url_file: str | None = None
 
     # Redis (queue + cache + sessions)
     redis_url: str = "redis://localhost:6379/0"
 
-    # Chat models (JSON list of {provider, model})
-    chat_models: str = '[{"provider":"openai","model":"gpt-4o"},{"provider":"anthropic","model":"claude-3-5-sonnet-latest"}]'
+    # Chat providers (JSON list of provider IDs from models.dev). The agent
+    # uses these to enumerate available models for chat.
+    chat_models: str = '["openai", "anthropic"]'
+
+    # Provider credentials (per-provider API key / base URL). These are
+    # consumed by the agent daemon to construct its LLM client; the model
+    # itself is selected from the chat_models list above.
+    provider_settings: str = Field(
+        default="{}",
+        description=(
+            "JSON object of provider -> {api_key, base_url} consumed by the "
+            "agent daemon to construct its LLM client."
+        ),
+    )
 
     # Keycloak OIDC
-    keycloak_jwks_url: str | None = Field(
-        default=None, description="Keycloak JWKS endpoint URL"
-    )
+    keycloak_jwks_url: str | None = Field(default=None, description="Keycloak JWKS endpoint URL")
     keycloak_issuer: str | None = Field(default=None, description="Keycloak issuer URL")
     keycloak_audience: str = "admin-template-api"
     access_token_expire_minutes: int = 5
 
     # Google OIDC
-    google_client_id: str | None = Field(
-        default=None, description="Google OAuth client ID"
-    )
-    google_client_secret: str | None = Field(
-        default=None, description="Google OAuth client secret"
-    )
+    google_client_id: str | None = Field(default=None, description="Google OAuth client ID")
+    google_client_secret: str | None = Field(default=None, description="Google OAuth client secret")
     google_issuer: str = Field(
         default="https://accounts.google.com", description="Google OIDC issuer"
     )
@@ -92,9 +100,7 @@ class Settings(BaseSettings):
     session_cookie_samesite: Literal["lax", "strict", "none"] = Field(
         default="lax", description="Session cookie SameSite attribute"
     )
-    session_ttl_minutes: int = Field(
-        default=60 * 24 * 7, description="Session TTL in minutes"
-    )
+    session_ttl_minutes: int = Field(default=60 * 24 * 7, description="Session TTL in minutes")
 
     # OpenTelemetry trace export endpoint
     otlp_endpoint: str = "http://localhost:4318/v1/traces"
@@ -103,6 +109,24 @@ class Settings(BaseSettings):
     kilo_api_base: str = "https://api.kilo.ai/v1"
     kilo_api_key: str | None = None
     kilo_model: str = "kilo-auto/free"
+
+    # Default local agent provisioning (FR-010)
+    provision_default_agent: bool = Field(
+        default=True,
+        description="Whether to auto-provision a default local agent for tenants",
+    )
+    default_agent_url: str = Field(
+        default="http://localhost:8100",
+        description="URL of the default local agent daemon",
+    )
+    default_agent_token: str | None = Field(
+        default=None,
+        description="Bearer token for the default local agent",
+    )
+    default_agent_name: str = Field(
+        default="local-agent",
+        description="Display name of the default local agent",
+    )
 
     def model_post_init(self, /, __context) -> None:
         """Resolve Docker `_FILE` secret mounts after field init.
@@ -113,7 +137,7 @@ class Settings(BaseSettings):
         """
         if self.database_url is None and self.database_url_file:
             try:
-                with open(self.database_url_file, "r", encoding="utf-8") as fh:
+                with open(self.database_url_file, encoding="utf-8") as fh:
                     object.__setattr__(self, "database_url", fh.read().strip())
             except FileNotFoundError:
                 pass

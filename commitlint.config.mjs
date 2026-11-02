@@ -35,6 +35,7 @@ export default {
         "deps",
         "deps-dev",
         "docs",
+        "agent",
       ],
     ],
     "subject-case": [0],
