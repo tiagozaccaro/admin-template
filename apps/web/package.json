@@ -13,7 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^4.0.103",
+    "@ai-sdk/openai": "^4.0.109",
     "@ai-sdk/react": "^4.0.159",
     "@opencode-ai/models": "^0.0.121",
     "@remixicon/react": "^4.9.0",
